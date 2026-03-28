@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harness 设计：长时间运行应用开发的工具链</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0a0a0f;
+  --bg-surface: #111118;
+  --bg-card: #1a1a24;
+  --bg-elevated: #222233;
+  --accent: #d4845a;
+  --accent-warm: #e8976b;
+  --accent-glow: rgba(212, 132, 90, 0.15);
+  --accent-subtle: rgba(212, 132, 90, 0.08);
+  --text-primary: #e8e4df;
+  --text-secondary: #9a9590;
+  --text-muted: #5c5856;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(212, 132, 90, 0.25);
+  --green: #5ab88a;
+  --red: #d45a5a;
+  --blue: #5a8ed4;
+  --purple: #9a6dd7;
+  --yellow: #d4b85a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: 'Noto Sans SC', sans-serif;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg-deep);
+}
+
+/* ---- Noise overlay ---- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ---- Scroll animations ---- */
+.fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Layout ---- */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+section {
+  padding: 100px 0;
+  position: relative;
+}
+
+/* ---- Hero ---- */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  padding: 60px 40px;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+  animation: pulse-glow 6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border: 1px solid var(--border-accent);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+  animation: badge-in 1s 0.2s both;
+}
+
+@keyframes badge-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: dot-pulse 2s infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero h1 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 900;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1.25;
+  max-width: 800px;
+  margin-bottom: 28px;
+  animation: title-in 1s 0.4s both;
+  letter-spacing: -0.02em;
+}
+
+@keyframes title-in {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero h1 .accent-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  line-height: 1.9;
+  animation: title-in 1s 0.6s both;
+}
+
+.hero-meta {
+  margin-top: 48px;
+  display: flex;
+  gap: 32px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  animation: title-in 1s 0.8s both;
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  animation: scroll-bounce 2s 1.5s infinite;
+}
+
+@keyframes scroll-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+.hero-scroll svg {
+  width: 20px;
+  stroke: var(--text-muted);
+}
+
+/* ---- Section Headers ---- */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.section-label::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.section-title {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.4;
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+.section-desc {
+  color: var(--text-secondary);
+  font-size: 1.02rem;
+  max-width: 680px;
+  line-height: 1.9;
+}
+
+/* ---- Divider ---- */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-accent), transparent);
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+/* ---- Problem Section ---- */
+.problems-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 56px;
+}
+
+.problem-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 36px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.4s, transform 0.4s;
+}
+
+.problem-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-4px);
+}
+
+.problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.problem-card:nth-child(1)::before { background: linear-gradient(90deg, var(--red), transparent); }
+.problem-card:nth-child(2)::before { background: linear-gradient(90deg, var(--yellow), transparent); }
+
+.problem-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  font-size: 1.4rem;
+}
+
+.problem-card:nth-child(1) .problem-icon {
+  background: rgba(212, 90, 90, 0.12);
+  color: var(--red);
+}
+.problem-card:nth-child(2) .problem-icon {
+  background: rgba(212, 184, 90, 0.12);
+  color: var(--yellow);
+}
+
+.problem-card h3 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.2rem;
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.problem-card p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.85;
+}
+
+/* ---- GAN Diagram ---- */
+.gan-section {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.gan-diagram {
+  margin-top: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.gan-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 800px;
+  position: relative;
+}
+
+.gan-node {
+  flex: 1;
+  text-align: center;
+  padding: 32px 20px;
+  border-radius: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.gan-node-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 1.8rem;
+  position: relative;
+}
+
+.gan-generator .gan-node-icon {
+  background: linear-gradient(135deg, rgba(90, 142, 212, 0.2), rgba(90, 142, 212, 0.05));
+  border: 2px solid rgba(90, 142, 212, 0.3);
+  box-shadow: 0 0 40px rgba(90, 142, 212, 0.1);
+}
+
+.gan-evaluator .gan-node-icon {
+  background: linear-gradient(135deg, rgba(154, 109, 215, 0.2), rgba(154, 109, 215, 0.05));
+  border: 2px solid rgba(154, 109, 215, 0.3);
+  box-shadow: 0 0 40px rgba(154, 109, 215, 0.1);
+}
+
+.gan-node h4 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.gan-node p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.gan-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  flex-shrink: 0;
+  width: 140px;
+}
+
+.gan-arrow-line {
+  width: 100%;
+  height: 2px;
+  position: relative;
+}
+
+.gan-arrow-line::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1px;
+}
+
+.gan-arrow-forward .gan-arrow-line::before {
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+}
+
+.gan-arrow-back .gan-arrow-line::before {
+  background: linear-gradient(90deg, var(--purple), var(--blue));
+}
+
+.gan-arrow-line::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 7px solid var(--purple);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.gan-arrow-back .gan-arrow-line::after {
+  right: auto;
+  left: -1px;
+  border-left: none;
+  border-right: 7px solid var(--blue);
+}
+
+.gan-arrow-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.gan-loop-label {
+  margin-top: 32px;
+  padding: 12px 28px;
+  border: 1px dashed var(--border-accent);
+  border-radius: 100px;
+  font-size: 0.85rem;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gan-loop-label svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--accent);
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Criteria Cards ---- */
+.criteria-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 56px;
+}
+
+.criteria-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 24px;
+  transition: border-color 0.4s, transform 0.4s;
+  position: relative;
+  overflow: hidden;
+}
+
+.criteria-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-accent);
+}
+
+.criteria-rank {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.criteria-card:nth-child(1) .criteria-rank,
+.criteria-card:nth-child(2) .criteria-rank {
+  background: rgba(212, 132, 90, 0.15);
+  color: var(--accent);
+}
+
+.criteria-card:nth-child(3) .criteria-rank,
+.criteria-card:nth-child(4) .criteria-rank {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+.criteria-icon {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.criteria-card h4 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.criteria-card p {
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.75;
+}
+
+.criteria-bar {
+  margin-top: 18px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.criteria-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 0;
+}
+
+.visible .criteria-bar-fill { width: var(--fill); }
+
+.criteria-card:nth-child(1) .criteria-bar-fill { background: var(--accent); --fill: 95%; }
+.criteria-card:nth-child(2) .criteria-bar-fill { background: var(--accent-warm); --fill: 90%; }
+.criteria-card:nth-child(3) .criteria-bar-fill { background: var(--text-muted); --fill: 60%; }
+.criteria-card:nth-child(4) .criteria-bar-fill { background: var(--text-muted); --fill: 55%; }
+
+/* ---- Three-Agent Architecture ---- */
+.arch-section {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.arch-flow {
+  margin-top: 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.arch-stage {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  position: relative;
+}
+
+.arch-timeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 56px;
+}
+
+.arch-dot {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.arch-line {
+  width: 2px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.arch-stage:nth-child(1) .arch-dot {
+  background: linear-gradient(135deg, rgba(90, 184, 138, 0.2), rgba(90, 184, 138, 0.05));
+  border: 2px solid rgba(90, 184, 138, 0.4);
+}
+.arch-stage:nth-child(1) .arch-line {
+  background: linear-gradient(to bottom, rgba(90, 184, 138, 0.3), rgba(90, 142, 212, 0.3));
+}
+
+.arch-stage:nth-child(3) .arch-dot {
+  background: linear-gradient(135deg, rgba(90, 142, 212, 0.2), rgba(90, 142, 212, 0.05));
+  border: 2px solid rgba(90, 142, 212, 0.4);
+}
+.arch-stage:nth-child(3) .arch-line {
+  background: linear-gradient(to bottom, rgba(90, 142, 212, 0.3), rgba(154, 109, 215, 0.3));
+}
+
+.arch-stage:nth-child(5) .arch-dot {
+  background: linear-gradient(135deg, rgba(154, 109, 215, 0.2), rgba(154, 109, 215, 0.05));
+  border: 2px solid rgba(154, 109, 215, 0.4);
+}
+
+.arch-connector {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.arch-connector .arch-timeline {
+  height: 60px;
+}
+
+.arch-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  flex: 1;
+  transition: border-color 0.4s;
+}
+
+.arch-content:hover {
+  border-color: var(--border-accent);
+}
+
+.arch-content h4 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.15rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.arch-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.arch-content p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.85;
+}
+
+.arch-content ul {
+  list-style: none;
+  margin-top: 12px;
+}
+
+.arch-content ul li {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  padding: 4px 0;
+  padding-left: 18px;
+  position: relative;
+}
+
+.arch-content ul li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+
+/* ---- Comparison ---- */
+.comparison {
+  margin-top: 56px;
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+
+.compare-card {
+  border-radius: 16px;
+  padding: 40px 36px;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.compare-solo {
+  background: linear-gradient(135deg, var(--bg-card), rgba(212, 90, 90, 0.03));
+}
+
+.compare-harness {
+  background: linear-gradient(135deg, var(--bg-card), rgba(90, 184, 138, 0.03));
+}
+
+.compare-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.compare-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.compare-header h4 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.1rem;
+}
+
+.compare-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.compare-solo .compare-badge {
+  background: rgba(212, 90, 90, 0.12);
+  color: var(--red);
+}
+
+.compare-harness .compare-badge {
+  background: rgba(90, 184, 138, 0.12);
+  color: var(--green);
+}
+
+.compare-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.compare-stat {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+
+.compare-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.compare-solo .compare-stat-value { color: var(--text-primary); }
+.compare-harness .compare-stat-value { color: var(--green); }
+
+.compare-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.compare-features {
+  list-style: none;
+}
+
+.compare-features li {
+  font-size: 0.88rem;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--text-secondary);
+}
+
+.compare-features li:last-child { border-bottom: none; }
+
+.compare-features .icon-pass { color: var(--green); flex-shrink: 0; }
+.compare-features .icon-fail { color: var(--red); flex-shrink: 0; }
+.compare-features .icon-warn { color: var(--yellow); flex-shrink: 0; }
+
+/* ---- Evolution Timeline ---- */
+.evo-timeline {
+  margin-top: 56px;
+  position: relative;
+}
+
+.evo-track {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent), var(--border));
+  transform: translateX(-50%);
+}
+
+.evo-step {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  margin-bottom: 48px;
+}
+
+.evo-step:last-child { margin-bottom: 0; }
+
+.evo-step:nth-child(odd) {
+  flex-direction: row;
+  padding-right: calc(50% + 40px);
+  text-align: right;
+}
+
+.evo-step:nth-child(even) {
+  flex-direction: row-reverse;
+  padding-left: calc(50% + 40px);
+  text-align: left;
+}
+
+.evo-marker {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-deep);
+  border: 3px solid var(--accent);
+  z-index: 1;
+}
+
+.evo-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px;
+  transition: border-color 0.4s;
+  flex: 1;
+}
+
+.evo-card:hover {
+  border-color: var(--border-accent);
+}
+
+.evo-version {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.evo-card h4 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+}
+
+.evo-card p {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+
+/* ---- Insight Section ---- */
+.insight-section {
+  text-align: center;
+  padding: 120px 0;
+}
+
+.insight-quote {
+  font-family: 'Noto Serif SC', serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+  font-weight: 600;
+  line-height: 1.6;
+  max-width: 750px;
+  margin: 0 auto 40px;
+  position: relative;
+}
+
+.insight-quote::before {
+  content: '\201C';
+  position: absolute;
+  top: -40px;
+  left: -20px;
+  font-size: 5rem;
+  color: var(--accent);
+  opacity: 0.3;
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+.insight-quote .accent-text {
+  background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.insight-author {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ---- DAW Results ---- */
+.daw-table-wrap {
+  margin-top: 40px;
+  overflow-x: auto;
+}
+
+.daw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.daw-table thead th {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 500;
+  text-align: left;
+  padding: 14px 20px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+
+.daw-table tbody td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.daw-table tbody tr:last-child td {
+  border-bottom: 2px solid var(--border-accent);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.daw-table .mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+/* ---- Footer ---- */
+footer {
+  padding: 60px 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* ---- Evaluator Findings ---- */
+.findings-grid {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.finding-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--red);
+  border-radius: 0 12px 12px 0;
+  padding: 24px 28px;
+  transition: border-color 0.4s;
+}
+
+.finding-card:hover {
+  border-color: var(--border-accent);
+  border-left-color: var(--red);
+}
+
+.finding-criterion {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.finding-criterion::before {
+  content: 'CONTRACT';
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  letter-spacing: 0.1em;
+}
+
+.finding-result {
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.finding-result strong {
+  color: var(--red);
+  font-weight: 500;
+}
+
+.finding-result code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent-warm);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 860px) {
+  .problems-grid { grid-template-columns: 1fr; }
+  .criteria-grid { grid-template-columns: 1fr 1fr; }
+  .comparison { grid-template-columns: 1fr; gap: 20px; }
+  .compare-vs { display: none; }
+  .evo-track { display: none; }
+  .evo-step:nth-child(odd),
+  .evo-step:nth-child(even) {
+    padding: 0;
+    flex-direction: column;
+    text-align: left;
+  }
+  .evo-marker { display: none; }
+  .container { padding: 0 24px; }
+  section { padding: 64px 0; }
+  .arch-stage { flex-direction: column; align-items: center; }
+  .arch-timeline { flex-direction: row; width: auto; }
+  .arch-line { width: 0; height: 0; }
+}
+
+@media (max-width: 560px) {
+  .criteria-grid { grid-template-columns: 1fr; }
+  .hero-meta { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-badge">Anthropic Engineering</div>
+  <h1>长时间运行应用开发的<br><span class="accent-text">工具链设计</span></h1>
+  <p class="hero-subtitle">
+    受 GAN 启发的多代理架构如何突破 Claude 在前端设计与全栈开发中的性能天花板——从生成器-评估器循环到三代理协作系统
+  </p>
+  <div class="hero-meta">
+    <span>Prithvi Rajasekaran</span>
+    <span>Anthropic Labs</span>
+    <span>2026.03.24</span>
+  </div>
+  <div class="hero-scroll">
+    <span>SCROLL</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</section>
+
+<!-- ============ PROBLEMS ============ -->
+<section>
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">问题背景</div>
+      <h2 class="section-title">为什么朴素的实现方式达不到要求</h2>
+      <p class="section-desc">在长时间代理编码中，我们观察到两种持续存在的失败模式，它们是工具链设计需要解决的核心挑战。</p>
+    </div>
+
+    <div class="problems-grid fade-up">
+      <div class="problem-card">
+        <div class="problem-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15h18"/><path d="M9 3v18" opacity="0.3"/></svg>
+        </div>
+        <h3>上下文焦虑</h3>
+        <p>随着上下文窗口填满，模型在冗长任务中失去连贯性。更严重的是，模型会过早收尾——它们接近自认为的上下文限制时开始"赶工"。<strong style="color:var(--text-primary)">压缩</strong>保持了连续性但无法给出全新起点；<strong style="color:var(--text-primary)">上下文重置</strong>则以结构化交接为代价，提供彻底的清零。</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6" opacity="0.5"/><path d="M12 3v2M12 19v2"/></svg>
+        </div>
+        <h3>自我评估偏差</h3>
+        <p>当被要求评估自己的工作时，代理总是自信地给予好评——即使质量明显平庸。在设计等主观任务中尤为突出，因为没有二元化的验证方式。<strong style="color:var(--text-primary)">将执行者与评判者分离</strong>被证明是解决此问题的有力杠杆。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ GAN ARCHITECTURE ============ -->
+<section class="gan-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">核心创新</div>
+      <h2 class="section-title">受 GAN 启发的生成器-评估器架构</h2>
+      <p class="section-desc">借鉴生成对抗网络的思路，将生成与评估分离为独立代理，形成驱动质量持续提升的反馈循环。</p>
+    </div>
+
+    <div class="gan-diagram fade-up">
+      <div class="gan-flow">
+        <div class="gan-node gan-generator">
+          <div class="gan-node-icon">G</div>
+          <h4>生成器 Generator</h4>
+          <p>根据提示创建前端实现<br>响应评估反馈进行迭代<br>策略决策：改进 or 转向</p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:24px; flex-shrink:0; width:160px;">
+          <div class="gan-arrow gan-arrow-forward">
+            <div class="gan-arrow-label">输出作品</div>
+            <div class="gan-arrow-line"></div>
+          </div>
+          <div class="gan-arrow gan-arrow-back">
+            <div class="gan-arrow-line"></div>
+            <div class="gan-arrow-label">具体反馈 + 评分</div>
+          </div>
+        </div>
+
+        <div class="gan-node gan-evaluator">
+          <div class="gan-node-icon">E</div>
+          <h4>评估器 Evaluator</h4>
+          <p>通过 Playwright 交互实时页面<br>基于四维标准独立评分<br>输出详细批评与改进建议</p>
+        </div>
+      </div>
+
+      <div class="gan-loop-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/><polyline points="21 3 21 9 15 9"/></svg>
+        5–15 次迭代 · 每次循环推向更具辨识度的方向
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CRITERIA ============ -->
+<section>
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">前端设计</div>
+      <h2 class="section-title">让主观质量变得可评分</h2>
+      <p class="section-desc">四个评分维度将"这个设计好不好？"转化为可具体评分的标准。设计质量与原创性权重更高——因为 Claude 默认在这两项上最弱。</p>
+    </div>
+
+    <div class="criteria-grid fade-up">
+      <div class="criteria-card">
+        <div class="criteria-rank">权重 HIGH</div>
+        <span class="criteria-icon">&#9670;</span>
+        <h4>设计质量</h4>
+        <p>颜色、排版、布局是否组合为连贯整体，创造独特氛围与身份感</p>
+        <div class="criteria-bar"><div class="criteria-bar-fill"></div></div>
+      </div>
+      <div class="criteria-card">
+        <div class="criteria-rank">权重 HIGH</div>
+        <span class="criteria-icon">&#10038;</span>
+        <h4>原创性</h4>
+        <p>是否有自定义创意选择的痕迹，还是模板默认与 AI 泔水模式的堆砌</p>
+        <div class="criteria-bar"><div class="criteria-bar-fill"></div></div>
+      </div>
+      <div class="criteria-card">
+        <div class="criteria-rank">权重 BASE</div>
+        <span class="criteria-icon">&#9632;</span>
+        <h4>工艺</h4>
+        <p>排版层次、间距一致性、色彩和谐、对比度等技术执行力</p>
+        <div class="criteria-bar"><div class="criteria-bar-fill"></div></div>
+      </div>
+      <div class="criteria-card">
+        <div class="criteria-rank">权重 BASE</div>
+        <span class="criteria-icon">&#9654;</span>
+        <h4>功能性</h4>
+        <p>用户能否理解界面、找到操作、不需猜测地完成任务</p>
+        <div class="criteria-bar"><div class="criteria-bar-fill"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ THREE-AGENT ARCHITECTURE ============ -->
+<section class="arch-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">全栈编码</div>
+      <h2 class="section-title">三代理协作架构</h2>
+      <p class="section-desc">规划器扩展意图，生成器按冲刺实现，评估器像真实用户一样测试——每个代理解决前代工具链中观察到的特定缺陷。</p>
+    </div>
+
+    <div class="arch-flow fade-up">
+      <!-- Planner -->
+      <div class="arch-stage">
+        <div class="arch-timeline">
+          <div class="arch-dot">P</div>
+          <div class="arch-line"></div>
+        </div>
+        <div class="arch-content">
+          <h4>规划器 Planner <span class="arch-tag">1-4 句提示 → 完整规格</span></h4>
+          <p>将简短提示扩展为完整产品规格。专注高层次产品上下文与技术方向，避免指定细粒度实现——防止规格错误级联到下游。</p>
+          <ul>
+            <li>野心勃勃的范围设定</li>
+            <li>寻找机会融入 AI 功能</li>
+            <li>创建视觉设计语言</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Connector -->
+      <div class="arch-connector">
+        <div class="arch-timeline"><div class="arch-line" style="background: linear-gradient(to bottom, rgba(90, 184, 138, 0.2), rgba(90, 142, 212, 0.2));"></div></div>
+        <div style="flex:1;text-align:center;color:var(--text-muted);font-size:0.78rem;letter-spacing:0.1em;">&#9660; 规格传递</div>
+      </div>
+
+      <!-- Generator -->
+      <div class="arch-stage">
+        <div class="arch-timeline">
+          <div class="arch-dot">G</div>
+          <div class="arch-line"></div>
+        </div>
+        <div class="arch-content">
+          <h4>生成器 Generator <span class="arch-tag">React + Vite + FastAPI + PostgreSQL</span></h4>
+          <p>按冲刺逐功能实现。每个冲刺前与评估器协商"冲刺合约"——定义完成标准。通信通过文件系统进行，保持工作忠于规格。</p>
+          <ul>
+            <li>逐功能冲刺式开发</li>
+            <li>冲刺结束自我评估后交接 QA</li>
+            <li>使用 git 进行版本控制</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Connector -->
+      <div class="arch-connector">
+        <div class="arch-timeline"><div class="arch-line" style="background: linear-gradient(to bottom, rgba(90, 142, 212, 0.2), rgba(154, 109, 215, 0.2));"></div></div>
+        <div style="flex:1;text-align:center;color:var(--text-muted);font-size:0.78rem;letter-spacing:0.1em;">&#9660; 代码交接 QA</div>
+      </div>
+
+      <!-- Evaluator -->
+      <div class="arch-stage">
+        <div class="arch-timeline">
+          <div class="arch-dot">E</div>
+        </div>
+        <div class="arch-content">
+          <h4>评估器 Evaluator <span class="arch-tag">Playwright MCP</span></h4>
+          <p>像真实用户一样点击运行中的应用，测试 UI、API 端点和数据库状态。每个标准有硬性阈值，低于阈值则冲刺失败。</p>
+          <ul>
+            <li>产品深度 · 功能性 · 视觉设计 · 代码质量</li>
+            <li>具体到代码行级的 bug 报告</li>
+            <li>不通过则返回生成器重做</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPARISON ============ -->
+<section>
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">实验结果</div>
+      <h2 class="section-title">2D 复古游戏制作器：单代理 vs 完整工具链</h2>
+      <p class="section-desc">相同的一句话提示，截然不同的产出。费用相差 20 倍，但质量差距是核心功能能否工作的区别。</p>
+    </div>
+
+    <div class="comparison fade-up">
+      <div class="compare-card compare-solo">
+        <div class="compare-header">
+          <h4>单代理</h4>
+          <div class="compare-badge">BASELINE</div>
+        </div>
+        <div class="compare-stats">
+          <div class="compare-stat">
+            <div class="compare-stat-value mono">20 min</div>
+            <div class="compare-stat-label">运行时长</div>
+          </div>
+          <div class="compare-stat">
+            <div class="compare-stat-value mono">$9</div>
+            <div class="compare-stat-label">Token 费用</div>
+          </div>
+        </div>
+        <ul class="compare-features">
+          <li><span class="icon-warn">&#9679;</span>布局浪费空间，面板固定高度</li>
+          <li><span class="icon-fail">&#10007;</span>工作流僵硬，无引导序列</li>
+          <li><span class="icon-fail">&#10007;</span>游戏核心功能损坏——实体不响应输入</li>
+          <li><span class="icon-fail">&#10007;</span>实体定义与运行时连接断裂</li>
+          <li><span class="icon-fail">&#10007;</span>无 AI 功能集成</li>
+        </ul>
+      </div>
+
+      <div class="compare-vs">VS</div>
+
+      <div class="compare-card compare-harness">
+        <div class="compare-header">
+          <h4>完整工具链</h4>
+          <div class="compare-badge">3-AGENT</div>
+        </div>
+        <div class="compare-stats">
+          <div class="compare-stat">
+            <div class="compare-stat-value mono">6 hr</div>
+            <div class="compare-stat-label">运行时长</div>
+          </div>
+          <div class="compare-stat">
+            <div class="compare-stat-value mono">$200</div>
+            <div class="compare-stat-label">Token 费用</div>
+          </div>
+        </div>
+        <ul class="compare-features">
+          <li><span class="icon-pass">&#10003;</span>16 功能规格，10 个冲刺</li>
+          <li><span class="icon-pass">&#10003;</span>全视口画布，一致的视觉语言</li>
+          <li><span class="icon-pass">&#10003;</span>核心游戏可玩——实体可移动</li>
+          <li><span class="icon-pass">&#10003;</span>精灵动画、行为模板、音效系统</li>
+          <li><span class="icon-pass">&#10003;</span>内置 Claude AI 集成辅助创作</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ EVALUATOR FINDINGS ============ -->
+<section>
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">评估器实战</div>
+      <h2 class="section-title">评估器捕获的真实 Bug</h2>
+      <p class="section-desc">评估器的发现足够具体，可以直接据此行动——精确到代码行级。仅第 3 个冲刺就有 27 个测试标准。</p>
+    </div>
+
+    <div class="findings-grid fade-up">
+      <div class="finding-card">
+        <div class="finding-criterion">矩形填充工具应允许点击拖动以填充区域</div>
+        <div class="finding-result"><strong>未通过</strong> — 工具仅在拖动起点/终点放置瓦片，而非填充区域。<code>fillRectangle</code> 函数存在但在 mouseUp 时未正确触发。</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-criterion">用户可以选择并删除已放置的实体生成点</div>
+        <div class="finding-result"><strong>未通过</strong> — <code>LevelEditor.tsx:892</code> 处的 Delete 键处理程序要求同时设置 <code>selection</code> 和 <code>selectedEntityId</code>，但点击实体只设置了后者。</div>
+      </div>
+      <div class="finding-card">
+        <div class="finding-criterion">用户可以通过 API 重新排列动画帧</div>
+        <div class="finding-result"><strong>未通过</strong> — <code>PUT /frames/reorder</code> 路由定义在 <code>/{frame_id}</code> 之后。FastAPI 将 'reorder' 匹配为整数并返回 422。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ EVOLUTION ============ -->
+<section>
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">模型演进</div>
+      <h2 class="section-title">当模型变强，工具链如何简化</h2>
+      <p class="section-desc">工具链中的每个组件都编码了"模型无法自己完成什么"的假设。随着 Opus 4.6 发布，这些假设需要被重新压力测试。</p>
+    </div>
+
+    <div class="evo-timeline fade-up">
+      <div class="evo-track"></div>
+
+      <div class="evo-step">
+        <div class="evo-marker"></div>
+        <div class="evo-card">
+          <span class="evo-version">V1 · OPUS 4.5</span>
+          <h4>完整三代理 + 冲刺分解</h4>
+          <p>规划器 → 生成器（逐冲刺）→ 评估器（逐冲刺）。需要上下文重置应对 Sonnet 4.5 的上下文焦虑。6 小时 / $200。</p>
+        </div>
+      </div>
+
+      <div class="evo-step">
+        <div class="evo-marker"></div>
+        <div class="evo-card">
+          <span class="evo-version">OPUS 4.6 发布</span>
+          <h4>模型原生能力提升</h4>
+          <p>规划更仔细，长任务持续性更强，更大代码库中更可靠，更好的自查纠错。长上下文检索大幅改善。</p>
+        </div>
+      </div>
+
+      <div class="evo-step">
+        <div class="evo-marker"></div>
+        <div class="evo-card">
+          <span class="evo-version">V2 · OPUS 4.6</span>
+          <h4>移除冲刺，简化评估</h4>
+          <p>冲刺分解不再必要。评估器改为终评单次通过。生成器连贯运行 2+ 小时无需分解。3 小时 50 分 / $124.70。</p>
+        </div>
+      </div>
+
+      <div class="evo-step">
+        <div class="evo-marker"></div>
+        <div class="evo-card">
+          <span class="evo-version">关键洞察</span>
+          <h4>评估器的价值是动态的</h4>
+          <p>当任务在模型能力边界内——评估器是多余开销。当任务在边界之外——评估器仍提供真实提升。它不是固定的是/否决定。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DAW RESULTS ============ -->
+<section class="arch-section">
+  <div class="container">
+    <div class="fade-up">
+      <div class="section-label">V2 验证</div>
+      <h2 class="section-title">数字音频工作站（DAW）实验</h2>
+      <p class="section-desc">一句话提示："在浏览器中使用 Web Audio API 构建一个功能完备的 DAW。"——最终产出包含编排视图、混音器、AI 作曲代理的完整音乐制作程序。</p>
+    </div>
+
+    <div class="daw-table-wrap fade-up">
+      <table class="daw-table">
+        <thead>
+          <tr>
+            <th>代理与阶段</th>
+            <th>时长</th>
+            <th>费用</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>规划器</td><td class="mono">4.7 min</td><td class="mono">$0.46</td></tr>
+          <tr><td>构建（第 1 轮）</td><td class="mono">2 hr 7 min</td><td class="mono">$71.08</td></tr>
+          <tr><td>QA（第 1 轮）</td><td class="mono">8.8 min</td><td class="mono">$3.24</td></tr>
+          <tr><td>构建（第 2 轮）</td><td class="mono">1 hr 2 min</td><td class="mono">$36.89</td></tr>
+          <tr><td>QA（第 2 轮）</td><td class="mono">6.8 min</td><td class="mono">$3.09</td></tr>
+          <tr><td>构建（第 3 轮）</td><td class="mono">10.9 min</td><td class="mono">$5.88</td></tr>
+          <tr><td>QA（第 3 轮）</td><td class="mono">9.6 min</td><td class="mono">$4.06</td></tr>
+          <tr><td>V2 工具链总计</td><td class="mono">3 hr 50 min</td><td class="mono">$124.70</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ INSIGHT ============ -->
+<section class="insight-section">
+  <div class="container fade-up">
+    <div class="insight-quote">
+      有趣的工具链组合空间不会随着模型的改进而缩小。相反，<span class="accent-text">它会移动</span>——AI 工程师的工作就是不断寻找下一个新颖的组合。
+    </div>
+    <div class="insight-author">— Prithvi Rajasekaran, Anthropic Labs</div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    原文：<a href="https://www.anthropic.com/engineering/harness-design-long-running-apps" target="_blank">Anthropic Engineering Blog</a> · 中文图文整理
+  </div>
+</footer>
+
+<script>
+// Scroll-triggered fade-up animations
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  },
+  { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+);
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

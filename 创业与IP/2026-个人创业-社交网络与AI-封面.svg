@@ -1,0 +1,70 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A1022"/>
+      <stop offset="1" stop-color="#174C8A"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1230 360) rotate(90) scale(360 360)">
+      <stop stop-color="#3BFFE2" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#3BFFE2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(340 760) rotate(90) scale(320 320)">
+      <stop stop-color="#FF8A3B" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#FF8A3B" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="chip" x1="130" y1="430" x2="830" y2="430" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1A5FD0"/>
+      <stop offset="1" stop-color="#20B7D4"/>
+    </linearGradient>
+    <filter id="soft" x="0" y="0" width="2000" height="1200" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1230" cy="360" r="360" fill="url(#glow1)"/>
+  <circle cx="340" cy="760" r="320" fill="url(#glow2)"/>
+
+  <g opacity="0.32">
+    <path d="M910 130L730 760" stroke="#B8F8FF" stroke-width="2"/>
+    <path d="M990 130L810 760" stroke="#B8F8FF" stroke-width="2"/>
+    <path d="M1070 130L890 760" stroke="#B8F8FF" stroke-width="2"/>
+    <path d="M1150 130L970 760" stroke="#B8F8FF" stroke-width="2"/>
+    <path d="M1230 130L1050 760" stroke="#B8F8FF" stroke-width="2"/>
+    <path d="M1310 130L1130 760" stroke="#B8F8FF" stroke-width="2"/>
+    <path d="M1390 130L1210 760" stroke="#B8F8FF" stroke-width="2"/>
+  </g>
+
+  <rect x="90" y="100" width="910" height="700" rx="28" fill="#0A142A" fill-opacity="0.68" stroke="#8AC8FF" stroke-opacity="0.65" stroke-width="2"/>
+
+  <text x="130" y="230" fill="#E9F7FF" font-size="86" font-weight="700" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">2026年</text>
+  <text x="130" y="350" fill="#E9F7FF" font-size="86" font-weight="700" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">个人要积极拥抱</text>
+
+  <rect x="120" y="390" width="720" height="110" rx="22" fill="url(#chip)"/>
+  <text x="152" y="470" fill="#F4FFFF" font-size="84" font-weight="800" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">社交网络与AI</text>
+
+  <text x="130" y="580" fill="#BFDCEC" font-size="40" font-weight="500" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">连接市场，放大能力，建立个人增长飞轮</text>
+
+  <rect x="130" y="645" width="190" height="60" rx="20" fill="#11305A" stroke="#8FD5FF" stroke-opacity="0.7"/>
+  <text x="165" y="685" fill="#E3F4FF" font-size="31" font-weight="600" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">个人创业</text>
+
+  <rect x="340" y="645" width="220" height="60" rx="20" fill="#11305A" stroke="#8FD5FF" stroke-opacity="0.7"/>
+  <text x="375" y="685" fill="#E3F4FF" font-size="31" font-weight="600" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">内容影响力</text>
+
+  <rect x="580" y="645" width="190" height="60" rx="20" fill="#11305A" stroke="#8FD5FF" stroke-opacity="0.7"/>
+  <text x="628" y="685" fill="#E3F4FF" font-size="31" font-weight="600" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, sans-serif">AI生产力</text>
+
+  <g>
+    <line x1="1240" y1="280" x2="1110" y2="390" stroke="#B8FFF4" stroke-opacity="0.85" stroke-width="5"/>
+    <line x1="1240" y1="280" x2="1360" y2="410" stroke="#B8FFF4" stroke-opacity="0.85" stroke-width="5"/>
+    <line x1="1110" y1="390" x2="1170" y2="560" stroke="#B8FFF4" stroke-opacity="0.85" stroke-width="5"/>
+    <line x1="1360" y1="410" x2="1390" y2="560" stroke="#B8FFF4" stroke-opacity="0.85" stroke-width="5"/>
+    <line x1="1170" y1="560" x2="1390" y2="560" stroke="#B8FFF4" stroke-opacity="0.85" stroke-width="5"/>
+
+    <circle cx="1240" cy="280" r="20" fill="#C7FFF7"/>
+    <circle cx="1110" cy="390" r="20" fill="#C7FFF7"/>
+    <circle cx="1360" cy="410" r="20" fill="#C7FFF7"/>
+    <circle cx="1170" cy="560" r="20" fill="#C7FFF7"/>
+    <circle cx="1390" cy="560" r="20" fill="#C7FFF7"/>
+  </g>
+</svg>
