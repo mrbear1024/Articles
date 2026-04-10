@@ -1,0 +1,69 @@
+用 Cloudflare 10分钟部署自己一个自己的静态网站 
+
+![image-20260408105930491](/Users/wanghe/Library/Application Support/typora-user-images/image-20260408105930491.png)
+
+
+
+# 第一步： 先注册，推荐用Google账号或者是gmail 邮箱注册 cloudflare 账号。
+
+这一步不讲，有问题的可以在群里问。  
+
+
+
+# 第二步： 左侧边栏找到「计算--Workders 和 Pages 」 ， 右侧「创建应用程序」 
+
+![image-20260408104525645](/Users/wanghe/Library/Application Support/typora-user-images/image-20260408104525645.png)
+
+
+
+# 第三步： 如图所示， 上传你的静态文件，就是你之前用AI创建html 单页，我创建的是一个html 海报
+
+![image-20260408105312871](/Users/wanghe/Library/Application Support/typora-user-images/image-20260408105312871.png)
+
+
+
+# 第四步： 改一个好记的名字 
+
+![image-20260408105525379](/Users/wanghe/Library/Application Support/typora-user-images/image-20260408105525379.png)
+
+
+
+# 第五步： 你会有一个默认域名， 点击会看到你已经部署成功了。  
+
+![image-20260408105608237](/Users/wanghe/Library/Application Support/typora-user-images/image-20260408105608237.png)
+
+
+
+
+
+# 第六步：自定义域名（可选）。 
+
+  点击设置可以设置自定义域名，如果没有域名需要自己购买域名， 可以直接在cf 上购买。  
+
+
+
+![image-20260408105726936](/Users/wanghe/Library/Application Support/typora-user-images/image-20260408105726936.png)
+
+
+
+自定义域名。
+
+
+
+![image-20260408105744303](/Users/wanghe/Library/Application Support/typora-user-images/image-20260408105744303.png)****
+
+
+
+
+
+输入域名。
+
+![image-20260408105818736](/Users/wanghe/Library/Application Support/typora-user-images/image-20260408105818736.png)
+
+
+
+
+
+最后点击添加域名。   
+
+![image-20260408105836968](/Users/wanghe/Library/Application Support/typora-user-images/image-20260408105836968.png)

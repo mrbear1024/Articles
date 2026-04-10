@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent 架构图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f1117;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .diagram {
+    width: 820px;
+    padding: 48px 40px;
+  }
+
+  /* 入口层 */
+  .entry-layer {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .entry-box {
+    flex: 1;
+    text-align: center;
+    padding: 18px 12px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1a1f35, #1e2440);
+    border: 1px solid #2d3555;
+    position: relative;
+  }
+  .entry-box .label {
+    font-size: 13px;
+    color: #8b95b0;
+    margin-bottom: 6px;
+  }
+  .entry-box .value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+  .entry-box.cli { border-top: 3px solid #60a5fa; }
+  .entry-box.gateway { border-top: 3px solid #a78bfa; }
+  .entry-box.acp { border-top: 3px solid #34d399; }
+  .entry-box.cli .value { color: #60a5fa; }
+  .entry-box.gateway .value { color: #a78bfa; }
+  .entry-box.acp .value { color: #34d399; }
+
+  /* 箭头 */
+  .arrows {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .arrow-down {
+    width: 2px;
+    height: 36px;
+    background: linear-gradient(to bottom, #3b4570, #f59e0b);
+    position: relative;
+  }
+  .arrow-down::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #f59e0b;
+  }
+
+  /* 核心层 */
+  .core-layer {
+    background: linear-gradient(135deg, #1c1a2e, #231f3a);
+    border: 1.5px solid #f59e0b44;
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 0 40px #f59e0b0a;
+  }
+  .core-layer .title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #f59e0b;
+    margin-bottom: 16px;
+  }
+  .core-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .core-step {
+    padding: 8px 16px;
+    background: #2a2545;
+    border-radius: 8px;
+    color: #e2e8f0;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .core-arrow {
+    color: #f59e0b;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  /* 下方箭头 */
+  .arrows-bottom {
+    display: flex;
+    justify-content: center;
+    gap: 200px;
+    margin-bottom: 24px;
+  }
+
+  /* 底层 */
+  .bottom-layer {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+  }
+  .bottom-card {
+    flex: 1;
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+  }
+  .bottom-card.provider {
+    background: linear-gradient(135deg, #1a1a2e, #1f1a30);
+    border: 1px solid #7c3aed44;
+  }
+  .bottom-card.tools {
+    background: linear-gradient(135deg, #1a2420, #152a20);
+    border: 1px solid #10b98144;
+  }
+  .bottom-card .card-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .bottom-card.provider .card-title { color: #a78bfa; }
+  .bottom-card.tools .card-title { color: #34d399; }
+  .bottom-card .card-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    color: #c0c8dc;
+    font-size: 14px;
+  }
+  .card-item .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .provider .dot { background: #a78bfa; }
+  .tools .dot { background: #34d399; }
+  .card-item .num {
+    font-weight: 700;
+    margin-right: 2px;
+  }
+  .provider .num { color: #a78bfa; }
+  .tools .num { color: #34d399; }
+</style>
+</head>
+<body>
+<div class="diagram">
+
+  <!-- 入口层 -->
+  <div class="entry-layer">
+    <div class="entry-box cli">
+      <div class="label">终端交互</div>
+      <div class="value">CLI</div>
+    </div>
+    <div class="entry-box gateway">
+      <div class="label">14+ 消息平台</div>
+      <div class="value">消息网关</div>
+    </div>
+    <div class="entry-box acp">
+      <div class="label">VS Code / Zed / JetBrains</div>
+      <div class="value">ACP (IDE 集成)</div>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="arrows">
+    <div class="arrow-down"></div>
+    <div class="arrow-down"></div>
+    <div class="arrow-down"></div>
+  </div>
+
+  <!-- 核心层 -->
+  <div class="core-layer">
+    <div class="title">AIAgent 核心循环</div>
+    <div class="core-flow">
+      <span class="core-step">提示词构建</span>
+      <span class="core-arrow">→</span>
+      <span class="core-step">API 调用</span>
+      <span class="core-arrow">→</span>
+      <span class="core-step">工具分发</span>
+      <span class="core-arrow">→</span>
+      <span class="core-step">响应输出</span>
+    </div>
+  </div>
+
+  <!-- 下方箭头 -->
+  <div class="arrows-bottom">
+    <div class="arrow-down"></div>
+    <div class="arrow-down"></div>
+  </div>
+
+  <!-- 底层 -->
+  <div class="bottom-layer">
+    <div class="bottom-card provider">
+      <div class="card-title">提供商解析</div>
+      <div class="card-item"><span class="dot"></span><span class="num">18+</span> LLM 提供商</div>
+      <div class="card-item"><span class="dot"></span>OAuth 认证流程</div>
+      <div class="card-item"><span class="dot"></span>别名与路由解析</div>
+    </div>
+    <div class="bottom-card tools">
+      <div class="card-title">工具注册表</div>
+      <div class="card-item"><span class="dot"></span><span class="num">47</span> 个内置工具</div>
+      <div class="card-item"><span class="dot"></span><span class="num">20</span> 个工具集</div>
+      <div class="card-item"><span class="dot"></span><span class="num">6</span> 种执行后端</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

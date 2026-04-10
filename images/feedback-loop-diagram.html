@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商业系统负反馈闭环</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #0a0a0a;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .diagram {
+    position: relative;
+    width: 800px;
+    height: 400px;
+  }
+  /* 顶部四个节点 */
+  .node {
+    position: absolute;
+    background: #1a1a2e;
+    border: 2px solid #4a9eff;
+    border-radius: 12px;
+    padding: 16px 28px;
+    color: #e0e0e0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    box-shadow: 0 0 20px rgba(74, 158, 255, 0.15);
+    transition: all 0.3s;
+  }
+  .node:hover {
+    background: #1f2a48;
+    box-shadow: 0 0 30px rgba(74, 158, 255, 0.3);
+    transform: translateY(-2px);
+  }
+  .n1 { top: 40px; left: 0; }
+  .n2 { top: 40px; left: 220px; }
+  .n3 { top: 40px; left: 440px; }
+  .n4 { top: 40px; left: 660px; }
+
+  /* 底部反馈节点 */
+  .feedback {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2a1a1a;
+    border: 2px solid #ff6b4a;
+    border-radius: 12px;
+    padding: 16px 32px;
+    color: #e0e0e0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    box-shadow: 0 0 20px rgba(255, 107, 74, 0.15);
+    transition: all 0.3s;
+  }
+  .feedback:hover {
+    background: #3a2020;
+    box-shadow: 0 0 30px rgba(255, 107, 74, 0.3);
+    transform: translate(-50%, -2px);
+  }
+
+  /* SVG 箭头层 */
+  svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .arrow-forward {
+    stroke: #4a9eff;
+    stroke-width: 2.5;
+    fill: none;
+    marker-end: url(#arrowBlue);
+  }
+  .arrow-down {
+    stroke: #ff6b4a;
+    stroke-width: 2.5;
+    fill: none;
+    marker-end: url(#arrowOrange);
+  }
+  .arrow-back {
+    stroke: #ff6b4a;
+    stroke-width: 2.5;
+    fill: none;
+    stroke-dasharray: 8 4;
+    marker-end: url(#arrowOrange);
+  }
+  .arrow-up {
+    stroke: #ff6b4a;
+    stroke-width: 2.5;
+    fill: none;
+    stroke-dasharray: 8 4;
+    marker-end: url(#arrowOrange);
+  }
+
+  /* 动画 */
+  @keyframes flowForward {
+    from { stroke-dashoffset: 20; }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes flowBack {
+    from { stroke-dashoffset: 24; }
+    to { stroke-dashoffset: 0; }
+  }
+  .arrow-forward {
+    stroke-dasharray: 10 10;
+    animation: flowForward 0.8s linear infinite;
+  }
+  .arrow-back, .arrow-up {
+    animation: flowBack 1s linear infinite;
+  }
+  .arrow-down {
+    stroke-dasharray: 8 4;
+    animation: flowBack 1s linear infinite;
+  }
+</style>
+</head>
+<body>
+<div class="diagram">
+  <!-- 节点 -->
+  <div class="node n1">用户需求</div>
+  <div class="node n2">产品设计</div>
+  <div class="node n3">技术实现</div>
+  <div class="node n4">上线交付</div>
+  <div class="feedback">用户反馈 / 数据指标</div>
+
+  <!-- 箭头 -->
+  <svg viewBox="0 0 800 400">
+    <defs>
+      <marker id="arrowBlue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+        <path d="M0,0 L10,4 L0,8" fill="#4a9eff"/>
+      </marker>
+      <marker id="arrowOrange" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+        <path d="M0,0 L10,4 L0,8" fill="#ff6b4a"/>
+      </marker>
+    </defs>
+
+    <!-- 顶部正向箭头: n1→n2→n3→n4 -->
+    <line class="arrow-forward" x1="118" y1="68" x2="218" y2="68"/>
+    <line class="arrow-forward" x1="338" y1="68" x2="438" y2="68"/>
+    <line class="arrow-forward" x1="558" y1="68" x2="658" y2="68"/>
+
+    <!-- 右侧下行: n4 → feedback -->
+    <path class="arrow-down" d="M740,96 L740,310"/>
+
+    <!-- 底部反馈回传: feedback → n1 -->
+    <path class="arrow-back" d="M260,320 L60,320 L60,96"/>
+
+    <!-- 上行箭头 -->
+    <path class="arrow-up" d="M60,96 L60,68"/>
+  </svg>
+</div>
+</body>
+</html>

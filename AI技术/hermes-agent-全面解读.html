@@ -1,0 +1,684 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'><style type='text/css'>html {overflow-x: initial !important;}</style>
+<style type='text/css'  id="style-base">:root { --bg-color: #ffffff; --text-color: #333333; --select-text-bg-color: #B5D6FC; --select-text-font-color: auto; --monospace: "Lucida Console",Consolas,"Courier",monospace; --title-bar-height: 20px; }
+.mac-os-11 { --title-bar-height: 28px; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, "Segoe UI Emoji", "SF Pro", sans-serif; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, h5 { white-space: pre-wrap; }
+body { margin: 0px; padding: 0px; height: auto; inset: 0px; font-size: 1rem; line-height: 1.428571; overflow-x: hidden; background: inherit; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 36px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p *, #write.first-line-indent svg * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+.typora-export .task-list-item input { pointer-events: none; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; image-orientation: from-image; }
+button, input, select, textarea { color: inherit; font-style: inherit; font-variant-caps: inherit; font-weight: inherit; font-width: inherit; font-size: inherit; line-height: inherit; font-family: inherit; font-size-adjust: inherit; font-kerning: inherit; font-variant-alternates: inherit; font-variant-ligatures: inherit; font-variant-numeric: inherit; font-variant-east-asian: inherit; font-variant-position: inherit; font-variant-emoji: inherit; font-feature-settings: inherit; font-optical-sizing: inherit; font-variation-settings: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; position: relative; }
+#write svg h1, #write svg h2, #write svg h3, #write svg h4, #write svg h5, #write svg h6, #write svg p { position: static; }
+svg sub, svg sup { position: static; }
+.nodeLabel p { padding-right: 2px; padding-left: 2px; }
+.typora-export .nodeLabel p { padding-right: 0px; padding-left: 0px; }
+foreignObject { overflow: visible; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 4; }
+p { orphans: 4; }
+li p { orphans: 1; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px; }
+thead, tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right-width: 0px; border-right-style: none; border-right-color: currentcolor; background-color: inherit; }
+.CodeMirror-linenumber { -webkit-user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-fences-adv-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+svg { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li blockquote { margin: 1rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; font-variant-ligatures: no-common-ligatures; }
+  #write { margin-top: 0px; border-color: transparent !important; padding-top: 0px !important; padding-bottom: 0px !important; }
+  .typora-export * { print-color-adjust: exact; }
+  .typora-export #write { break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+  .is-mac table { break-inside: avoid; }
+  #write > p:nth-child(1) { margin-top: 0px; }
+  .typora-export-show-outline .typora-export-sidebar { display: none; }
+  figure { overflow-x: visible; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+#write.first-line-indent p > .md-image:only-child:not(.md-img-error) img { left: -2em; position: relative; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+.MathJax_ref { fill: currentcolor; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: medium; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.reversefootnote { font-family: ui-monospace, sans-serif; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.6; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: medium !important; border-style: none !important; border-color: currentcolor !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom-width: 0px; border-bottom-style: none; border-bottom-color: currentcolor; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: medium; }
+.highlight td, .highlight tr { border: 0px; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+.md-expand mark .md-meta { opacity: 0.3 !important; }
+mark .md-meta { color: rgb(0, 0, 0); }
+@media print {
+  .typora-export h1, .typora-export h2, .typora-export h3, .typora-export h4, .typora-export h5, .typora-export h6 { break-inside: avoid; }
+}
+.md-diagram-panel .messageText { stroke: none !important; }
+.md-diagram-panel .start-state { fill: var(--node-fill); }
+.md-diagram-panel .edgeLabel rect { opacity: 1 !important; }
+.md-fences.md-fences-math { font-size: 1em; }
+.md-fences-advanced:not(.md-focus) { padding: 0px; white-space: nowrap; border: 0px; }
+.md-fences-advanced:not(.md-focus) { background: inherit; }
+.mermaid-svg { margin: auto; }
+.typora-export-show-outline .typora-export-content { max-width: 1440px; margin: auto; display: flex; flex-direction: row; }
+.typora-export-sidebar { width: 300px; font-size: 0.8rem; margin-top: 80px; margin-right: 18px; }
+.typora-export-show-outline #write { --webkit-flex: 2; flex: 2 1 0%; }
+.typora-export-sidebar .outline-content { position: fixed; top: 0px; max-height: 100%; overflow: hidden auto; padding-bottom: 30px; padding-top: 60px; width: 300px; }
+@media screen and (max-width: 1024px) {
+  .typora-export-sidebar, .typora-export-sidebar .outline-content { width: 240px; }
+}
+@media screen and (max-width: 800px) {
+  .typora-export-sidebar { display: none; }
+}
+.outline-content li, .outline-content ul { margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; list-style: none; overflow-wrap: anywhere; }
+.outline-content ul { margin-top: 0px; margin-bottom: 0px; }
+.outline-content strong { font-weight: 400; }
+.outline-expander { width: 1rem; height: 1.428571rem; position: relative; display: table-cell; vertical-align: middle; cursor: pointer; padding-left: 4px; }
+.outline-expander::before { content: ""; position: relative; font-family: Ionicons; display: inline-block; font-size: 8px; vertical-align: middle; }
+.outline-item { padding-top: 3px; padding-bottom: 3px; cursor: pointer; }
+.outline-expander:hover::before { content: ""; }
+.outline-h1 > .outline-item { padding-left: 0px; }
+.outline-h2 > .outline-item { padding-left: 1em; }
+.outline-h3 > .outline-item { padding-left: 2em; }
+.outline-h4 > .outline-item { padding-left: 3em; }
+.outline-h5 > .outline-item { padding-left: 4em; }
+.outline-h6 > .outline-item { padding-left: 5em; }
+.outline-label { cursor: pointer; display: table-cell; vertical-align: middle; text-decoration: none; color: inherit; }
+.outline-label:hover { text-decoration: underline; }
+.outline-item:hover { border-color: rgb(245, 245, 245); background-color: var(--item-hover-bg-color); }
+.outline-item:hover { margin-left: -28px; margin-right: -28px; border-left-width: 28px; border-left-style: solid; border-left-color: transparent; border-right-width: 28px; border-right-style: solid; border-right-color: transparent; }
+.outline-item-single .outline-expander::before, .outline-item-single .outline-expander:hover::before { display: none; }
+.outline-item-open > .outline-item > .outline-expander::before { content: ""; }
+.outline-children { display: none; }
+.info-panel-tab-wrapper { display: none; }
+.outline-item-open > .outline-children { display: block; }
+.typora-export .outline-item { padding-top: 1px; padding-bottom: 1px; }
+.typora-export .outline-item:hover { margin-right: -8px; border-right-width: 8px; border-right-style: solid; border-right-color: transparent; }
+.typora-export .outline-expander::before { content: "+"; font-family: inherit; top: -1px; }
+.typora-export .outline-expander:hover::before, .typora-export .outline-item-open > .outline-item > .outline-expander::before { content: "−"; }
+.typora-export-collapse-outline .outline-children { display: none; }
+.typora-export-collapse-outline .outline-item-open > .outline-children, .typora-export-no-collapse-outline .outline-children { display: block; }
+.typora-export-no-collapse-outline .outline-expander::before { content: "" !important; }
+.typora-export-show-outline .outline-item-active > .outline-item .outline-label { font-weight: 700; }
+.md-inline-math-container mjx-container { zoom: 0.95; }
+mjx-container { break-inside: avoid; }
+.md-alert.md-alert-note { border-left-color: rgb(9, 105, 218); }
+.md-alert.md-alert-important { border-left-color: rgb(130, 80, 223); }
+.md-alert.md-alert-warning { border-left-color: rgb(154, 103, 0); }
+.md-alert.md-alert-tip { border-left-color: rgb(31, 136, 61); }
+.md-alert.md-alert-caution { border-left-color: rgb(207, 34, 46); }
+.md-alert { padding: 0px 1em; margin-bottom: 16px; color: inherit; border-left-width: 0.25em; border-left-style: solid; border-left-color: rgb(0, 0, 0); }
+.md-alert-text-note { color: rgb(9, 105, 218); }
+.md-alert-text-important { color: rgb(130, 80, 223); }
+.md-alert-text-warning { color: rgb(154, 103, 0); }
+.md-alert-text-tip { color: rgb(31, 136, 61); }
+.md-alert-text-caution { color: rgb(207, 34, 46); }
+.md-alert-text { font-size: 0.9rem; font-weight: 700; }
+.md-alert-text svg { fill: currentcolor; position: relative; top: 0.125em; margin-right: 1ch; overflow: visible; }
+.md-alert-text-container::after { content: attr(data-text); text-transform: capitalize; pointer-events: none; margin-right: 1ch; }
+
+</style>
+<style type='text/css'  id="style-codemirror">.CodeMirror { height: auto; }
+.CodeMirror.cm-s-inner { background: inherit; }
+.CodeMirror-scroll { overflow: auto hidden; z-index: 3; }
+.CodeMirror-gutter-filler, .CodeMirror-scrollbar-filler { background-color: rgb(255, 255, 255); }
+.CodeMirror-gutters { border-right-width: 1px; border-right-style: solid; border-right-color: rgb(221, 221, 221); background: inherit; white-space: nowrap; }
+.CodeMirror-linenumber { padding: 0px 3px 0px 5px; text-align: right; color: rgb(153, 153, 153); }
+.cm-s-inner .cm-keyword { color: rgb(119, 0, 136); }
+.cm-s-inner .cm-atom, .cm-s-inner.cm-atom { color: rgb(34, 17, 153); }
+.cm-s-inner .cm-number { color: rgb(17, 102, 68); }
+.cm-s-inner .cm-def { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-variable { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-variable-2 { color: rgb(0, 85, 170); }
+.cm-s-inner .cm-variable-3 { color: rgb(0, 136, 85); }
+.cm-s-inner .cm-string { color: rgb(170, 17, 17); }
+.cm-s-inner .cm-property { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-operator { color: rgb(152, 26, 26); }
+.cm-s-inner .cm-comment, .cm-s-inner.cm-comment { color: rgb(170, 85, 0); }
+.cm-s-inner .cm-string-2 { color: rgb(255, 85, 0); }
+.cm-s-inner .cm-meta { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-qualifier { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-builtin { color: rgb(51, 0, 170); }
+.cm-s-inner .cm-bracket { color: rgb(153, 153, 119); }
+.cm-s-inner .cm-tag { color: rgb(17, 119, 0); }
+.cm-s-inner .cm-attribute { color: rgb(0, 0, 204); }
+.cm-s-inner .cm-header, .cm-s-inner.cm-header { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-quote, .cm-s-inner.cm-quote { color: rgb(0, 153, 0); }
+.cm-s-inner .cm-hr, .cm-s-inner.cm-hr { color: rgb(153, 153, 153); }
+.cm-s-inner .cm-link, .cm-s-inner.cm-link { color: rgb(0, 0, 204); }
+.cm-negative { color: rgb(221, 68, 68); }
+.cm-positive { color: rgb(34, 153, 34); }
+.cm-header, .cm-strong { font-weight: 700; }
+.cm-del { text-decoration: line-through; }
+.cm-em { font-style: italic; }
+.cm-link { text-decoration: underline; }
+.cm-error { color: red; }
+.cm-invalidchar { color: red; }
+.cm-constant { color: rgb(38, 139, 210); }
+.cm-defined { color: rgb(181, 137, 0); }
+div.CodeMirror span.CodeMirror-matchingbracket { color: rgb(0, 255, 0); }
+div.CodeMirror span.CodeMirror-nonmatchingbracket { color: rgb(255, 34, 34); }
+.cm-s-inner .CodeMirror-activeline-background { background: inherit; }
+.CodeMirror { position: relative; overflow: hidden; }
+.CodeMirror-scroll { height: 100%; outline: 0px; position: relative; box-sizing: content-box; background: inherit; }
+.CodeMirror-sizer { position: relative; }
+.CodeMirror-gutter-filler, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-vscrollbar { position: absolute; z-index: 6; display: none; outline: 0px; }
+.CodeMirror-vscrollbar { right: 0px; top: 0px; overflow: hidden; }
+.CodeMirror-hscrollbar { bottom: 0px; left: 0px; overflow: auto hidden; }
+.CodeMirror-scrollbar-filler { right: 0px; bottom: 0px; }
+.CodeMirror-gutter-filler { left: 0px; bottom: 0px; }
+.CodeMirror-gutters { position: absolute; left: 0px; top: 0px; padding-bottom: 10px; z-index: 3; overflow-y: hidden; }
+.CodeMirror-gutter { white-space: normal; height: 100%; box-sizing: content-box; padding-bottom: 30px; margin-bottom: -32px; display: inline-block; }
+.CodeMirror-gutter-wrapper { position: absolute; z-index: 4; background: 0px 0px !important; border: medium !important; }
+.CodeMirror-gutter-background { position: absolute; top: 0px; bottom: 0px; z-index: 4; }
+.CodeMirror-gutter-elt { position: absolute; cursor: default; z-index: 4; }
+.CodeMirror-lines { cursor: text; }
+.CodeMirror pre { border-radius: 0px; border-width: 0px; background: 0px 0px; font-family: inherit; font-size: inherit; margin: 0px; white-space: pre; overflow-wrap: normal; color: inherit; z-index: 2; position: relative; overflow: visible; }
+.CodeMirror-wrap pre { overflow-wrap: break-word; white-space: pre-wrap; word-break: normal; }
+.CodeMirror-code pre { border-right-width: 30px; border-right-style: solid; border-right-color: transparent; width: fit-content; }
+.CodeMirror-wrap .CodeMirror-code pre { border-right-width: medium; border-right-style: none; border-right-color: currentcolor; width: auto; }
+.CodeMirror-linebackground { position: absolute; inset: 0px; z-index: 0; }
+.CodeMirror-linewidget { position: relative; z-index: 2; overflow: auto; }
+.CodeMirror-wrap .CodeMirror-scroll { overflow-x: hidden; }
+.CodeMirror-measure { position: absolute; width: 100%; height: 0px; overflow: hidden; visibility: hidden; }
+.CodeMirror-measure pre { position: static; }
+.CodeMirror div.CodeMirror-cursor { position: absolute; visibility: hidden; border-right-width: medium; border-right-style: none; border-right-color: currentcolor; width: 0px; }
+.CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+.CodeMirror-focused div.CodeMirror-cursor { visibility: inherit; }
+.cm-searching { background: rgba(255, 255, 0, 0.4); }
+span.cm-underlined { text-decoration: underline; }
+span.cm-strikethrough { text-decoration: line-through; }
+.cm-tw-syntaxerror { color: rgb(255, 255, 255); background-color: rgb(153, 0, 0); }
+.cm-tw-deleted { text-decoration: line-through; }
+.cm-tw-header5 { font-weight: 700; }
+.cm-tw-listitem:first-child { padding-left: 10px; }
+.cm-tw-box { border-style: solid; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-color: inherit; border-top-width: 0px !important; }
+.cm-tw-underline { text-decoration: underline; }
+@media print {
+  .CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+}
+
+</style>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Didact+Gothic&amp;display=swap&amp;subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext' type='text/css' />
+<style type='text/css'  id="style-theme_css">@include-when-export url(https://fonts.googleapis.com/css?family=Didact+Gothic&display=swap&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext);
+
+/* cyrillic-ext */
+/* cyrillic */
+:root {
+	--window-border: none;
+	--typora-center-window-title: true;
+	--active-file-bg-color: #f3f3f3;
+	--bg-color: #fcfcfc;
+	--control-text-color: #777;
+}
+
+.mac-seamless-mode #typora-sidebar {
+	top: 20px;
+	padding-top: 0;
+	height: auto;
+}
+
+html,
+body {
+	background: #fcfcfc;
+	background: var(--bg-color);
+	font-family: 'TeXGyreAdventor', "Century Gothic", "Didact Gothic", "Yu Gothic", 'Segoe UI Emoji', 'SF Pro', sans-serif;
+	font-weight: 300;
+	-webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: #111;
+	font-family: 'TeXGyreAdventor', "Century Gothic", "Didact Gothic", "Yu Gothic", sans-serif;
+}
+
+html {
+	font-size:16px;
+}
+
+#write {
+	max-width: 914px;
+	text-align: justify;
+}
+
+@media only screen and (min-width: 1400px) {
+	#write {
+		max-width: 1024px;
+	}
+}
+
+#write>h1:first-child {
+	margin-top: 2.75rem;
+}
+#write>h2:first-child {
+	margin-top: 1.75rem;
+}
+#write>h3:first-child {
+	margin-top: 1rem;
+}
+#write>h4:first-child {
+	margin-top: 0.5rem;
+}
+h1 {
+	font-weight: normal;
+	line-height: 4rem;
+	margin: 0 0 1.75rem;
+	padding: 20px 30px;
+	text-align: center;
+	text-transform: uppercase;
+	margin-top: 4rem;
+}
+h2 {
+	font-weight: normal;
+	line-height: 3rem;
+	margin: 0 0 1.9375rem;
+	padding: 0 30px;
+	text-align: center;
+	text-transform: uppercase;
+	margin-top: 3rem
+}
+h3 {
+	font-weight: normal;
+}
+h4 {
+	font-weight: normal;
+}
+h5 {
+	font-size: 1.125rem;
+	font-weight: normal;
+}
+h6 {
+	font-size: 1rem;
+	font-weight: bold;
+}
+p {
+	color: #111;
+	font-size: 1rem;
+	line-height: 1.75rem;
+	margin: 0 0 1.25rem;
+}
+#write>h3.md-focus:before {
+	left: -1.875rem;
+	top: 0.5rem;
+	padding: 2px;
+}
+#write>h4.md-focus:before {
+	left: -1.875rem;
+	top: 0.3125rem;
+	padding: 2px;
+}
+#write>h5.md-focus:before {
+	left: -1.875rem;
+	top: 0.25rem;
+	padding: 2px;
+}
+#write>h6.md-focus:before {
+	left: -1.875rem;
+	top: .125rem;
+	padding: 2px;
+}
+@media screen and (max-width: 48em) {
+	blockquote {
+		margin-left: 1rem;
+		margin-right: 0;
+		padding: 0.5em;
+	}
+	.h1,
+	h1 {
+		font-size: 2.827rem;
+	}
+	.h2,
+	h2 {
+		font-size: 1.999rem;
+	}
+	.h3,
+	h3 {
+		font-size: 1.413rem;
+	}
+	.h4,
+	h4 {
+		font-size: 1.250rem;
+	}
+	.h5,
+	h5 {
+		font-size: 1.150rem;
+	}
+	.h6,
+	h6 {
+		font-size: 1rem;
+	}
+}
+a,
+.md-def-url {
+	color: #990000;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+table {
+	margin-bottom: 20px
+}
+table th,
+table td {
+	padding: 8px;
+	line-height: 1.25rem;
+	vertical-align: top;
+	border-top: 1px solid #ddd
+}
+table th {
+	font-weight: bold
+}
+table thead th {
+	vertical-align: bottom
+}
+table caption+thead tr:first-child th,
+table caption+thead tr:first-child td,
+table colgroup+thead tr:first-child th,
+table colgroup+thead tr:first-child td,
+table thead:first-child tr:first-child th,
+table thead:first-child tr:first-child td {
+	border-top: 0
+}
+table tbody+tbody {
+	border-top: 2px solid #ddd
+}
+code, .md-fences {
+	padding: .5em;
+	/*background: #f0f0f0;*/
+	border: 1px solid #ccc;
+	padding: .1em;
+	font-size: 0.9em;
+	margin-left: 0.2em;
+	margin-right: 0.2em;
+}
+.md-fences {
+	margin: 0 0 20px;
+	font-size: 1em;
+	padding: 0.3em 1em;
+  	padding-top: 0.4em;
+}
+.task-list{
+	padding-left: 0;
+}
+
+.task-list-item {
+	padding-left:2.125rem;
+}
+
+input {
+	border-style: ridge;
+}
+
+.task-list-item input {
+	top: 3px;
+}
+
+.md-task-list-item input {
+	margin-left: -1.5em;
+}
+
+.task-list-item input:before {
+	content: "";
+	display: inline-block;
+	width: 1rem;
+	height: 1rem;
+	vertical-align: middle;
+	text-align: center;
+	border: 1px solid gray;
+	background-color: #fdfdfd;
+	margin-left: 0;
+	-webkit-appearance: none;
+	margin-top: -1rem;
+}
+
+.typora-node .task-list-item input:before {
+	top: 0.3ex;
+	position: absolute;
+}
+
+.task-list-item input:checked:before,
+.task-list-item input[checked]:before{
+	content: '\25FC';
+	/*◘*/
+	font-size: 0.8125rem;
+	line-height: 0.9375rem;
+}
+
+/* Chrome 29+ */
+.task-list-item input:before {
+	margin-top: -0.2rem;
+}
+
+.task-list-item input:checked:before,
+.task-list-item input[checked]:before {
+	margin-top: -0.2rem;
+}
+
+.html-for-mac .task-list-item input:checked:before,
+.html-for-mac .task-list-item input[checked]:before {
+	margin-top: -0.8rem;
+}
+
+blockquote {
+	margin: 0 0 1.11111rem;
+	padding: 0.5rem 1.11111rem 0 1.05556rem;
+	border-left: 1px solid gray;
+}
+blockquote,
+blockquote p {
+	line-height: 1.6;
+	color: #6f6f6f;
+}
+#write pre.md-meta-block {
+	min-height: 30px;
+	background: #f8f8f8;
+	padding: 1.5em;
+	font-weight: 300;
+	font-size: 1em;
+	padding-bottom: 1.5em;
+	padding-top: 3em;
+    margin-top: -1.5em;
+	color: #999;
+	
+	width: 100vw;
+	max-width: calc(100% + 60px);
+	margin-left: -30px;
+	border-left: 30px #f8f8f8 solid;
+	border-right: 30px #f8f8f8 solid;
+}
+.MathJax_Display {
+	font-size: 0.9em;
+	margin-top: 0.5em;
+	margin-bottom: 0;
+}
+p.mathjax-block,
+.mathjax-block {
+	padding-bottom: 0;
+}
+.mathjax-block>.code-tooltip {
+	bottom: 5px;
+	box-shadow: none;
+}
+.md-image>.md-meta {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+.md-image>img {
+	margin-top: 2px;
+}
+.md-image>.md-meta:first-of-type:before {
+	padding-left: 4px;
+}
+
+#typora-source {
+	color: #555;
+}
+
+/** ui for windows **/
+#md-searchpanel {
+    border-bottom: 1px solid #ccc;
+}
+
+#md-searchpanel .btn {
+    border: 1px solid #ccc;
+}
+
+#md-notification:before {
+	top: 14px;
+}
+
+#md-notification-container {
+	background: #eee;
+}
+
+.megamenu-menu-panel .btn {
+	border: 1px solid #ccc;
+}
+
+#typora-sidebar {
+	box-shadow: none;
+}
+
+.file-list-item ,
+.show-folder-name .file-list-item {
+	padding-top: 20px;
+	padding-bottom: 20px;
+	line-height: 20px;
+}
+
+.file-list-item-summary {
+	height: 40px;
+	line-height: 20px;
+}
+
+.ty-table-edit {
+	background: #ededed;
+}
+
+.dropdown-menu .divider {
+	border-color: #e5e5e5;
+}</style>
+<style type='text/css'  id="style-lp">ol, ul {padding-left: 40px}</style>
+<style type='text/css'  id="style-mac-print"> @media print { @page {margin: 0 0 0 0;} body.typora-export {padding-left: 0; padding-right: 0;} #write {padding:0;}}</style>
+
+<title>hermes-agent-全面解读</title>
+</head>
+<body class='typora-export'><div class='typora-export-content'>
+<div id='write'  class=''><h1 id='hermes-agentnous-research-打造的开源自主-ai-智能体'><span>Hermes Agent：Nous Research 打造的开源自主 AI 智能体</span></h1><p><img src="../../../Downloads/Hermes Agent.png" alt="Hermes Agent"></p><blockquote><p><span>一个能在你的服务器上 24/7 运行、跨 14+ 平台通信、自己学会新技能的 AI Agent。</span></p></blockquote><h2 id='为什么要关注-hermes-agent'><span>为什么要关注 Hermes Agent？</span></h2><p><span>当下的 AI 编程工具——无论是 Cursor、Claude Code 还是 GitHub Copilot——都有一个共同点：</span><strong><span>它们依赖你的 IDE 和笔记本电脑</span></strong><span>。你关上电脑，AI 就停止工作了。</span></p><p><span>Hermes Agent 要解决的正是这个限制。它由 AI 开源研究组织 </span><a href='https://nousresearch.com'><span>Nous Research</span></a><span> 开发，是一个</span><strong><span>可以脱离 IDE 独立运行</span></strong><span>的自主 AI 智能体。你可以把它部署在 VPS 上、Docker 容器里、甚至 HPC 集群中，让它通过 Telegram、Discord、Slack 等平台随时待命，接受你的指令。</span></p><p><span>更关键的是，它</span><strong><span>开源免费</span></strong><span>，你可以接入任何 LLM 提供商——OpenAI、Anthropic、DeepSeek、本地模型，随时切换，没有锁定。</span></p><hr /><h2 id='hermes-agent-是什么'><span>Hermes Agent 是什么？</span></h2><p><span>简单来说，Hermes Agent 是一个</span><strong><span>基础设施级的 AI 智能体平台</span></strong><span>，具备以下核心特征：</span></p><ul><li><p><strong><span>多平台通信</span></strong><span>：通过统一网关连接 14+ 消息平台</span></p></li><li><p><strong><span>持久记忆</span></strong><span>：跨会话记忆系统，不会“失忆”</span></p></li><li><p><strong><span>自主学习</span></strong><span>：能从经验中生成可复用的技能</span></p></li><li><p><strong><span>灵活部署</span></strong><span>：本地、Docker、SSH、云端均可运行</span></p></li><li><p><strong><span>47 个内置工具</span></strong><span>：文件操作、网页搜索、浏览器自动化、语音交互等</span></p></li><li><p><strong><span>MCP 协议兼容</span></strong><span>：可对接外部工具服务器，扩展能力无上限</span></p></li></ul><p><span>它的定位不是“一个聊天机器人”，而是</span><strong><span>一个能 7×24 小时替你干活的数字员工</span></strong><span>。</span></p><hr /><h2 id='核心能力详解'><span>核心能力详解</span></h2><h3 id='1-跨平台消息网关------随时随地跟-ai-对话'><span>1. 跨平台消息网关——随时随地跟 AI 对话</span></h3><p><span>这可能是 Hermes Agent 最实用的特性。你不需要打开终端或 IDE，直接在日常使用的通讯工具里就能和它交互：</span></p><figure class='table-figure'><table><thead><tr><th><span>平台</span></th><th style='text-align:center;' ><span>语音</span></th><th style='text-align:center;' ><span>图片</span></th><th style='text-align:center;' ><span>文件</span></th><th style='text-align:center;' ><span>多线程</span></th><th style='text-align:center;' ><span>流式输出</span></th></tr></thead><tbody><tr><td><span>Discord</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td></tr><tr><td><span>Slack</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td></tr><tr><td><span>Telegram</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>✅</span></td></tr><tr><td><span>WhatsApp</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>飞书/Lark</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td></tr><tr><td><span>企业微信</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td></tr><tr><td><span>钉钉</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>邮件</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr></tbody></table></figure><p><span>一个后台进程就能同时连接所有平台，消息自动路由，会话独立隔离。你在 Telegram 上让它跑个脚本，然后切到 Slack 上问它结果，上下文完全保持。</span></p><p><span>设置也简单——运行 </span><code>hermes gateway setup</code><span>，跟着交互向导一步步配置即可。</span></p><h3 id='2-记忆系统------不会失忆的-ai'><span>2. 记忆系统——不会“失忆”的 AI</span></h3><p><span>大多数 AI 工具的记忆仅限于当前对话窗口。Hermes Agent 的记忆系统分为三层：</span></p><p><strong><span>即时记忆：MEMORY.md 和 USER.md</span></strong></p><p><span>两个持久化文件，分别记录环境信息和用户偏好。每次新会话启动时自动注入系统提示词，确保 Agent 始终“认识你”。Agent 会主动记录：</span></p><ul><li><p><span>你的操作系统、项目结构、工具偏好</span></p></li><li><p><span>你的沟通风格和交互习惯</span></p></li><li><p><span>完成任务时发现的技巧和规律</span></p></li></ul><p><strong><span>长期回忆：FTS5 全文搜索</span></strong></p><p><span>所有历史对话存储在 SQLite 数据库中，支持 FTS5 全文检索。当 Agent 需要回忆几周前的讨论，它会搜索历史记录并用 Gemini Flash 进行摘要，精准找回相关上下文。</span></p><p><strong><span>外部记忆扩展</span></strong></p><p><span>支持 8 个第三方记忆插件（Honcho、Mem0、Supermemory 等），提供语义搜索和知识图谱能力，进一步增强记忆深度。</span></p><h3 id='3-技能系统------ai-学会自我进化'><span>3. 技能系统——AI 学会“自我进化”</span></h3><p><span>这是 Hermes Agent 最有想象力的设计。当 Agent 完成一个复杂任务（5 次以上工具调用），它会自动将解决过程提炼为一个</span><strong><span>可复用的技能</span></strong><span>，保存在本地。下次遇到类似问题，它直接调用技能，无需从零开始。</span></p><p><span>技能采用</span><strong><span>渐进式加载</span></strong><span>策略：</span></p><ul><li><p><strong><span>Level 0</span></strong><span>：仅加载元数据（~3k tokens），判断是否需要这个技能</span></p></li><li><p><strong><span>Level 1</span></strong><span>：加载完整内容，执行具体步骤</span></p></li><li><p><strong><span>Level 2</span></strong><span>：访问特定参考文件，获取深度细节</span></p></li></ul><p><span>这种设计大幅节省了 token 消耗——不需要的技能完全不占用上下文空间。</span></p><p><span>技能还能共享。Hermes 兼容 </span><a href='https://agentskills.io'><span>agentskills.io</span></a><span> 开放标准，你可以从社区安装技能，也可以把自己的技能发布出去。技能来源包括：</span></p><ul><li><p><span>官方技能库</span></p></li><li><p><span>skills.sh 公共目录</span></p></li><li><p><span>GitHub 仓库直接安装</span></p></li><li><p><span>LobeHub、ClawHub 等第三方社区</span></p></li></ul><h3 id='4-47-个内置工具------开箱即用的能力矩阵'><span>4. 47 个内置工具——开箱即用的能力矩阵</span></h3><figure class='table-figure'><table><thead><tr><th><span>类别</span></th><th><span>代表工具</span></th><th><span>用途</span></th></tr></thead><tbody><tr><td><span>网页</span></td><td><code>web_search</code><span>、</span><code>web_extract</code></td><td><span>搜索和内容提取</span></td></tr><tr><td><span>终端</span></td><td><code>terminal</code><span>、</span><code>read_file</code><span>、</span><code>patch</code></td><td><span>命令执行和文件操作</span></td></tr><tr><td><span>浏览器</span></td><td><code>browser_navigate</code><span>、</span><code>browser_snapshot</code></td><td><span>带视觉的浏览器自动化</span></td></tr><tr><td><span>媒体</span></td><td><code>vision_analyze</code><span>、</span><code>image_generate</code><span>、</span><code>text_to_speech</code></td><td><span>多模态处理</span></td></tr><tr><td><span>编排</span></td><td><code>todo</code><span>、</span><code>clarify</code><span>、</span><code>delegate_task</code></td><td><span>任务规划和委派</span></td></tr><tr><td><span>记忆</span></td><td><code>memory</code><span>、</span><code>session_search</code></td><td><span>持久化记忆</span></td></tr><tr><td><span>自动化</span></td><td><code>cronjob</code><span>、</span><code>send_message</code></td><td><span>定时任务和消息推送</span></td></tr><tr><td><span>集成</span></td><td><span>Home Assistant、MCP</span></td><td><span>第三方对接</span></td></tr></tbody></table></figure><p><span>工具按照 toolset 分组，可以按需启用：</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="bash"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="bash"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9px; left: 4px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: currentcolor;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: currentcolor;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">hermes chat <span class="cm-attribute">--toolsets</span> <span class="cm-string">"web,terminal,browser"</span></span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 22px;"></div><div class="CodeMirror-gutters" style="display: none; height: 22px;"></div></div></div></pre><h3 id='5-多种执行后端------安全隔离的运行环境'><span>5. 多种执行后端——安全隔离的运行环境</span></h3><p><span>终端工具支持 6 种执行后端，满足从个人电脑到生产环境的不同需求：</span></p><ul><li><p><strong><span>local</span></strong><span>：直接在本机运行（默认）</span></p></li><li><p><strong><span>docker</span></strong><span>：容器隔离，丢弃权限、限制进程数</span></p></li><li><p><strong><span>ssh</span></strong><span>：连接远程服务器执行</span></p></li><li><p><strong><span>daytona</span></strong><span>：持久化的远程开发工作区</span></p></li><li><p><strong><span>modal</span></strong><span>：无服务器云端执行</span></p></li><li><p><strong><span>singularity</span></strong><span>：HPC 高性能计算集群</span></p></li></ul><p><span>容器后端默认启用安全加固：只读文件系统、最小权限、进程数上限 256、内存限制 5GB。</span></p><h3 id='6-语音交互------和-ai-用嘴说话'><span>6. 语音交互——和 AI 用嘴说话</span></h3><p><span>Hermes Agent 支持全链路语音交互，覆盖 CLI 和消息平台：</span></p><ul><li><p><strong><span>CLI 模式</span></strong><span>：按 Ctrl+B 录音，Agent 自动检测静默并回复</span></p></li><li><p><strong><span>Telegram/Discord</span></strong><span>：自动语音回复，音频与文字同步发送</span></p></li><li><p><strong><span>Discord 语音频道</span></strong><span>：Agent 加入频道，实时监听、转写、处理、回话</span></p></li></ul><p><span>语音转文字（STT）支持本地 Whisper（免费）、Groq（快速免费层）和 OpenAI。文字转语音（TTS）支持 Edge TTS（免费）、ElevenLabs（高品质）、OpenAI TTS 等多种引擎。</span></p><p><span>响应采用逐句流式生成音频，不用等整段回复完成就能听到声音。系统还内置了幻觉过滤，会自动去除背景噪音产生的“感谢收看”之类的幽灵文本。</span></p><h3 id='7-soulmd------定义你的-ai-人格'><span>7. SOUL.md——定义你的 AI 人格</span></h3><p><span>通过 </span><code>~/.hermes/SOUL.md</code><span> 文件，你可以定义 Agent 的持久人格：</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="markdown"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="markdown"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9px; left: 4px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: currentcolor;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: currentcolor;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" cm-header cm-header1 CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class=" cm-header cm-header1"># Personality</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">你是一个务实的资深工程师，有自己的品味和主张。</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" cm-header cm-header2 CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class=" cm-header cm-header2">## 风格</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-block-start cm-variable-2">- </span><span class="cm-variable-2">直接但不冷漠</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-block-start cm-variable-2">- </span><span class="cm-variable-2">重视实质内容，避免废话</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-block-start cm-variable-2">- </span><span class="cm-variable-2">如果方案不好，要敢于反驳</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" cm-header cm-header2 CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class=" cm-header cm-header2">## 避免</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-block-start cm-variable-2">- </span><span class="cm-variable-2">谄媚</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-block-start cm-variable-2">- </span><span class="cm-variable-2">炒作用语</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 242px;"></div><div class="CodeMirror-gutters" style="display: none; height: 242px;"></div></div></div></pre><p><span>SOUL.md 定义的是</span><strong><span>跨所有场景的默认人格</span></strong><span>。除此之外，你还可以用 </span><code>/personality pirate</code><span> 临时切换趣味模式（海盗、莎士比亚、哲学家等），或在项目级别用 </span><code>AGENTS.md</code><span> 定义特定工作指令。</span></p><h3 id='8-mcp-协议集成------无限扩展能力边界'><span>8. MCP 协议集成——无限扩展能力边界</span></h3><p><span>MCP（Model Context Protocol）让 Hermes 能连接外部工具服务器——GitHub、数据库、文件系统、内部 API，任何实现了 MCP 协议的服务都能接入。</span></p><p><span>在 </span><code>~/.hermes/config.yaml</code><span> 中配置即可：</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="yaml"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="yaml"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9px; left: 4px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: currentcolor;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: currentcolor;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-atom">mcp_servers</span><span class="cm-meta">:</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-atom">  github</span><span class="cm-meta">:</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-atom"> &nbsp;  command</span><span class="cm-meta">: </span><span class="cm-string">"npx"</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-atom"> &nbsp;  args</span><span class="cm-meta">: [</span><span class="cm-string">"-y"</span><span class="cm-meta">,</span> <span class="cm-string">"@modelcontextprotocol/server-github"</span><span class="cm-meta">]</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-atom"> &nbsp;  env</span><span class="cm-meta">:</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-atom"> &nbsp; &nbsp;  GITHUB_TOKEN</span><span class="cm-meta">: </span><span class="cm-string">"ghp_xxx"</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 132px;"></div><div class="CodeMirror-gutters" style="display: none; height: 132px;"></div></div></div></pre><p><span>工具自动发现和注册，使用 </span><code>mcp_&lt;server&gt;_&lt;tool&gt;</code><span> 的命名规则避免冲突。</span></p><hr /><h2 id='安全机制'><span>安全机制</span></h2><p><span>Hermes Agent 在安全设计上下了很大功夫，实施了</span><strong><span>七层防御体系</span></strong><span>：</span></p><ol start='' ><li><p><strong><span>用户授权</span></strong><span>：基于白名单和 DM 配对码的访问控制</span></p></li><li><p><strong><span>危险命令审批</span></strong><span>：默认手动确认，也可使用 LLM 智能评估风险等级</span></p></li><li><p><strong><span>容器隔离</span></strong><span>：Docker 模式下丢弃权限、限制资源、只读文件系统</span></p></li><li><p><strong><span>凭据保护</span></strong><span>：环境变量过滤，敏感文件只读挂载</span></p></li><li><p><strong><span>内容扫描</span></strong><span>：检测提示注入、数据外泄、Unicode 隐藏字符</span></p></li><li><p><strong><span>URL 验证</span></strong><span>：阻止 SSRF 攻击，拦截对内网和云元数据地址的请求</span></p></li><li><p><strong><span>预执行扫描</span></strong><span>：检测同形字欺骗、管道注入等终端攻击</span></p></li></ol><p><span>配对码系统特别值得一提——使用 32 字符无歧义字母表生成 8 位随机码，1 小时过期，5 次失败后锁定。相比手动复制粘贴用户 ID，这种方式更安全也更方便。</span></p><hr /><h2 id='快速上手'><span>快速上手</span></h2><h3 id='安装<-2-分钟'><span>安装（&lt; 2 分钟）</span></h3><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="bash"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="bash"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9px; left: 4px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: currentcolor;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: currentcolor;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># Linux / macOS / WSL2 一键安装</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin">curl</span> <span class="cm-attribute">-fsSL</span> https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | <span class="cm-builtin">bash</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span cm-text="" cm-zwsp="">
+</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># 重新加载 shell</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-builtin">source</span> ~/.bashrc &nbsp;<span class="cm-comment"># 或 source ~/.zshrc</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 132px;"></div><div class="CodeMirror-gutters" style="display: none; height: 132px;"></div></div></div></pre><p><span>安装脚本会自动处理 Python 3.11、Node.js v22、ripgrep、ffmpeg 等依赖，你只需要提前装好 Git。</span></p><h3 id='配置-llm'><span>配置 LLM</span></h3><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="bash"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="bash"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9px; left: 4px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: currentcolor;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: currentcolor;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">hermes model</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-comment"># 交互式选择 LLM 提供商：OpenAI、Anthropic、DeepSeek、OpenRouter...</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 44px;"></div><div class="CodeMirror-gutters" style="display: none; height: 44px;"></div></div></div></pre><p><span>支持 15+ 提供商，随时用 </span><code>hermes model</code><span> 切换，无需改代码。</span></p><h3 id='开始对话'><span>开始对话</span></h3><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="bash"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="bash"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9px; left: 4px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: currentcolor;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: currentcolor;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">hermes &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="cm-comment"># 启动交互式对话</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">hermes <span class="cm-attribute">-c</span> &nbsp; &nbsp; &nbsp; &nbsp; <span class="cm-comment"># 继续上次的会话</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 44px;"></div><div class="CodeMirror-gutters" style="display: none; height: 44px;"></div></div></div></pre><p><span>常用操作：</span></p><ul><li><p><span>输入 </span><code>/</code><span> 查看所有可用斜杠命令</span></p></li><li><p><code>Alt+Enter</code><span> 输入多行内容</span></p></li><li><p><span>输入新消息按回车可</span><strong><span>中断</span></strong><span>当前任务</span></p></li></ul><h3 id='启动消息网关'><span>启动消息网关</span></h3><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="bash"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang="bash"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9px; left: 4px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: currentcolor;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: currentcolor;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">hermes gateway setup &nbsp; <span class="cm-comment"># 交互式配置平台</span></span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">hermes gateway &nbsp; &nbsp; &nbsp; &nbsp; <span class="cm-comment"># 启动后台服务</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 44px;"></div><div class="CodeMirror-gutters" style="display: none; height: 44px;"></div></div></div></pre><hr /><h2 id='架构概览'><span>架构概览</span></h2><p><span>Hermes Agent 的架构设计遵循</span><strong><span>平台无关核心</span></strong><span>原则：</span></p><p><img src="../../../Library/Application Support/typora-user-images/image-20260408132208807.png" alt="image-20260408132208807"></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="" style="break-inside: unset;"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9px; left: 4px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: currentcolor;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: currentcolor;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">┌────────────────────────────────────────────┐</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  入口层 (Entry Points) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  CLI  │  消息网关(14+平台)  │  ACP(IDE集成) &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">└──────────┬────────────────────┬─────────────┘</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ▼ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  ▼</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">┌────────────────────────────────────────────┐</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; AIAgent 核心循环 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  提示词构建 → API 调用 → 工具分发 → 响应 &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">└──────────┬────────────────────┬─────────────┘</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; ┌─────▼──────┐ &nbsp; &nbsp;  ┌─────▼──────┐</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; │ 提供商解析 &nbsp; │ &nbsp; &nbsp;  │  工具注册表  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; │ 18+ 提供商  │ &nbsp; &nbsp;  │  47 工具 &nbsp;  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; │ OAuth 流程  │ &nbsp; &nbsp;  │  20 工具集 &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; └────────────┘ &nbsp; &nbsp;  │  6 执行后端  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; └────────────┘</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom-width: 0px; border-bottom-style: solid; border-bottom-color: transparent; top: 374px;"></div><div class="CodeMirror-gutters" style="display: none; height: 374px;"></div></div></div></pre><p><span>核心是一个统一的 </span><code>AIAgent</code><span> 类，所有入口点（CLI、消息网关、IDE 插件）都通过它处理。这意味着无论你从哪个平台发消息，获得的能力完全一致。</span></p><hr /><h2 id='与-openclaw-的对比'><span>与 OpenClaw 的对比</span></h2><p><span>如果你关注开源 AI Agent 领域，一定听说过 OpenClaw——2026 年初 GitHub 上增长最快的开源项目，200K+ Stars。Hermes Agent 和 OpenClaw 定位相似，都是可以自部署、跨平台通信的自主 AI 智能体。但深入对比后，Hermes Agent 在几个关键维度上有明显优势。</span></p><h3 id='功能对比一览'><span>功能对比一览</span></h3><figure class='table-figure'><table><thead><tr><th><span>特性</span></th><th style='text-align:center;' ><span>Hermes Agent</span></th><th style='text-align:center;' ><span>OpenClaw</span></th></tr></thead><tbody><tr><td><span>消息平台</span></td><td style='text-align:center;' ><span>14+（含飞书、企微）</span></td><td style='text-align:center;' ><span>20+（更多平台）</span></td></tr><tr><td><span>语音交互</span></td><td style='text-align:center;' ><span>✅（CLI + 平台 + 语音频道）</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>自主学习技能</span></td><td style='text-align:center;' ><span>✅（自动从经验中生成）</span></td><td style='text-align:center;' ><span>❌（依赖 ClawHub 手动安装）</span></td></tr><tr><td><span>技能渐进加载</span></td><td style='text-align:center;' ><span>✅（3 级加载，省 token）</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>MCP 协议支持</span></td><td style='text-align:center;' ><span>✅（原生集成）</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>容器隔离执行</span></td><td style='text-align:center;' ><span>✅（Docker + 6 种后端）</span></td><td style='text-align:center;' ><span>基础（Chromium 沙盒）</span></td></tr><tr><td><span>安全体系</span></td><td style='text-align:center;' ><span>七层防御 + 预执行扫描</span></td><td style='text-align:center;' ><span>较弱（曾曝 CVE 漏洞）</span></td></tr><tr><td><span>多用户支持</span></td><td style='text-align:center;' ><span>✅（白名单 + DM 配对码）</span></td><td style='text-align:center;' ><span>❌（单用户架构）</span></td></tr><tr><td><span>HPC 集群支持</span></td><td style='text-align:center;' ><span>✅（Singularity 后端）</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>记忆系统</span></td><td style='text-align:center;' ><span>FTS5 + LLM 摘要 + 8 插件</span></td><td style='text-align:center;' ><span>JSONL + Markdown</span></td></tr><tr><td><span>人格定制</span></td><td style='text-align:center;' ><span>SOUL.md + /personality 叠加</span></td><td style='text-align:center;' ><span>SOUL.md + AGENTS.md</span></td></tr><tr><td><span>社区规模</span></td><td style='text-align:center;' ><span>较小（新项目）</span></td><td style='text-align:center;' ><span>200K+ Stars</span></td></tr><tr><td><span>技能生态</span></td><td style='text-align:center;' ><span>agentskills.io（成长中）</span></td><td style='text-align:center;' ><span>ClawHub 700+ 技能</span></td></tr><tr><td><span>技术栈</span></td><td style='text-align:center;' ><span>Python</span></td><td style='text-align:center;' ><span>TypeScript/Node.js</span></td></tr></tbody></table></figure><h3 id='hermes-agent-的核心优势'><span>Hermes Agent 的核心优势</span></h3><p><strong><span>1. 自主学习，越用越聪明</span></strong></p><p><span>这是两者最根本的差异。OpenClaw 的技能来自 ClawHub 市场，你需要手动搜索、安装、配置。Hermes Agent 则内置了&quot;学习循环&quot;——当它完成一个复杂任务后，会自动把解决流程提炼为可复用的技能。下次遇到类似场景，直接调用，无需人工干预。</span></p><p><span>OpenClaw 用得越久，积累的只是记忆；Hermes Agent 用得越久，积累的是</span><strong><span>能力</span></strong><span>。</span></p><p><strong><span>2. 语音交互，解放双手</span></strong></p><p><span>OpenClaw 目前没有语音功能。Hermes Agent 支持完整的语音链路——在终端按 Ctrl+B 说话，在 Telegram 发语音消息，甚至直接加入 Discord 语音频道和你实时对话。对于需要边做事边和 AI 沟通的场景，这个差距很大。</span></p><p><strong><span>3. 安全设计差距明显</span></strong></p><p><span>OpenClaw 在 2026 年初曝出了 CVE-2026-25253 令牌泄漏漏洞，暴露了架构层面的安全隐患。而 Hermes Agent 从一开始就设计了七层防御体系：用户授权、危险命令审批、容器隔离、凭据过滤、内容扫描、URL 验证、预执行扫描。特别是容器后端会丢弃 Linux 权限、限制进程数、挂载只读文件系统——这是生产环境级别的安全意识。</span></p><p><strong><span>4. 多用户架构 vs 单用户限制</span></strong></p><p><span>OpenClaw 最大的架构硬伤是</span><strong><span>单用户设计</span></strong><span>——多人共用同一实例时，API 密钥、对话记录、记忆文件都可能互相泄露，无法做用户隔离和成本分摊。Hermes Agent 通过白名单、DM 配对码、平台级会话隔离解决了这个问题，天然支持小团队共享使用。</span></p><p><strong><span>5. 执行环境更灵活</span></strong></p><p><span>OpenClaw 的命令执行基本限于本地 + 浏览器自动化。Hermes Agent 提供 6 种执行后端——本地、Docker、SSH、Daytona、Modal、Singularity——覆盖从个人电脑到 HPC 集群的全部场景。你可以让 Agent 在远程 GPU 服务器上跑训练脚本，在无服务器环境里处理批量任务，这些 OpenClaw 做不到。</span></p><p><strong><span>6. MCP 协议，生态扩展更标准化</span></strong></p><p><span>Hermes Agent 原生支持 MCP（Model Context Protocol），可以直接对接社区中大量的 MCP 工具服务器——GitHub、数据库、文件系统、内部 API。OpenClaw 的工具扩展依赖自有的技能格式和 ClawHub 生态，通用性和互操作性不如 MCP。</span></p><h3 id='openclaw-的优势在哪'><span>OpenClaw 的优势在哪？</span></h3><p><span>公平地说，OpenClaw 也有自己的长处：</span></p><ul><li><p><strong><span>社区更大</span></strong><span>：200K+ Stars 意味着更多教程、更多问题已被解答、更活跃的 ClawHub 生态</span></p></li><li><p><strong><span>平台覆盖更广</span></strong><span>：20+ 消息平台，包括 iMessage、微信等 Hermes 暂不支持的渠道</span></p></li><li><p><strong><span>上手门槛稍低</span></strong><span>：TypeScript 技术栈对前端开发者更友好，社区文档更丰富</span></p></li><li><p><strong><span>浏览器自动化更成熟</span></strong><span>：内置 Chromium 实例，对网页操作场景支持更好</span></p></li></ul><h3 id='怎么选'><span>怎么选？</span></h3><ul><li><p><span>如果你需要</span><strong><span>语音交互、安全隔离、多用户共享、HPC 支持</span></strong><span>——选 Hermes Agent</span></p></li><li><p><span>如果你需要</span><strong><span>最广的平台覆盖、成熟的社区生态、快速上手</span></strong><span>——选 OpenClaw</span></p></li><li><p><span>如果你在意 Agent 能</span><strong><span>自主学习进化</span></strong><span>，而不只是执行预设技能——选 Hermes Agent</span></p></li></ul><hr /><h2 id='与其他-ai-工具的对比'><span>与其他 AI 工具的对比</span></h2><figure class='table-figure'><table><thead><tr><th><span>特性</span></th><th style='text-align:center;' ><span>Hermes Agent</span></th><th style='text-align:center;' ><span>Claude Code</span></th><th style='text-align:center;' ><span>Cursor</span></th></tr></thead><tbody><tr><td><span>脱离 IDE 运行</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>✅（CLI）</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>多平台通信</span></td><td style='text-align:center;' ><span>✅（14+平台）</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>持久记忆</span></td><td style='text-align:center;' ><span>✅（多层）</span></td><td style='text-align:center;' ><span>✅（基础）</span></td><td style='text-align:center;' ><span>✅（基础）</span></td></tr><tr><td><span>自主学习技能</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>语音交互</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>开源</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>自由选择 LLM</span></td><td style='text-align:center;' ><span>✅（15+）</span></td><td style='text-align:center;' ><span>❌（仅 Claude）</span></td><td style='text-align:center;' ><span>有限</span></td></tr><tr><td><span>容器隔离执行</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>定时任务</span></td><td style='text-align:center;' ><span>✅</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr><tr><td><span>人格定制</span></td><td style='text-align:center;' ><span>✅（SOUL.md）</span></td><td style='text-align:center;' ><span>❌</span></td><td style='text-align:center;' ><span>❌</span></td></tr></tbody></table></figure><p><span>Hermes Agent 的定位更接近一个</span><strong><span>可编程的 AI 基础设施</span></strong><span>，而非简单的编码辅助工具。</span></p><hr /><h2 id='适合谁用'><span>适合谁用？</span></h2><ul><li><p><strong><span>独立开发者</span></strong><span>：让 Agent 在 VPS 上 24 小时待命，随时通过 Telegram 下达任务</span></p></li><li><p><strong><span>小团队</span></strong><span>：通过 Slack/Discord 共享一个 Agent，处理运维、监控、自动化任务</span></p></li><li><p><strong><span>AI 研究者</span></strong><span>：接入本地模型，在 HPC 集群上跑实验</span></p></li><li><p><strong><span>自动化爱好者</span></strong><span>：用 cronjob 定时执行任务，用消息网关接收结果通知</span></p></li><li><p><strong><span>重视隐私的用户</span></strong><span>：完全本地部署，数据不离开你的服务器</span></p></li></ul><hr /><h2 id='总结'><span>总结</span></h2><p><span>Hermes Agent 代表了 AI Agent 发展的一个重要方向：</span><strong><span>从 IDE 插件走向独立基础设施</span></strong><span>。它把 AI 智能体从编辑器的束缚中解放出来，让它真正成为一个可以 7×24 小时工作、跨平台协作、持续学习进化的数字工作伙伴。</span></p><p><span>开源、灵活、安全——如果你一直在寻找一个“属于自己的 AI 助手”，Hermes Agent 值得一试。</span></p><p><strong><span>相关链接：</span></strong></p><ul><li><p><span>官方文档：</span><a href='https://hermes-agent.nousresearch.com/docs' target='_blank' class='url'>https://hermes-agent.nousresearch.com/docs</a></p></li><li><p><span>GitHub：</span><a href='https://github.com/NousResearch/hermes-agent' target='_blank' class='url'>https://github.com/NousResearch/hermes-agent</a></p></li><li><p><span>技能市场：</span><a href='https://agentskills.io' target='_blank' class='url'>https://agentskills.io</a></p></li><li><p><span>Nous Research：</span><a href='https://nousresearch.com' target='_blank' class='url'>https://nousresearch.com</a></p></li></ul></div></div>
+</body>
+</html>

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  /* ===== Reset & Base ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    background: #0A0E1A;
+    font-family: "PingFang SC", "SF Pro Display", -apple-system, "Helvetica Neue", sans-serif;
+    padding: 0;
+    color: #E2E8F0;
+    overflow: hidden;
+  }
+
+  /* ===== Background Pattern ===== */
+  .poster {
+    position: relative;
+    padding: 64px 56px 56px;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(239,68,68,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(14,165,233,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 50%, rgba(15,23,42,1) 0%, #0A0E1A 100%);
+  }
+  .poster::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='g' width='60' height='60' patternUnits='userSpaceOnUse'%3E%3Ccircle cx='30' cy='30' r='0.8' fill='%23ffffff08'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='60' height='60' fill='url(%23g)'/%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* ===== Header ===== */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+    position: relative;
+  }
+  .header .label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #EF4444;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 20px;
+    padding: 6px 20px;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.3;
+    background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .header .desc {
+    font-size: 15px;
+    color: #64748B;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== Connector ===== */
+  .connector {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0;
+    position: relative;
+  }
+  .connector .line {
+    width: 2px;
+    height: 36px;
+    background: linear-gradient(180deg, rgba(99,102,241,0.6) 0%, rgba(6,182,212,0.6) 100%);
+    position: relative;
+  }
+  .connector .line::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #06B6D4;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(6,182,212,0.5);
+  }
+
+  /* ===== Branch Out (5 items) ===== */
+  .branch-out-5 {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 40px;
+  }
+  .branch-out-5 .stem {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 16px;
+    background: rgba(99,102,241,0.5);
+  }
+  .branch-out-5 .bar {
+    position: absolute;
+    top: 16px;
+    left: calc(50% - 441px);
+    width: 882px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(16,185,129,0.5), rgba(245,158,11,0.5), rgba(139,92,246,0.5), rgba(6,182,212,0.5), rgba(236,72,153,0.5));
+  }
+  .branch-out-5 .drop {
+    position: absolute;
+    top: 16px;
+    width: 2px;
+    height: 24px;
+  }
+  .branch-out-5 .drop::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    box-shadow: 0 0 6px currentColor;
+    background: currentColor;
+  }
+  .branch-out-5 .d1 { left: calc(50% - 441px); background: rgba(16,185,129,0.6); color: #10B981; }
+  .branch-out-5 .d2 { left: calc(50% - 220px); background: rgba(245,158,11,0.6); color: #F59E0B; }
+  .branch-out-5 .d3 { left: calc(50%); background: rgba(139,92,246,0.6); color: #8B5CF6; }
+  .branch-out-5 .d4 { left: calc(50% + 220px); background: rgba(6,182,212,0.6); color: #06B6D4; }
+  .branch-out-5 .d5 { left: calc(50% + 441px); background: rgba(236,72,153,0.6); color: #EC4899; }
+
+  /* ===== Merge (5 items) ===== */
+  .merge-in-5 {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 36px;
+  }
+  .merge-in-5 .bar {
+    position: absolute;
+    top: 0;
+    left: calc(50% - 441px);
+    width: 882px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(16,185,129,0.3), rgba(245,158,11,0.3), rgba(139,92,246,0.3), rgba(6,182,212,0.3), rgba(236,72,153,0.3));
+  }
+  .merge-in-5 .rise {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 10px;
+    background: rgba(100,116,139,0.4);
+  }
+  .merge-in-5 .r1 { left: calc(50% - 441px); }
+  .merge-in-5 .r2 { left: calc(50% - 220px); }
+  .merge-in-5 .r3 { left: calc(50%); }
+  .merge-in-5 .r4 { left: calc(50% + 220px); }
+  .merge-in-5 .r5 { left: calc(50% + 441px); }
+  .merge-in-5 .stem {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    width: 2px;
+    height: 28px;
+    background: linear-gradient(180deg, rgba(99,102,241,0.5), rgba(30,41,59,0.5));
+  }
+  .merge-in-5 .stem::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: #6366F1;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(99,102,241,0.5);
+  }
+
+  /* ===== Branch Out (4 items) ===== */
+  .branch-out-4 {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 40px;
+  }
+  .branch-out-4 .stem {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 16px;
+    background: rgba(99,102,241,0.5);
+  }
+  .branch-out-4 .bar {
+    position: absolute;
+    top: 16px;
+    left: calc(50% - 414px);
+    width: 828px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(16,185,129,0.5), rgba(245,158,11,0.5), rgba(139,92,246,0.5), rgba(6,182,212,0.5));
+  }
+  .branch-out-4 .drop {
+    position: absolute;
+    top: 16px;
+    width: 2px;
+    height: 24px;
+  }
+  .branch-out-4 .drop::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    box-shadow: 0 0 6px currentColor;
+    background: currentColor;
+  }
+  .branch-out-4 .d1 { left: calc(50% - 414px); background: rgba(16,185,129,0.6); color: #10B981; }
+  .branch-out-4 .d2 { left: calc(50% - 138px); background: rgba(245,158,11,0.6); color: #F59E0B; }
+  .branch-out-4 .d3 { left: calc(50% + 138px); background: rgba(139,92,246,0.6); color: #8B5CF6; }
+  .branch-out-4 .d4 { left: calc(50% + 414px); background: rgba(6,182,212,0.6); color: #06B6D4; }
+
+  /* ===== Merge (4 items) ===== */
+  .merge-in-4 {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 36px;
+  }
+  .merge-in-4 .bar {
+    position: absolute;
+    top: 0;
+    left: calc(50% - 414px);
+    width: 828px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(16,185,129,0.3), rgba(245,158,11,0.3), rgba(139,92,246,0.3), rgba(6,182,212,0.3));
+  }
+  .merge-in-4 .rise {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 10px;
+    background: rgba(100,116,139,0.4);
+  }
+  .merge-in-4 .r1 { left: calc(50% - 414px); }
+  .merge-in-4 .r2 { left: calc(50% - 138px); }
+  .merge-in-4 .r3 { left: calc(50% + 138px); }
+  .merge-in-4 .r4 { left: calc(50% + 414px); }
+  .merge-in-4 .stem {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    width: 2px;
+    height: 28px;
+    background: linear-gradient(180deg, rgba(99,102,241,0.5), rgba(30,41,59,0.5));
+  }
+  .merge-in-4 .stem::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: #6366F1;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(99,102,241,0.5);
+  }
+
+  /* ===== Level ===== */
+  .level {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+  }
+  .level-5 {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    position: relative;
+  }
+
+  /* ===== Card ===== */
+  .card {
+    flex: 1;
+    border-radius: 16px;
+    padding: 28px 26px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    opacity: 0.06;
+    background: linear-gradient(135deg, white 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .card.full { max-width: 100%; }
+  .card .tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card .tag .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .card .card-title {
+    font-size: 21px;
+    font-weight: 700;
+    color: #F1F5F9;
+    margin-bottom: 12px;
+    line-height: 1.35;
+  }
+  .card .content {
+    font-size: 14px;
+    line-height: 1.9;
+    color: #94A3B8;
+  }
+  .card .content ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 4px;
+  }
+  .card .content li {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .card .content li:last-child { border-bottom: none; }
+  .card .content li::before {
+    content: '›';
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Compact card variant for 5-column layout */
+  .card.compact {
+    padding: 22px 18px;
+  }
+  .card.compact .card-title {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+  .card.compact .content {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .card.compact .content li {
+    padding: 3px 0;
+    gap: 6px;
+  }
+  .card.compact .tag {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  }
+
+  /* ===== Badge ===== */
+  .badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .card.compact .badge {
+    font-size: 11px;
+    padding: 1px 6px;
+  }
+
+  /* ===== Color Themes ===== */
+  /* Red / Problem */
+  .card.red {
+    background: linear-gradient(135deg, rgba(239,68,68,0.12) 0%, rgba(15,23,42,0.95) 100%);
+    border-color: rgba(239,68,68,0.2);
+  }
+  .card.red .tag { color: #F87171; }
+  .card.red .tag .dot { background: #EF4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+  .badge.red { background: rgba(239,68,68,0.15); color: #FCA5A5; }
+
+  /* Blue / Framework */
+  .card.blue {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(15,23,42,0.95) 100%);
+    border-color: rgba(99,102,241,0.2);
+  }
+  .card.blue .tag { color: #A5B4FC; }
+  .card.blue .tag .dot { background: #6366F1; box-shadow: 0 0 8px rgba(99,102,241,0.5); }
+  .badge.blue { background: rgba(99,102,241,0.15); color: #C7D2FE; }
+
+  /* Green / Pillar A */
+  .card.green {
+    background: linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(15,23,42,0.95) 100%);
+    border-color: rgba(16,185,129,0.2);
+  }
+  .card.green .tag { color: #6EE7B7; }
+  .card.green .tag .dot { background: #10B981; box-shadow: 0 0 8px rgba(16,185,129,0.5); }
+  .card.green .content li::before { color: #10B981; }
+  .badge.green { background: rgba(16,185,129,0.15); color: #6EE7B7; }
+
+  /* Amber / Pillar B */
+  .card.amber {
+    background: linear-gradient(135deg, rgba(245,158,11,0.12) 0%, rgba(15,23,42,0.95) 100%);
+    border-color: rgba(245,158,11,0.2);
+  }
+  .card.amber .tag { color: #FCD34D; }
+  .card.amber .tag .dot { background: #F59E0B; box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+  .card.amber .content li::before { color: #F59E0B; }
+  .badge.amber { background: rgba(245,158,11,0.15); color: #FCD34D; }
+
+  /* Purple / Pillar C */
+  .card.purple {
+    background: linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(15,23,42,0.95) 100%);
+    border-color: rgba(139,92,246,0.2);
+  }
+  .card.purple .tag { color: #C4B5FD; }
+  .card.purple .tag .dot { background: #8B5CF6; box-shadow: 0 0 8px rgba(139,92,246,0.5); }
+  .card.purple .content li::before { color: #8B5CF6; }
+  .badge.purple { background: rgba(139,92,246,0.15); color: #C4B5FD; }
+
+  /* Cyan / Pillar D */
+  .card.cyan {
+    background: linear-gradient(135deg, rgba(6,182,212,0.12) 0%, rgba(15,23,42,0.95) 100%);
+    border-color: rgba(6,182,212,0.2);
+  }
+  .card.cyan .tag { color: #67E8F9; }
+  .card.cyan .tag .dot { background: #06B6D4; box-shadow: 0 0 8px rgba(6,182,212,0.5); }
+  .card.cyan .content li::before { color: #06B6D4; }
+  .badge.cyan { background: rgba(6,182,212,0.15); color: #67E8F9; }
+
+  /* Rose / Pillar E */
+  .card.rose {
+    background: linear-gradient(135deg, rgba(236,72,153,0.12) 0%, rgba(15,23,42,0.95) 100%);
+    border-color: rgba(236,72,153,0.2);
+  }
+  .card.rose .tag { color: #F9A8D4; }
+  .card.rose .tag .dot { background: #EC4899; box-shadow: 0 0 8px rgba(236,72,153,0.5); }
+  .card.rose .content li::before { color: #EC4899; }
+  .badge.rose { background: rgba(236,72,153,0.15); color: #F9A8D4; }
+
+  /* Slate / System */
+  .card.slate {
+    background: linear-gradient(135deg, rgba(51,65,85,0.3) 0%, rgba(15,23,42,0.95) 100%);
+    border-color: rgba(100,116,139,0.2);
+  }
+  .card.slate .tag { color: #94A3B8; }
+  .card.slate .tag .dot { background: #64748B; box-shadow: 0 0 8px rgba(100,116,139,0.4); }
+
+  /* Sky / Action */
+  .card.sky {
+    background: linear-gradient(135deg, rgba(14,165,233,0.15) 0%, rgba(99,102,241,0.08) 100%);
+    border-color: rgba(14,165,233,0.25);
+  }
+  .card.sky .tag { color: #7DD3FC; }
+  .card.sky .tag .dot { background: #0EA5E9; box-shadow: 0 0 8px rgba(14,165,233,0.5); }
+
+  /* ===== Section Label ===== */
+  .section-label {
+    text-align: center;
+    margin: 4px 0;
+    position: relative;
+  }
+  .section-label span {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: #64748B;
+    background: rgba(30,41,59,0.8);
+    padding: 4px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(100,116,139,0.15);
+  }
+
+  /* ===== Footer ===== */
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .footer p {
+    font-size: 11px;
+    color: #475569;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- ============ HEADER ============ -->
+  <div class="header">
+    <div class="label">Article Structure</div>
+    <h1>为什么不到40岁的脸看起来却很老</h1>
+    <div class="desc">从五大衰老加速器到四个科学验证的护肤成分，用研究证据拆解面部抗衰</div>
+  </div>
+
+  <!-- ============ LEVEL 1: PROBLEM ============ -->
+  <div class="level">
+    <div class="card red full">
+      <div class="tag"><span class="dot"></span>核心问题</div>
+      <div class="card-title">不到40岁，为什么脸看起来却很老？</div>
+      <div class="content">
+        面部衰老的速度，<span class="badge red">70-80%</span> 取决于外部因素和生活方式 —— 你的脸大部分是自己"作"出来的
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><div class="line"></div></div>
+
+  <!-- ============ LEVEL 2: FRAMEWORK ============ -->
+  <div class="level">
+    <div class="card blue full">
+      <div class="tag"><span class="dot"></span>科学框架</div>
+      <div class="card-title">皮肤衰老的两条线</div>
+      <div class="content">
+        <span class="badge blue">内源性衰老</span> 基因时钟，25岁起胶原蛋白每年流失1-1.5%，推进缓慢 &nbsp;｜&nbsp;
+        <span class="badge blue">外源性衰老</span> 生活方式驱动，同卵双胞胎实验证实可造成 <span class="badge red">>10年</span> 外观年龄差距 —— 这才是主因
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BRANCH OUT 5 ============ -->
+  <div class="branch-out-5">
+    <div class="stem"></div>
+    <div class="bar"></div>
+    <div class="drop d1"></div>
+    <div class="drop d2"></div>
+    <div class="drop d3"></div>
+    <div class="drop d4"></div>
+    <div class="drop d5"></div>
+  </div>
+
+  <!-- ============ LEVEL 3: FIVE ACCELERATORS ============ -->
+  <div class="section-label"><span>五大衰老加速器</span></div>
+  <div style="height: 8px;"></div>
+  <div class="level-5">
+    <div class="card green compact">
+      <div class="tag"><span class="dot"></span>元凶一</div>
+      <div class="card-title">紫外线</div>
+      <div class="content">
+        <ul>
+          <li><span class="badge green">80%</span> 可见衰老来自光老化</li>
+          <li>UVA穿透玻璃，激活MMP酶切割胶原</li>
+          <li>卡车司机左右脸差20岁（NEJM）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card amber compact">
+      <div class="tag"><span class="dot"></span>元凶二</div>
+      <div class="card-title">糖化反应</div>
+      <div class="content">
+        <ul>
+          <li>AGEs使胶原蛋白交联僵化</li>
+          <li>血糖↑1mmol/L → 感知年龄 <span class="badge amber">+5个月</span></li>
+          <li>一杯奶茶含糖40-60g（WHO建议&lt;25g）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card purple compact">
+      <div class="tag"><span class="dot"></span>元凶三</div>
+      <div class="card-title">睡眠不足</div>
+      <div class="content">
+        <ul>
+          <li>细纹 <span class="badge purple">↑45%</span></li>
+          <li>色素沉着不均 <span class="badge purple">↑30%</span></li>
+          <li>屏障修复能力 <span class="badge purple">↓30%</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card cyan compact">
+      <div class="tag"><span class="dot"></span>元凶四</div>
+      <div class="card-title">慢性压力</div>
+      <div class="content">
+        <ul>
+          <li>皮质醇分解胶原蛋白</li>
+          <li>抑制透明质酸合成</li>
+          <li>加速端粒缩短（细胞衰老标志）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card rose compact">
+      <div class="tag"><span class="dot"></span>元凶五</div>
+      <div class="card-title">烟酒</div>
+      <div class="content">
+        <ul>
+          <li>双胞胎对照：吸烟者所有指标更差</li>
+          <li>酒精：脱水+血管扩张+炎症</li>
+          <li>典型"酒精面容"：浮肿泛红</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MERGE 5 ============ -->
+  <div style="height: 12px;"></div>
+  <div class="merge-in-5">
+    <div class="bar"></div>
+    <div class="rise r1"></div>
+    <div class="rise r2"></div>
+    <div class="rise r3"></div>
+    <div class="rise r4"></div>
+    <div class="rise r5"></div>
+    <div class="stem"></div>
+  </div>
+
+  <!-- ============ LEVEL 4: COUNTER STRATEGY ============ -->
+  <div class="level">
+    <div class="card slate full">
+      <div class="tag"><span class="dot"></span>反守为攻</div>
+      <div class="card-title">经过科学验证的有效成分 —— 只看RCT和系统综述级别证据</div>
+      <div class="content">
+        市面上成千上万的护肤品，真正被临床试验证明有效的活性成分屈指可数
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ BRANCH OUT 4 ============ -->
+  <div class="branch-out-4">
+    <div class="stem"></div>
+    <div class="bar"></div>
+    <div class="drop d1"></div>
+    <div class="drop d2"></div>
+    <div class="drop d3"></div>
+    <div class="drop d4"></div>
+  </div>
+
+  <!-- ============ LEVEL 5: FOUR SOLUTIONS ============ -->
+  <div class="section-label"><span>四大有效成分</span></div>
+  <div style="height: 8px;"></div>
+  <div class="level">
+    <div class="card green">
+      <div class="tag"><span class="dot"></span>最重要</div>
+      <div class="card-title">防晒 SPF30+</div>
+      <div class="content">
+        <ul>
+          <li>4.5年RCT：光老化 <span class="badge green">零增加</span></li>
+          <li>每天涂 · 每2h补涂 · 足量</li>
+          <li>物理遮挡是终极方案</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card amber">
+      <div class="tag"><span class="dot"></span>金标准</div>
+      <div class="card-title">维A酸类</div>
+      <div class="content">
+        <ul>
+          <li>唯一分子级 <span class="badge amber">逆转</span> 光老化</li>
+          <li>刺激胶原合成 · 抑制MMP酶</li>
+          <li>从低浓度起步，逐步建立耐受</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card purple">
+      <div class="tag"><span class="dot"></span>抗氧化</div>
+      <div class="card-title">维生素C</div>
+      <div class="content">
+        <ul>
+          <li>中和紫外线产生的自由基</li>
+          <li>抑制黑色素 · 促进胶原合成</li>
+          <li>选 <span class="badge purple">10-20%</span> L-AA，密封避光</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card cyan">
+      <div class="tag"><span class="dot"></span>温和百搭</div>
+      <div class="card-title">烟酰胺 B3</div>
+      <div class="content">
+        <ul>
+          <li>加强皮肤屏障 · 减少水分流失</li>
+          <li>改善细纹、色素、弹性、泛红</li>
+          <li>几乎无刺激，可搭配所有成分</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MERGE 4 ============ -->
+  <div style="height: 12px;"></div>
+  <div class="merge-in-4">
+    <div class="bar"></div>
+    <div class="rise r1"></div>
+    <div class="rise r2"></div>
+    <div class="rise r3"></div>
+    <div class="rise r4"></div>
+    <div class="stem"></div>
+  </div>
+
+  <!-- ============ LEVEL 6: CONCLUSION ============ -->
+  <div class="level">
+    <div class="card sky full">
+      <div class="tag"><span class="dot"></span>核心原则</div>
+      <div class="card-title">减少破坏 + 支持修复</div>
+      <div class="content">
+        你不需要追求"逆龄"，你只需要让自己的脸，老得像它应有的速度 —— 每一天的防护、饮食选择和充足睡眠，都在暗中保护你的皮肤
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <div class="footer">
+    <p>基于 NEJM · Annals of Internal Medicine · Archives of Dermatology · Nutrients · BJD 等顶级期刊的研究证据</p>
+  </div>
+
+</div>
+</body>
+</html>
