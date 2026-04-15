@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 实战训练营｜优化版海报页面</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+  :root {
+    --bg: #07111f;
+    --bg-soft: #0d1a2c;
+    --panel: rgba(10, 24, 40, 0.82);
+    --panel-strong: rgba(8, 19, 33, 0.96);
+    --line: rgba(132, 196, 255, 0.14);
+    --line-strong: rgba(132, 196, 255, 0.28);
+    --text: #f7fbff;
+    --muted: rgba(228, 239, 251, 0.72);
+    --dim: rgba(228, 239, 251, 0.42);
+    --cyan: #70e4ff;
+    --teal: #26c6b0;
+    --amber: #ffb84d;
+    --coral: #ff7d5c;
+    --lime: #c5f36b;
+    --shadow: 0 28px 80px rgba(2, 10, 19, 0.42);
+    --radius-xl: 36px;
+    --radius-lg: 26px;
+    --radius-md: 18px;
+    --content: 1120px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 15% 20%, rgba(38, 198, 176, 0.18), transparent 28%),
+      radial-gradient(circle at 85% 10%, rgba(255, 184, 77, 0.16), transparent 24%),
+      radial-gradient(circle at 70% 78%, rgba(112, 228, 255, 0.12), transparent 26%),
+      linear-gradient(180deg, #040b14 0%, #07111f 42%, #06101d 100%);
+    padding: 36px 18px 64px;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
+    -webkit-mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
+    pointer-events: none;
+    opacity: 0.55;
+  }
+
+  .page-shell {
+    position: relative;
+  }
+
+  .ambient {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .ambient-a {
+    width: 320px;
+    height: 320px;
+    background: rgba(38, 198, 176, 0.16);
+    top: 8%;
+    left: -90px;
+    animation: drift 15s ease-in-out infinite;
+  }
+
+  .ambient-b {
+    width: 360px;
+    height: 360px;
+    background: rgba(255, 125, 92, 0.12);
+    right: -120px;
+    top: 35%;
+    animation: drift 18s ease-in-out infinite reverse;
+  }
+
+  .ambient-c {
+    width: 280px;
+    height: 280px;
+    background: rgba(112, 228, 255, 0.12);
+    left: 45%;
+    bottom: -80px;
+    animation: drift 13s ease-in-out infinite;
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(16px, -20px, 0) scale(1.08); }
+  }
+
+  .poster {
+    position: relative;
+    width: min(100%, var(--content));
+    margin: 0 auto;
+    border: 1px solid rgba(122, 173, 221, 0.16);
+    border-radius: 40px;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(9, 20, 35, 0.94) 0%, rgba(7, 17, 31, 0.96) 60%, rgba(5, 14, 26, 0.98) 100%);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(24px);
+  }
+
+  .poster::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(120deg, rgba(255, 255, 255, 0.05), transparent 26%),
+      linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.015) 50%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .poster::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02), transparent);
+    mix-blend-mode: screen;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .section {
+    position: relative;
+    padding: 0 48px 48px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 26px;
+  }
+
+  .section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 12px;
+  }
+
+  .section-kicker::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(112, 228, 255, 0.1), rgba(112, 228, 255, 0.9));
+  }
+
+  .section-title {
+    font-size: clamp(28px, 3vw, 38px);
+    line-height: 1.18;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    max-width: 640px;
+  }
+
+  .section-title em {
+    font-style: normal;
+    color: var(--amber);
+  }
+
+  .section-note {
+    max-width: 320px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--dim);
+  }
+
+  .hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+    gap: 28px;
+    padding: 56px 48px 28px;
+    isolation: isolate;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: auto 48px 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(132, 196, 255, 0.16), transparent);
+  }
+
+  .hero-copy,
+  .hero-stage,
+  .glass-card,
+  .metric-card,
+  .state-card,
+  .roadmap-card,
+  .module-card,
+  .panel,
+  .cta-card {
+    background: linear-gradient(180deg, rgba(15, 31, 51, 0.76), rgba(8, 19, 33, 0.9));
+    border: 1px solid rgba(132, 196, 255, 0.12);
+    box-shadow: 0 18px 40px rgba(3, 9, 18, 0.18);
+  }
+
+  .hero-copy {
+    padding: 34px;
+    border-radius: var(--radius-xl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-copy::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at top left, rgba(255, 184, 77, 0.16), transparent 34%),
+      radial-gradient(circle at bottom right, rgba(112, 228, 255, 0.14), transparent 36%);
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    color: var(--cyan);
+    background: rgba(112, 228, 255, 0.09);
+    border: 1px solid rgba(112, 228, 255, 0.16);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 14px var(--cyan);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.4); opacity: 0.45; }
+  }
+
+  .hero-title {
+    font-size: clamp(40px, 7vw, 76px);
+    line-height: 0.96;
+    letter-spacing: -0.05em;
+    font-weight: 900;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-title .line-a {
+    display: block;
+    color: #eef7ff;
+  }
+
+  .hero-title .line-b {
+    display: block;
+    background: linear-gradient(110deg, #70e4ff 5%, #c5f36b 35%, #ffb84d 62%, #ff7d5c 92%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    max-width: 620px;
+    font-size: 19px;
+    line-height: 1.8;
+    color: var(--muted);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-subtitle strong {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 26px 0 30px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(247, 251, 255, 0.82);
+    font-size: 13px;
+  }
+
+  .chip::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.65;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 24px;
+    border-radius: 16px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+    transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+  }
+
+  .btn-primary {
+    color: #05101d;
+    background: linear-gradient(120deg, var(--cyan), var(--amber));
+    box-shadow: 0 12px 34px rgba(255, 184, 77, 0.18);
+  }
+
+  .btn-secondary {
+    color: #f0f6fc;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 26px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .meta-card {
+    padding: 16px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .meta-label {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 8px;
+  }
+
+  .meta-value {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .hero-stage {
+    position: relative;
+    min-height: 100%;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    padding: 26px;
+    isolation: isolate;
+  }
+
+  .hero-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 25% 20%, rgba(112, 228, 255, 0.18), transparent 26%),
+      radial-gradient(circle at 80% 80%, rgba(255, 184, 77, 0.16), transparent 24%);
+    pointer-events: none;
+  }
+
+  .stage-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: linear-gradient(180deg, transparent 0%, black 18%, black 82%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 18%, black 82%, transparent 100%);
+    opacity: 0.34;
+  }
+
+  .orbit {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(112, 228, 255, 0.14);
+    animation: rotate 18s linear infinite;
+  }
+
+  .orbit-a {
+    width: 280px;
+    height: 280px;
+    top: 28px;
+    right: 16px;
+  }
+
+  .orbit-b {
+    width: 220px;
+    height: 220px;
+    top: 58px;
+    right: 46px;
+    animation-direction: reverse;
+    animation-duration: 13s;
+  }
+
+  .orbit::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--amber));
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 18px rgba(112, 228, 255, 0.4);
+  }
+
+  @keyframes rotate {
+    to { transform: rotate(360deg); }
+  }
+
+  .glass-card {
+    position: relative;
+    border-radius: 24px;
+    padding: 18px 18px 20px;
+    backdrop-filter: blur(18px);
+  }
+
+  .glass-card + .glass-card {
+    margin-top: 14px;
+  }
+
+  .signal-card {
+    position: relative;
+    z-index: 1;
+    margin-top: 170px;
+  }
+
+  .signal-header,
+  .log-row,
+  .mini-stat {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .signal-header {
+    margin-bottom: 18px;
+  }
+
+  .signal-title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .signal-badge {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lime);
+  }
+
+  .line-chart {
+    position: relative;
+    height: 122px;
+    margin-bottom: 16px;
+    border-radius: 18px;
+    overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(112, 228, 255, 0.07), transparent),
+      rgba(255, 255, 255, 0.02);
+  }
+
+  .line-chart svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .log-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .log-row {
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .log-row strong {
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .tool-board {
+    position: relative;
+    z-index: 1;
+  }
+
+  .tool-board .board-title {
+    font-size: 13px;
+    color: var(--dim);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .mini-stat {
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .mini-stat span {
+    display: block;
+  }
+
+  .mini-label {
+    font-size: 12px;
+    color: var(--dim);
+    margin-bottom: 4px;
+  }
+
+  .mini-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+
+  .info-band {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    padding: 20px 48px 44px;
+  }
+
+  .metric-card {
+    border-radius: 24px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    inset: auto -10% -40% auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 70%);
+  }
+
+  .metric-label {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 12px;
+  }
+
+  .metric-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(34px, 4vw, 46px);
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    line-height: 0.95;
+    margin-bottom: 10px;
+  }
+
+  .metric-copy {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .metric-value .suffix,
+  .metric-value .prefix {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 0.5em;
+    font-weight: 700;
+    letter-spacing: 0;
+    margin: 0 2px;
+  }
+
+  .transformation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px minmax(0, 1fr);
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  .state-card {
+    border-radius: 28px;
+    padding: 28px 26px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .state-card::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 4px;
+  }
+
+  .state-card.before::after {
+    background: linear-gradient(90deg, rgba(255, 125, 92, 0.85), rgba(255, 184, 77, 0.25));
+  }
+
+  .state-card.after::after {
+    background: linear-gradient(90deg, rgba(112, 228, 255, 0.9), rgba(197, 243, 107, 0.45));
+  }
+
+  .state-tag {
+    display: inline-flex;
+    margin-bottom: 18px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .before .state-tag {
+    color: #ffd0c4;
+    background: rgba(255, 125, 92, 0.12);
+  }
+
+  .after .state-tag {
+    color: #c8fbff;
+    background: rgba(112, 228, 255, 0.12);
+  }
+
+  .state-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 18px;
+    line-height: 1.3;
+  }
+
+  .state-list {
+    list-style: none;
+    display: grid;
+    gap: 12px;
+  }
+
+  .state-list li {
+    position: relative;
+    padding-left: 18px;
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 14px;
+  }
+
+  .state-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.55;
+  }
+
+  .delta-card {
+    border-radius: 28px;
+    border: 1px dashed rgba(132, 196, 255, 0.28);
+    padding: 22px 18px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(17, 34, 54, 0.64), rgba(9, 18, 30, 0.86));
+    position: relative;
+    overflow: hidden;
+  }
+
+  .delta-card::before {
+    content: '';
+    position: absolute;
+    inset: 16px;
+    border-radius: 22px;
+    background: radial-gradient(circle at center, rgba(112, 228, 255, 0.12), transparent 65%);
+  }
+
+  .delta-icon {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(112, 228, 255, 0.16), rgba(255, 184, 77, 0.22));
+    display: grid;
+    place-items: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #ffffff;
+    z-index: 1;
+  }
+
+  .delta-text {
+    position: relative;
+    z-index: 1;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  .roadmap {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .roadmap-card {
+    border-radius: 26px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .roadmap-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 20%, rgba(255, 255, 255, 0.04) 100%);
+    pointer-events: none;
+  }
+
+  .roadmap-top {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .roadmap-step {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.24);
+    letter-spacing: -0.06em;
+  }
+
+  .roadmap-time {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  .roadmap-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .roadmap-copy {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .roadmap-result {
+    display: inline-flex;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(112, 228, 255, 0.08);
+    border: 1px solid rgba(112, 228, 255, 0.14);
+    font-size: 12px;
+    color: #d5fbff;
+  }
+
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .module-card {
+    border-radius: 28px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .module-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 24px;
+    bottom: 24px;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .module-card:nth-child(1)::before { background: linear-gradient(180deg, #70e4ff, #26c6b0); }
+  .module-card:nth-child(2)::before { background: linear-gradient(180deg, #ffb84d, #ff7d5c); }
+  .module-card:nth-child(3)::before { background: linear-gradient(180deg, #c5f36b, #70e4ff); }
+  .module-card:nth-child(4)::before { background: linear-gradient(180deg, #70e4ff, #ffb84d); }
+  .module-card:nth-child(5)::before { background: linear-gradient(180deg, #26c6b0, #c5f36b); }
+  .module-card:nth-child(6)::before { background: linear-gradient(180deg, #ff7d5c, #ffb84d); }
+
+  .module-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .module-index {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    color: rgba(255, 255, 255, 0.18);
+  }
+
+  .module-title {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  .module-subtitle {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--dim);
+  }
+
+  .module-list {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .module-list li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  .module-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, var(--cyan), var(--amber));
+    opacity: 0.9;
+  }
+
+  .module-outcome {
+    display: inline-flex;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #f8fcff;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+
+  .panel-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .panel {
+    border-radius: 28px;
+    padding: 26px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .panel-copy {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .panel-list {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+
+  .panel-list li {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    font-size: 14px;
+    line-height: 1.7;
+    color: #f8fcff;
+  }
+
+  .cta-wrap {
+    padding-bottom: 56px;
+  }
+
+  .cta-card {
+    border-radius: 34px;
+    margin: 0 48px 0;
+    padding: 34px;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at top left, rgba(112, 228, 255, 0.16), transparent 28%),
+      radial-gradient(circle at bottom right, rgba(255, 184, 77, 0.18), transparent 32%),
+      linear-gradient(140deg, rgba(11, 28, 46, 0.96), rgba(8, 18, 30, 0.98));
+  }
+
+  .cta-card::before {
+    content: '';
+    position: absolute;
+    inset: -40% auto auto 58%;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    animation: rotate 22s linear infinite;
+  }
+
+  .cta-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    gap: 24px;
+    align-items: center;
+  }
+
+  .cta-title {
+    font-size: clamp(30px, 3.6vw, 46px);
+    line-height: 1.15;
+    font-weight: 900;
+    margin-bottom: 14px;
+    letter-spacing: -0.04em;
+  }
+
+  .cta-copy {
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--muted);
+    max-width: 620px;
+  }
+
+  .cta-points {
+    display: grid;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .cta-points li {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #f8fcff;
+    font-size: 14px;
+  }
+
+  .cta-points li::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--amber));
+    box-shadow: 0 0 14px rgba(112, 228, 255, 0.4);
+  }
+
+  .signup-box {
+    padding: 22px;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .signup-price {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 50px;
+    line-height: 0.92;
+    letter-spacing: -0.08em;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .signup-price small {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 0.32em;
+    font-weight: 700;
+    margin-left: 6px;
+    letter-spacing: 0;
+  }
+
+  .signup-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  .signup-list {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .signup-list li {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #f7fbff;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .footer {
+    padding: 26px 48px 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--dim);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .footer strong {
+    color: #f8fcff;
+    font-weight: 700;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .delay-1 { transition-delay: 0.08s; }
+  .delay-2 { transition-delay: 0.16s; }
+  .delay-3 { transition-delay: 0.24s; }
+  .delay-4 { transition-delay: 0.32s; }
+
+  @media (max-width: 1040px) {
+    .hero,
+    .cta-grid,
+    .transformation {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-stage {
+      min-height: 560px;
+    }
+
+    .info-band,
+    .panel-grid,
+    .roadmap {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .module-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .delta-card {
+      min-height: 180px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    body {
+      padding: 18px 10px 36px;
+    }
+
+    .hero,
+    .section,
+    .info-band,
+    .cta-card,
+    .footer {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .hero {
+      padding-top: 22px;
+      gap: 18px;
+    }
+
+    .hero::after {
+      inset: auto 20px 0;
+    }
+
+    .hero-copy,
+    .hero-stage,
+    .state-card,
+    .roadmap-card,
+    .module-card,
+    .panel,
+    .cta-card,
+    .metric-card {
+      border-radius: 24px;
+    }
+
+    .hero-copy {
+      padding: 24px 20px;
+    }
+
+    .hero-stage {
+      padding: 20px;
+      min-height: 520px;
+    }
+
+    .signal-card {
+      margin-top: 190px;
+    }
+
+    .section {
+      padding-bottom: 34px;
+    }
+
+    .section-head {
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .section-note {
+      margin-top: 12px;
+      max-width: none;
+    }
+
+    .hero-meta,
+    .info-band,
+    .roadmap,
+    .panel-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .tool-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .cta-row,
+    .chip-row {
+      gap: 10px;
+    }
+
+    .btn {
+      width: 100%;
+    }
+
+    .module-top {
+      flex-direction: column;
+    }
+
+    .cta-card {
+      margin: 0 20px;
+      padding-top: 26px;
+      padding-bottom: 26px;
+    }
+
+    .footer {
+      flex-direction: column;
+      align-items: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page-shell">
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <div class="ambient ambient-c"></div>
+
+  <main class="poster" id="top">
+    <section class="hero">
+      <div class="hero-copy reveal is-visible">
+        <div class="eyebrow">2026 AI Bootcamp</div>
+        <h1 class="hero-title">
+          <span class="line-a">一个月，重做你的</span>
+          <span class="line-b">AI 工作系统</span>
+        </h1>
+        <p class="hero-subtitle">
+          这不是一门“听完就结束”的概念课，而是一场 <strong>你亲自上手、我逐步带练</strong> 的 AI 实战训练营。
+          从账号、环境、工具，到 AI Coding、自动化、工作流与真实项目，系统把你从零基础带到真正能把 AI 用进工作的人。
+        </p>
+
+        <div class="chip-row">
+          <span class="chip">零基础可进入</span>
+          <span class="chip">6 大核心模块</span>
+          <span class="chip">真实项目驱动</span>
+          <span class="chip">工具矩阵协同</span>
+          <span class="chip">方法论 + 执行力</span>
+        </div>
+
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#signup">关注报名信息</a>
+          <a class="btn btn-secondary" href="#curriculum">查看完整课程结构</a>
+        </div>
+
+        <div class="hero-meta">
+          <div class="meta-card">
+            <div class="meta-label">训练方式</div>
+            <div class="meta-value">你来动手，我来指导<br>按模块逐步跑通</div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-label">核心目标</div>
+            <div class="meta-value">从“会问 AI”升级到<br>“能驾驭 AI 完成复杂任务”</div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-label">适合人群</div>
+            <div class="meta-value">想把 AI 真正融入工作<br>而不是只停留在试玩层面的人</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-stage reveal delay-1 is-visible">
+        <div class="stage-grid"></div>
+        <div class="orbit orbit-a"></div>
+        <div class="orbit orbit-b"></div>
+
+        <div class="glass-card signal-card">
+          <div class="signal-header">
+            <div class="signal-title">能力跃迁仪表盘</div>
+            <div class="signal-badge">Live Progress</div>
+          </div>
+
+          <div class="line-chart" aria-hidden="true">
+            <svg viewBox="0 0 360 120" fill="none">
+              <path d="M0 92H360" stroke="rgba(255,255,255,0.08)" stroke-dasharray="4 6"/>
+              <path d="M0 65H360" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 6"/>
+              <path d="M0 38H360" stroke="rgba(255,255,255,0.05)" stroke-dasharray="4 6"/>
+              <path d="M18 94C50 91 64 82 92 78C130 72 138 55 178 49C218 43 236 65 270 53C302 41 320 22 342 18" stroke="url(#signal-line)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M18 94C50 91 64 82 92 78C130 72 138 55 178 49C218 43 236 65 270 53C302 41 320 22 342 18V120H18V94Z" fill="url(#signal-fill)" opacity="0.45"/>
+              <circle cx="342" cy="18" r="7" fill="#ffb84d"/>
+              <defs>
+                <linearGradient id="signal-line" x1="18" y1="94" x2="342" y2="18" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#70e4ff"/>
+                  <stop offset="0.55" stop-color="#c5f36b"/>
+                  <stop offset="1" stop-color="#ffb84d"/>
+                </linearGradient>
+                <linearGradient id="signal-fill" x1="180" y1="18" x2="180" y2="120" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#70e4ff"/>
+                  <stop offset="1" stop-color="#70e4ff" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <div class="log-list">
+            <div class="log-row">
+              <span><strong>Week 1</strong> 打通基础设施与账号环境</span>
+              <span>启动</span>
+            </div>
+            <div class="log-row">
+              <span><strong>Week 2</strong> 建立模型选择与 Prompt 方法论</span>
+              <span>升级</span>
+            </div>
+            <div class="log-row">
+              <span><strong>Week 3</strong> 把 Claude Code / Codex 用进真实任务</span>
+              <span>实战</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card tool-board">
+          <div class="board-title">训练营交付结果</div>
+          <div class="tool-grid">
+            <div class="mini-stat">
+              <span class="mini-label">工具能力</span>
+              <span class="mini-value">Tool Stack</span>
+            </div>
+            <div class="mini-stat">
+              <span class="mini-label">实战项目</span>
+              <span class="mini-value">Projects</span>
+            </div>
+            <div class="mini-stat">
+              <span class="mini-label">工作流设计</span>
+              <span class="mini-value">Workflow</span>
+            </div>
+            <div class="mini-stat">
+              <span class="mini-label">系统化思维</span>
+              <span class="mini-value">System</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="info-band">
+      <article class="metric-card reveal delay-1">
+        <div class="metric-label">训练周期</div>
+        <div class="metric-value">
+          <span class="prefix"></span><span class="countup" data-target="30">0</span><span class="suffix">天</span>
+        </div>
+        <p class="metric-copy">不是拖拖拉拉的“长期陪伴”，而是一个月内把核心路径高密度跑通。</p>
+      </article>
+
+      <article class="metric-card reveal delay-2">
+        <div class="metric-label">课程结构</div>
+        <div class="metric-value">
+          <span class="countup" data-target="6">0</span><span class="suffix">大模块</span>
+        </div>
+        <p class="metric-copy">从前置环境、认知框架，到 AI Coding、部署和全场景应用，形成闭环。</p>
+      </article>
+
+      <article class="metric-card reveal delay-3">
+        <div class="metric-label">报名费用</div>
+        <div class="metric-value">
+          <span class="prefix">¥</span><span class="countup" data-target="3999">0</span>
+        </div>
+        <p class="metric-copy">买的不是一堆概念，而是已经被反复验证过的 AI 实战方法、路径与带练。</p>
+      </article>
+
+      <article class="metric-card reveal delay-4">
+        <div class="metric-label">核心产出</div>
+        <div class="metric-value">
+          <span class="countup" data-target="3">0</span><span class="suffix">类结果</span>
+        </div>
+        <p class="metric-copy">工具掌控力、项目落地力、工作流系统化能力，三条线一起建立。</p>
+      </article>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">Why This Camp</div>
+          <h2 class="section-title">不是让你“学一点 AI”，而是让 AI <em>真正进入你的工作系统</em></h2>
+        </div>
+        <p class="section-note">多数人不是被“不会用 AI”卡住，而是被环境、认知、方法和落地路径同时卡住。这个训练营解决的是整条链路。</p>
+      </div>
+
+      <div class="transformation">
+        <article class="state-card before reveal delay-1">
+          <div class="state-tag">Before</div>
+          <h3 class="state-title">很多人现在的状态</h3>
+          <ul class="state-list">
+            <li>账号、网络、支付、环境配置总是卡在第一步。</li>
+            <li>知道 AI 很强，但不知道什么场景该用哪个模型、哪个工具。</li>
+            <li>提示词全靠碰运气，任务一复杂就完全失控。</li>
+            <li>看过很多内容，却没有亲手跑通过一个可重复使用的工作流。</li>
+          </ul>
+        </article>
+
+        <div class="delta-card reveal delay-2">
+          <div class="delta-icon">→</div>
+          <p class="delta-text">一个月里，把“知道一点点”推进到“能独立拆解任务、调用工具、跑通项目、形成系统”。</p>
+        </div>
+
+        <article class="state-card after reveal delay-3">
+          <div class="state-tag">After</div>
+          <h3 class="state-title">你将获得的变化</h3>
+          <ul class="state-list">
+            <li>拥有稳定的 AI 工具环境和清晰的工具矩阵，不再反复踩坑。</li>
+            <li>知道如何选择模型、写指令、拆任务，让 AI 成为执行层。</li>
+            <li>能把 Claude Code、Codex、AI IDE 用进真实项目和日常工作。</li>
+            <li>开始用自动化与工作流思维重新定义“你一个人能做多少事”的上限。</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">30-Day Journey</div>
+          <h2 class="section-title">30 天不是按知识点堆砌，而是按 <em>能力形成顺序</em> 推进</h2>
+        </div>
+        <p class="section-note">每个阶段都对应一个更清晰的目标：从打通环境，到建立认知，再到让 AI 进入真实工作流。</p>
+      </div>
+
+      <div class="roadmap">
+        <article class="roadmap-card reveal delay-1">
+          <div class="roadmap-top">
+            <span class="roadmap-step">01</span>
+            <span class="roadmap-time">Day 1-3</span>
+          </div>
+          <h3 class="roadmap-title">基础设施搭建</h3>
+          <p class="roadmap-copy">把账号、网络、支付、设备环境这些最容易劝退人的问题一次性清掉。</p>
+          <div class="roadmap-result">结果：稳定可用的 AI 工作环境</div>
+        </article>
+
+        <article class="roadmap-card reveal delay-2">
+          <div class="roadmap-top">
+            <span class="roadmap-step">02</span>
+            <span class="roadmap-time">Day 4-7</span>
+          </div>
+          <h3 class="roadmap-title">AI 认知重塑</h3>
+          <p class="roadmap-copy">建立模型能力边界、任务匹配逻辑和 Prompt 方法论，升级你的思维操作系统。</p>
+          <div class="roadmap-result">结果：知道什么任务该怎么交给 AI</div>
+        </article>
+
+        <article class="roadmap-card reveal delay-3">
+          <div class="roadmap-top">
+            <span class="roadmap-step">03</span>
+            <span class="roadmap-time">Day 8-14</span>
+          </div>
+          <h3 class="roadmap-title">Claude Code 深度实战</h3>
+          <p class="roadmap-copy">从安装、配置到项目级协作，把最强 AI 编程工具真正用进工程流程。</p>
+          <div class="roadmap-result">结果：拥有项目级 AI 协作能力</div>
+        </article>
+
+        <article class="roadmap-card reveal delay-1">
+          <div class="roadmap-top">
+            <span class="roadmap-step">04</span>
+            <span class="roadmap-time">Day 15-19</span>
+          </div>
+          <h3 class="roadmap-title">多工具协同</h3>
+          <p class="roadmap-copy">理解 Codex、Claude Code、Cursor、Windsurf 的分工与配合，搭起你的工具矩阵。</p>
+          <div class="roadmap-result">结果：工具不再彼此冲突，而是协同增效</div>
+        </article>
+
+        <article class="roadmap-card reveal delay-2">
+          <div class="roadmap-top">
+            <span class="roadmap-step">05</span>
+            <span class="roadmap-time">Day 20-26</span>
+          </div>
+          <h3 class="roadmap-title">AI Coding 全流程</h3>
+          <p class="roadmap-copy">从想法、生成、调试、重构到部署，完整跑一遍“AI 帮你做项目”的闭环。</p>
+          <div class="roadmap-result">结果：具备从需求到交付的实操经验</div>
+        </article>
+
+        <article class="roadmap-card reveal delay-3">
+          <div class="roadmap-top">
+            <span class="roadmap-step">06</span>
+            <span class="roadmap-time">Day 27-30</span>
+          </div>
+          <h3 class="roadmap-title">AI 全场景应用</h3>
+          <p class="roadmap-copy">把 AI 扩展到写作、学习、数据、办公自动化，让它从工具变成你的日常基础设施。</p>
+          <div class="roadmap-result">结果：AI 真正融入每天的工作与学习</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="curriculum">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">Full Curriculum</div>
+          <h2 class="section-title">六大模块，覆盖从入门卡点到项目交付的 <em>完整路径</em></h2>
+        </div>
+        <p class="section-note">课程不是把知识分散列出来，而是每个模块都对准一个现实问题：怎么开始、怎么判断、怎么执行、怎么落地。</p>
+      </div>
+
+      <div class="module-grid">
+        <article class="module-card reveal delay-1">
+          <div class="module-top">
+            <div>
+              <h3 class="module-title">基础设施搭建</h3>
+              <p class="module-subtitle">扫清使用 AI 的第一层障碍，让所有前置条件稳定可用。</p>
+            </div>
+            <div class="module-index">01</div>
+          </div>
+          <ul class="module-list">
+            <li>主流 AI 模型账号注册、配置与使用策略</li>
+            <li>合理合法的网络环境方案与长期稳定使用思路</li>
+            <li>订阅、支付、多平台设备协同配置</li>
+            <li>统一你的 AI 工作环境，减少工具摩擦</li>
+          </ul>
+          <div class="module-outcome">Outcome: 能随时开始，而不是一直卡在准备阶段</div>
+        </article>
+
+        <article class="module-card reveal delay-2">
+          <div class="module-top">
+            <div>
+              <h3 class="module-title">AI 认知重塑</h3>
+              <p class="module-subtitle">把“感觉 AI 很强”变成清晰的判断标准和方法框架。</p>
+            </div>
+            <div class="module-index">02</div>
+          </div>
+          <ul class="module-list">
+            <li>主流模型的能力边界、短板与适用场景</li>
+            <li>按任务特征选择模型和工具的决策方式</li>
+            <li>Prompt Engineering 的结构化写法</li>
+            <li>AI 时代的学习路径与能力模型</li>
+          </ul>
+          <div class="module-outcome">Outcome: 知道为什么这样用，而不只是跟着别人照做</div>
+        </article>
+
+        <article class="module-card reveal delay-3">
+          <div class="module-top">
+            <div>
+              <h3 class="module-title">Claude Code 深度实战</h3>
+              <p class="module-subtitle">把 AI 编程从“体验一下”推进到项目级、工程级的协作能力。</p>
+            </div>
+            <div class="module-index">03</div>
+          </div>
+          <ul class="module-list">
+            <li>从安装到精通的完整上手路径</li>
+            <li>CLAUDE.md 配置策略与项目级协作模式</li>
+            <li>MCP 工具链扩展与第三方集成</li>
+            <li>多文件编辑、调试、重构和排错工作流</li>
+          </ul>
+          <div class="module-outcome">Outcome: 让 AI 真的读懂你的工程并参与交付</div>
+        </article>
+
+        <article class="module-card reveal delay-1">
+          <div class="module-top">
+            <div>
+              <h3 class="module-title">Codex 与多工具协同</h3>
+              <p class="module-subtitle">不是只会用一个工具，而是根据任务选择最合适的组合拳。</p>
+            </div>
+            <div class="module-index">04</div>
+          </div>
+          <ul class="module-list">
+            <li>OpenAI Codex 的核心场景与高效使用方式</li>
+            <li>Claude Code 与 Codex 的差异化分工</li>
+            <li>Cursor、Windsurf 等 AI IDE 的选型逻辑</li>
+            <li>多工具协同的高效率工作流设计</li>
+          </ul>
+          <div class="module-outcome">Outcome: 形成可复制的 AI 工具矩阵</div>
+        </article>
+
+        <article class="module-card reveal delay-2">
+          <div class="module-top">
+            <div>
+              <h3 class="module-title">AI Coding 全流程</h3>
+              <p class="module-subtitle">从想法到能运行的产品，把“我不会写代码”变成可操作的项目能力。</p>
+            </div>
+            <div class="module-index">05</div>
+          </div>
+          <ul class="module-list">
+            <li>零基础用 AI 写出完整可运行程序</li>
+            <li>Web、自动化、数据处理等实战项目</li>
+            <li>代码调试、问题排查和重构的 AI 方法</li>
+            <li>版本管理、部署与交付基础</li>
+          </ul>
+          <div class="module-outcome">Outcome: 从“能生成代码”升级到“能做出东西”</div>
+        </article>
+
+        <article class="module-card reveal delay-3">
+          <div class="module-top">
+            <div>
+              <h3 class="module-title">AI 全场景应用</h3>
+              <p class="module-subtitle">把 AI 带进写作、学习、分析和办公，不只停留在编程场景。</p>
+            </div>
+            <div class="module-index">06</div>
+          </div>
+          <ul class="module-list">
+            <li>AI 写作、翻译、内容创作的高效方法</li>
+            <li>数据分析与可视化的实际工作流</li>
+            <li>用 AI 快速学习新领域和新工具</li>
+            <li>文档、邮件、日程等办公自动化方案</li>
+          </ul>
+          <div class="module-outcome">Outcome: AI 从偶尔打开的网页变成每天的底层设施</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-kicker">Who / What / How</div>
+          <h2 class="section-title">这期训练营最重要的，不是“内容很多”，而是 <em>方向明确、结果明确、方式明确</em></h2>
+        </div>
+        <p class="section-note">如果你只想听概念，市面上已经有太多免费的内容。但如果你要的是可执行、可落地、可迁移的能力，这一套结构会更有效。</p>
+      </div>
+
+      <div class="panel-grid">
+        <article class="panel reveal delay-1">
+          <h3 class="panel-title">适合谁</h3>
+          <p class="panel-copy">适合想真正把 AI 用进工作的人，而不是只想“了解一下”或偶尔试试玩的人。</p>
+          <ul class="panel-list">
+            <li>想系统掌握 AI 工具但总被环境和信息差卡住的人</li>
+            <li>想用 AI 提升工作效率、自动化重复任务的人</li>
+            <li>想学 AI Coding，但不一定要成为程序员的人</li>
+          </ul>
+        </article>
+
+        <article class="panel reveal delay-2">
+          <h3 class="panel-title">你会带走什么</h3>
+          <p class="panel-copy">不是一堆零散技巧，而是能够迁移到你自己工作中的框架与执行力。</p>
+          <ul class="panel-list">
+            <li>一套稳定的 AI 环境和工具矩阵</li>
+            <li>一条从需求拆解到执行落地的 AI 协作路径</li>
+            <li>至少一套能反复复用的自动化或工作流思维</li>
+          </ul>
+        </article>
+
+        <article class="panel reveal delay-3">
+          <h3 class="panel-title">训练方式</h3>
+          <p class="panel-copy">核心原则只有一个：重点始终是你的双手真正碰到键盘，而不是只在脑子里觉得自己“懂了”。</p>
+          <ul class="panel-list">
+            <li>按模块推进，跟着路径一步步跑通</li>
+            <li>强调亲手操作、亲自验证、亲自修正</li>
+            <li>把理论压缩到最少，把真正的实战和方法论放到前台</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="cta-wrap" id="signup">
+      <div class="cta-card reveal">
+        <div class="cta-grid">
+          <div>
+            <div class="section-kicker">Next Step</div>
+            <h2 class="cta-title">一个月，把你从“知道 AI 很厉害”推进到 <span style="color: var(--amber);">“能稳定地让 AI 为你工作”</span></h2>
+            <p class="cta-copy">
+              我会把自己日常高频使用的 AI 技术、工具、方法与实战路径系统讲清楚。目标不是让你听完感觉很燃，而是让你带着明确能力离开：会判断、会拆解、会执行、会交付。
+            </p>
+            <ul class="cta-points">
+              <li>实战驱动，不做纯 PPT 讲解</li>
+              <li>从零基础到真实项目，路径完整</li>
+              <li>代表当前主流且高水准的 AI 应用实践</li>
+            </ul>
+          </div>
+
+          <aside class="signup-box">
+            <div class="signup-price">¥3999<small>/ 一期</small></div>
+            <p class="signup-text">名额会控制在能够保证指导质量的范围内。如果你确定想认真学、认真做，这会比零散地自己摸索快很多。</p>
+            <ul class="signup-list">
+              <li>周期：30 天高强度训练</li>
+              <li>结构：6 大模块逐步递进</li>
+              <li>目标：让 AI 成为你的日常工作基础设施</li>
+            </ul>
+            <a class="btn btn-primary" href="#top">关注后续报名信息</a>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span><strong>AI Bootcamp 2026</strong> · 实战驱动 · 你来动手，我来指导</span>
+      <span>Optimized Poster Page</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+  (function () {
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var revealItems = document.querySelectorAll('.reveal');
+    var counterItems = document.querySelectorAll('.countup');
+
+    if (!prefersReduced && 'IntersectionObserver' in window) {
+      var revealObserver = new IntersectionObserver(function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.18 });
+
+      revealItems.forEach(function (item) {
+        revealObserver.observe(item);
+      });
+
+      var counterObserver = new IntersectionObserver(function (entries, observer) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+
+          var el = entry.target;
+          var target = parseInt(el.getAttribute('data-target') || '0', 10);
+          var duration = 1400;
+          var start = 0;
+          var startTime = null;
+
+          function tick(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var progress = Math.min((timestamp - startTime) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            var value = Math.round(start + (target - start) * eased);
+            el.textContent = target >= 1000 ? value.toLocaleString('zh-CN') : String(value);
+            if (progress < 1) {
+              requestAnimationFrame(tick);
+            }
+          }
+
+          requestAnimationFrame(tick);
+          observer.unobserve(el);
+        });
+      }, { threshold: 0.6 });
+
+      counterItems.forEach(function (item) {
+        counterObserver.observe(item);
+      });
+    } else {
+      revealItems.forEach(function (item) {
+        item.classList.add('is-visible');
+      });
+      counterItems.forEach(function (item) {
+        var target = parseInt(item.getAttribute('data-target') || '0', 10);
+        item.textContent = target >= 1000 ? target.toLocaleString('zh-CN') : String(target);
+      });
+    }
+  }());
+</script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1600">
+<title>封面图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1600px;
+    height: 640px;
+    overflow: hidden;
+    font-family: -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: #0a0e1a;
+    position: relative;
+  }
+
+  /* 背景渐变层 */
+  .bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% 60%, rgba(59, 130, 246, 0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 700px 400px at 85% 30%, rgba(168, 85, 247, 0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 300px at 50% 80%, rgba(20, 184, 166, 0.08) 0%, transparent 70%),
+      linear-gradient(160deg, #0a0e1a 0%, #111827 40%, #0f172a 100%);
+  }
+
+  /* 网格背景 */
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+  }
+
+  /* 时间线 */
+  .timeline {
+    position: absolute;
+    top: 520px;
+    left: 120px;
+    right: 120px;
+    height: 2px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(59, 130, 246, 0.5) 10%,
+      rgba(139, 92, 246, 0.5) 40%,
+      rgba(20, 184, 166, 0.5) 70%,
+      rgba(251, 191, 36, 0.5) 90%,
+      transparent 100%
+    );
+  }
+
+  /* 时间线上的节点 */
+  .node {
+    position: absolute;
+    top: 506px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .node-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: #0a0e1a;
+  }
+  .node-year {
+    margin-top: 12px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .node-name {
+    margin-top: 4px;
+    font-size: 13px;
+    opacity: 0.5;
+    letter-spacing: 0.5px;
+  }
+
+  .node:nth-child(1) { left: 160px; }
+  .node:nth-child(1) .node-dot { border-color: #3b82f6; box-shadow: 0 0 12px rgba(59,130,246,0.4); }
+  .node:nth-child(1) .node-year { color: #3b82f6; }
+  .node:nth-child(1) .node-name { color: #93c5fd; }
+
+  .node:nth-child(2) { left: 520px; }
+  .node:nth-child(2) .node-dot { border-color: #8b5cf6; box-shadow: 0 0 12px rgba(139,92,246,0.4); }
+  .node:nth-child(2) .node-year { color: #8b5cf6; }
+  .node:nth-child(2) .node-name { color: #c4b5fd; }
+
+  .node:nth-child(3) { left: 880px; }
+  .node:nth-child(3) .node-dot { border-color: #14b8a6; box-shadow: 0 0 12px rgba(20,184,166,0.4); }
+  .node:nth-child(3) .node-year { color: #14b8a6; }
+  .node:nth-child(3) .node-name { color: #99f6e4; }
+
+  .node:nth-child(4) { left: 1240px; }
+  .node:nth-child(4) .node-dot { border-color: #f59e0b; box-shadow: 0 0 12px rgba(245,158,11,0.4); }
+  .node:nth-child(4) .node-year { color: #f59e0b; }
+  .node:nth-child(4) .node-name { color: #fcd34d; }
+
+  /* 主标题区 */
+  .content {
+    position: absolute;
+    top: 80px;
+    left: 120px;
+    right: 120px;
+  }
+
+  .subtitle-top {
+    font-size: 18px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-bottom: 32px;
+  }
+
+  .title-main {
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 40%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .title-sub {
+    margin-top: 28px;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* 四个关键词标签 */
+  .keywords {
+    position: absolute;
+    top: 370px;
+    left: 120px;
+    display: flex;
+    gap: 20px;
+  }
+  .kw {
+    padding: 10px 28px;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    border: 1px solid;
+  }
+  .kw:nth-child(1) {
+    color: #93c5fd;
+    border-color: rgba(59,130,246,0.3);
+    background: rgba(59,130,246,0.08);
+  }
+  .kw:nth-child(2) {
+    color: #c4b5fd;
+    border-color: rgba(139,92,246,0.3);
+    background: rgba(139,92,246,0.08);
+  }
+  .kw:nth-child(3) {
+    color: #99f6e4;
+    border-color: rgba(20,184,166,0.3);
+    background: rgba(20,184,166,0.08);
+  }
+  .kw:nth-child(4) {
+    color: #fcd34d;
+    border-color: rgba(245,158,11,0.3);
+    background: rgba(245,158,11,0.08);
+  }
+
+  /* 右下装饰 */
+  .decoration {
+    position: absolute;
+    right: 80px;
+    top: 100px;
+    width: 280px;
+    height: 280px;
+    opacity: 0.06;
+  }
+  .decoration svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="grid"></div>
+
+  <!-- 右上角装饰：抽象的连接图案 -->
+  <div class="decoration">
+    <svg viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="140" cy="140" r="120" stroke="white" stroke-width="1"/>
+      <circle cx="140" cy="140" r="80" stroke="white" stroke-width="1"/>
+      <circle cx="140" cy="140" r="40" stroke="white" stroke-width="1"/>
+      <line x1="140" y1="20" x2="140" y2="260" stroke="white" stroke-width="0.5"/>
+      <line x1="20" y1="140" x2="260" y2="140" stroke="white" stroke-width="0.5"/>
+      <line x1="55" y1="55" x2="225" y2="225" stroke="white" stroke-width="0.5"/>
+      <line x1="225" y1="55" x2="55" y2="225" stroke="white" stroke-width="0.5"/>
+    </svg>
+  </div>
+
+  <div class="content">
+    <div class="subtitle-top">Interdisciplinary Methodology</div>
+    <div class="title-main">从笛卡尔到图灵</div>
+    <div class="title-sub">四种底层能力的跨学科方法论</div>
+  </div>
+
+  <div class="keywords">
+    <span class="kw">拆解问题</span>
+    <span class="kw">精确表达</span>
+    <span class="kw">构建系统</span>
+    <span class="kw">自动化流程</span>
+  </div>
+
+  <!-- 时间线 -->
+  <div class="timeline"></div>
+  <div class="node">
+    <div class="node-dot"></div>
+    <div class="node-year">1637</div>
+    <div class="node-name">Descartes</div>
+  </div>
+  <div class="node">
+    <div class="node-dot"></div>
+    <div class="node-year">1921</div>
+    <div class="node-name">Wittgenstein</div>
+  </div>
+  <div class="node">
+    <div class="node-dot"></div>
+    <div class="node-year">1948</div>
+    <div class="node-name">Bertalanffy</div>
+  </div>
+  <div class="node">
+    <div class="node-dot"></div>
+    <div class="node-year">1936</div>
+    <div class="node-name">Turing</div>
+  </div>
+</body>
+</html>
