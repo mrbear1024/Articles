@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub 高频功能实用指南</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0d1117;
+    --bg-card: #161b22;
+    --bg-card-alt: #1c2333;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --accent5: #ff7b72;
+    --accent6: #79c0ff;
+    --border: #30363d;
+    --gradient1: linear-gradient(135deg, #58a6ff 0%, #3fb950 100%);
+    --gradient2: linear-gradient(135deg, #f78166 0%, #d2a8ff 100%);
+  }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ===== Slide system ===== */
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 80px;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    visibility: hidden;
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    z-index: 2;
+  }
+
+  .slide.exit-left {
+    opacity: 0; visibility: visible; z-index: 1;
+    animation: slideOutLeft 0.45s ease forwards;
+  }
+  .slide.exit-right {
+    opacity: 0; visibility: visible; z-index: 1;
+    animation: slideOutRight 0.45s ease forwards;
+  }
+  .slide.enter-from-right { animation: slideInFromRight 0.45s ease forwards; }
+  .slide.enter-from-left  { animation: slideInFromLeft 0.45s ease forwards; }
+
+  @keyframes slideOutLeft {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(-60px); }
+  }
+  @keyframes slideOutRight {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(60px); }
+  }
+  @keyframes slideInFromRight {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInFromLeft {
+    from { opacity: 0; transform: translateX(-60px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ===== Background decorations ===== */
+  .bg-grid {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-image:
+      linear-gradient(rgba(48,54,61,0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(48,54,61,0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
+  }
+  .bg-glow {
+    position: absolute;
+    width: 500px; height: 500px; border-radius: 50%;
+    filter: blur(120px); opacity: 0.12;
+    pointer-events: none; z-index: 0;
+  }
+  .slide > *:not(.bg-grid):not(.bg-glow) { position: relative; z-index: 1; }
+
+  /* ===== Typography ===== */
+  h1 { font-size: 3.2em; font-weight: 900; line-height: 1.2; margin-bottom: 20px; letter-spacing: -0.02em; }
+  h2 { font-size: 2.4em; font-weight: 700; line-height: 1.3; margin-bottom: 16px; }
+  h3 { font-size: 1.4em; font-weight: 500; color: var(--text-dim); margin-bottom: 30px; }
+  p, li { font-size: 1.15em; line-height: 1.8; }
+
+  .text-dim    { color: var(--text-dim); }
+  .text-accent { color: var(--accent); }
+  .text-green  { color: var(--accent2); }
+  .text-orange { color: var(--accent3); }
+  .text-purple { color: var(--accent4); }
+
+  code, .code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(110,118,129,0.15);
+    padding: 2px 8px; border-radius: 6px;
+    font-size: 0.9em; color: var(--accent3);
+  }
+
+  .gradient-text {
+    background: var(--gradient1);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ===== Code block ===== */
+  .code-block {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 30px;
+    font-size: 1.05em; line-height: 1.9;
+    text-align: left; width: 100%; max-width: 700px;
+  }
+  .code-block .prompt  { color: var(--accent2); }
+  .code-block .cmd     { color: var(--text); }
+  .code-block .flag    { color: var(--accent3); }
+  .code-block .string  { color: var(--accent6); }
+  .code-block .comment { color: var(--text-dim); }
+  .code-block .key     { color: var(--accent); }
+  .code-block .val     { color: var(--accent4); }
+
+  /* ===== Layout helpers ===== */
+  .row   { display: flex; gap: 30px; width: 100%; max-width: 1200px; align-items: stretch; }
+  .col   { flex: 1; display: flex; flex-direction: column; }
+  .center { text-align: center; align-items: center; }
+  .gap-20 { gap: 20px; } .gap-40 { gap: 40px; }
+  .mt-20  { margin-top: 20px; } .mt-40 { margin-top: 40px; }
+  .full-w { width: 100%; max-width: 1200px; }
+
+  /* ===== Card ===== */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 30px; text-align: left;
+  }
+  .card-title {
+    font-size: 1.2em; font-weight: 700; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card p { font-size: 1em; color: var(--text-dim); line-height: 1.7; }
+  .icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.3em; flex-shrink: 0;
+  }
+
+  /* ===== Badge ===== */
+  .badge {
+    display: inline-block; padding: 6px 16px; border-radius: 20px;
+    font-size: 0.85em; font-weight: 500; margin-bottom: 16px;
+  }
+  .badge-blue   { background: rgba(88,166,255,0.15);  color: var(--accent); }
+  .badge-green  { background: rgba(63,185,80,0.15);   color: var(--accent2); }
+  .badge-orange { background: rgba(247,129,102,0.15);  color: var(--accent3); }
+  .badge-purple { background: rgba(210,168,255,0.15);  color: var(--accent4); }
+
+  /* ===== Progress & Navigation ===== */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: var(--gradient1); transition: width 0.4s ease; z-index: 100;
+  }
+  .page-indicator {
+    position: fixed; bottom: 30px; right: 40px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+    color: var(--text-dim); z-index: 100;
+  }
+  .nav-dots {
+    position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 8px; z-index: 100;
+  }
+  .nav-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--border);
+    cursor: pointer; transition: all 0.3s ease;
+  }
+  .nav-dot.active {
+    background: var(--accent); box-shadow: 0 0 8px rgba(88,166,255,0.4);
+  }
+  .keyboard-hint {
+    position: fixed; bottom: 30px; left: 40px;
+    font-size: 0.8em; color: var(--text-dim);
+    display: flex; align-items: center; gap: 8px; z-index: 100;
+  }
+  .key {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 28px; height: 26px; padding: 0 6px;
+    border: 1px solid var(--border); border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+    background: var(--bg-card);
+  }
+
+  /* ===== Back home ===== */
+  .back-home {
+    position: fixed; top: 20px; left: 20px; z-index: 100;
+    display: inline-flex; align-items: center; gap: 5px;
+    color: var(--text-dim); text-decoration: none;
+    font-size: 0.78em; padding: 5px 12px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--bg-card); transition: all 0.2s;
+  }
+  .back-home:hover { color: var(--accent); border-color: var(--accent); background: rgba(88,166,255,0.08); }
+  .back-home svg { width: 14px; height: 14px; }
+
+  /* ===== Feature grid ===== */
+  .gh-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 1000px; }
+  .gh-feature-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px 24px; text-align: center; transition: all 0.3s ease;
+  }
+  .gh-feature-card:hover { border-color: var(--accent); transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+  .gh-feature-icon  { font-size: 2.4em; margin-bottom: 16px; }
+  .gh-feature-title { font-weight: 700; font-size: 1.1em; margin-bottom: 10px; }
+  .gh-feature-desc  { font-size: 0.9em; color: var(--text-dim); line-height: 1.6; }
+
+  /* ===== Feature grid 4-col ===== */
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 100%; max-width: 1100px; }
+  .grid-4 .gh-feature-card { padding: 24px 18px; }
+  .grid-4 .gh-feature-icon { font-size: 2em; margin-bottom: 12px; }
+  .grid-4 .gh-feature-title { font-size: 1em; }
+  .grid-4 .gh-feature-desc { font-size: 0.85em; }
+
+  /* ===== Workflow steps ===== */
+  .workflow-steps { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 800px; }
+  .workflow-step {
+    display: flex; align-items: center; gap: 20px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 24px; transition: all 0.3s ease;
+  }
+  .workflow-step:hover { border-color: var(--accent); transform: translateX(8px); }
+  .workflow-step-text  { flex: 1; }
+  .workflow-step-title { font-weight: 600; font-size: 1.05em; margin-bottom: 4px; }
+  .workflow-step-desc  { font-size: 0.9em; color: var(--text-dim); }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.95em; flex-shrink: 0;
+  }
+
+  /* ===== Feature list ===== */
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 12px; text-align: left; }
+  .feature-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 1.1em; line-height: 1.6; }
+  .bullet {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 0.8em; margin-top: 2px;
+  }
+
+  /* ===== Command table ===== */
+  .cmd-table { width: 100%; max-width: 900px; border-collapse: separate; border-spacing: 0; font-size: 0.95em; }
+  .cmd-table th {
+    background: var(--bg-card-alt); padding: 14px 20px; text-align: left;
+    font-weight: 600; color: var(--accent); border-bottom: 2px solid var(--border);
+  }
+  .cmd-table th:first-child { border-radius: 12px 0 0 0; }
+  .cmd-table th:last-child  { border-radius: 0 12px 0 0; }
+  .cmd-table td {
+    padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg-card);
+  }
+  .cmd-table td:first-child { font-family: 'JetBrains Mono', monospace; color: var(--accent3); font-size: 0.9em; }
+  .cmd-table tr:last-child td:first-child { border-radius: 0 0 0 12px; }
+  .cmd-table tr:last-child td:last-child  { border-radius: 0 0 12px 0; }
+
+  /* ===== Screenshot ===== */
+  .screenshot {
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ===== Merge strategy boxes ===== */
+  .merge-row { display: flex; gap: 16px; width: 100%; max-width: 1000px; }
+  .merge-box {
+    flex: 1; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px 20px; text-align: left;
+  }
+  .merge-box-title { font-weight: 700; font-size: 1em; margin-bottom: 8px; }
+  .merge-box p { font-size: 0.9em; color: var(--text-dim); line-height: 1.6; }
+
+  /* ===== Title slide logo ===== */
+  .title-logo { width: 120px; height: 120px; margin-bottom: 30px; }
+  .glow-blue { filter: drop-shadow(0 0 20px rgba(88,166,255,0.3)); }
+</style>
+</head>
+<body>
+
+<a class="back-home" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>首页</a>
+<div class="progress-bar" id="progressBar"></div>
+<div class="nav-dots" id="navDots"></div>
+<div class="keyboard-hint"><span class="key">&larr;</span><span class="key">&rarr;</span> 翻页</div>
+<div class="page-indicator" id="pageIndicator"></div>
+
+<!-- ===== SLIDE 1: Title ===== -->
+<div class="slide active" id="slide-0">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent); top: -200px; right: -100px;"></div>
+  <div class="bg-glow" style="background: var(--accent4); bottom: -200px; left: -100px;"></div>
+  <div class="center">
+    <svg class="title-logo glow-blue" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="ghGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#58a6ff"/><stop offset="100%" style="stop-color:#d2a8ff"/></linearGradient></defs>
+      <circle cx="60" cy="60" r="56" fill="none" stroke="url(#ghGrad)" stroke-width="3"/>
+      <path d="M60 20C38 20 20 38 20 60c0 17.7 11.5 32.6 27.4 37.9 2 .35 2.75-.85 2.75-1.9 0-.95-.05-4.1-.05-7.45-10.05 1.85-12.7-2.45-13.5-4.7-.45-1.15-2.4-4.7-4.1-5.65-1.4-.75-3.4-2.6-.05-2.65 3.15-.05 5.4 2.9 6.15 4.1 3.6 6.05 9.35 4.35 11.65 3.3.35-2.6 1.4-4.35 2.55-5.35-8.9-1-18.2-4.45-18.2-19.75 0-4.35 1.55-7.95 4.1-10.75-.4-1-1.8-5.1.4-10.6 0 0 3.35-1.05 11 4.1 3.2-.9 6.6-1.35 10-1.35s6.8.45 10 1.35c7.65-5.2 11-4.1 11-4.1 2.2 5.5.8 9.6.4 10.6 2.55 2.8 4.1 6.35 4.1 10.75 0 15.35-9.35 18.75-18.25 19.75 1.45 1.25 2.7 3.65 2.7 7.4 0 5.35-.05 9.65-.05 11 0 1.05.75 2.3 2.75 1.9C88.55 92.55 100 77.65 100 60 100 38 82 20 60 20z" fill="url(#ghGrad)"/>
+    </svg>
+    <h1><span class="gradient-text">GitHub</span> 高频功能<br>实用指南</h1>
+    <h3>从日常使用到高效协作</h3>
+    <p class="text-dim" style="font-size: 0.95em; margin-top: 20px;">仓库管理 · Issue & PR · Actions · 代码搜索 · 项目发现</p>
+  </div>
+</div>
+
+<!-- ===== SLIDE 2: Overview ===== -->
+<div class="slide" id="slide-1">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-blue">概览</span>
+    <h2>GitHub 高频功能一览</h2>
+    <p class="text-dim" style="margin-bottom: 36px;">真正高频使用的功能大概只有十几个，掌握这些就够了</p>
+    <div class="grid-4">
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">📦</div>
+        <div class="gh-feature-title text-accent">仓库管理</div>
+        <div class="gh-feature-desc">创建、设置、协作者</div>
+      </div>
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">🔍</div>
+        <div class="gh-feature-title text-green">代码搜索</div>
+        <div class="gh-feature-desc">浏览、搜索、Blame</div>
+      </div>
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">📋</div>
+        <div class="gh-feature-title text-orange">Issue</div>
+        <div class="gh-feature-desc">任务追踪与问题管理</div>
+      </div>
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">🔀</div>
+        <div class="gh-feature-title text-purple">Pull Request</div>
+        <div class="gh-feature-desc">代码审查与合并</div>
+      </div>
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">⚙️</div>
+        <div class="gh-feature-title text-accent">Actions</div>
+        <div class="gh-feature-desc">CI/CD 自动化</div>
+      </div>
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">🌐</div>
+        <div class="gh-feature-title text-green">Pages</div>
+        <div class="gh-feature-desc">免费静态网站托管</div>
+      </div>
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">🏷️</div>
+        <div class="gh-feature-title text-orange">Releases</div>
+        <div class="gh-feature-desc">版本发布管理</div>
+      </div>
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">🔧</div>
+        <div class="gh-feature-title text-purple">CLI</div>
+        <div class="gh-feature-desc">终端命令行操作</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 3: 仓库管理 ===== -->
+<div class="slide" id="slide-2">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent); top: -200px; left: -100px;"></div>
+  <div class="row" style="max-width: 1100px;">
+    <div class="col" style="flex: 1; justify-content: center;">
+      <span class="badge badge-blue">基础</span>
+      <h2 style="font-size: 2.2em;">仓库<span class="text-accent">（Repository）</span><br>管理</h2>
+      <p class="text-dim" style="margin-top: 16px; max-width: 420px;">点击右上角"+"号 → New repository，做三个决定即可</p>
+      <ul class="feature-list" style="margin-top: 24px; max-width: 420px;">
+        <li><div class="bullet" style="background: rgba(88,166,255,0.15); color: var(--accent);">①</div><span><strong style="color:var(--text);">仓库名称</strong>——小写字母加连字符</span></li>
+        <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">②</div><span><strong style="color:var(--text);">Public / Private</strong>——按需选择可见性</span></li>
+        <li><div class="bullet" style="background: rgba(247,129,102,0.15); color: var(--accent3);">③</div><span><strong style="color:var(--text);">初始化</strong>——README + .gitignore + LICENSE</span></li>
+      </ul>
+    </div>
+    <div class="col" style="flex: 1; justify-content: center; align-items: center;">
+      <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/image-20260506134449870.png" class="screenshot" style="max-height: 440px;" alt="创建仓库">
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 4: 仓库设置 ===== -->
+<div class="slide" id="slide-3">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-blue">基础</span>
+    <h2>仓库设置中的<span class="text-accent">关键选项</span></h2>
+    <p class="text-dim" style="margin-bottom: 30px;">Settings 标签页中最常用的四个功能</p>
+    <div class="row gap-20" style="max-width: 1000px;">
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent);">
+        <div class="card-title"><div class="icon" style="background: rgba(88,166,255,0.15);"><span style="color: var(--accent);">🌿</span></div>默认分支</div>
+        <p>Settings → Branches 修改默认分支名称，通常为 <code>main</code></p>
+      </div>
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent2);">
+        <div class="card-title"><div class="icon" style="background: rgba(63,185,80,0.15);"><span style="color: var(--accent2);">🛡️</span></div>分支保护</div>
+        <p>设置规则：合并前必须通过 PR、至少一人审批</p>
+      </div>
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent4);">
+        <div class="card-title"><div class="icon" style="background: rgba(210,168,255,0.15);"><span style="color: var(--accent4);">👥</span></div>Collaborators</div>
+        <p>邀请协作者直接推送代码，无需 Fork → PR 流程</p>
+      </div>
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent5);">
+        <div class="card-title"><div class="icon" style="background: rgba(255,123,114,0.15);"><span style="color: var(--accent5);">⚠️</span></div>Danger Zone</div>
+        <p>修改可见性、转移仓库、删除仓库——不可逆，谨慎操作</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 5: 代码浏览 ===== -->
+<div class="slide" id="slide-4">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent2); bottom: -200px; right: -100px;"></div>
+  <div class="row" style="max-width: 1100px;">
+    <div class="col" style="flex: 1; justify-content: center;">
+      <span class="badge badge-green">浏览</span>
+      <h2 style="font-size: 2em;">在线<span class="text-green">浏览代码</span></h2>
+      <ul class="feature-list" style="margin-top: 24px; max-width: 420px;">
+        <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">→</div><span>点击文件直接查看，Markdown 自动渲染</span></li>
+        <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">→</div><span>点击<strong style="color:var(--text);">行号</strong>高亮单行，URL 自动更新</span></li>
+        <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">→</div><span>Shift + 点击高亮<strong style="color:var(--text);">一个范围</strong></span></li>
+        <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">→</div><span>"Raw"按钮获取原始文件内容</span></li>
+      </ul>
+      <div style="margin-top: 24px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 24px; max-width: 420px;">
+        <p style="font-size: 0.95em; color: var(--text-dim); line-height: 1.8;">
+          <span style="color: var(--accent3);">💡</span> 按 <code>.</code> 键打开 <strong style="color:var(--accent);">github.dev</strong> 在线编辑器（VS Code 网页版）
+        </p>
+      </div>
+    </div>
+    <div class="col" style="flex: 1; justify-content: center; align-items: center;">
+      <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/repo-page.png" class="screenshot" style="max-height: 440px;" alt="React 仓库首页">
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 6: 代码搜索 & Blame ===== -->
+<div class="slide" id="slide-5">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-green">搜索</span>
+    <h2>代码搜索 & <span class="text-green">Blame</span></h2>
+    <div class="row gap-40 mt-40" style="max-width: 1100px; align-items: flex-start;">
+      <div class="col" style="flex: 1;">
+        <p style="color: var(--accent); font-weight: 600; margin-bottom: 12px;">搜索过滤语法</p>
+        <table class="cmd-table" style="max-width: 100%;">
+          <thead><tr><th>语法</th><th>作用</th></tr></thead>
+          <tbody>
+            <tr><td>language:python</td><td>按编程语言过滤</td></tr>
+            <tr><td>path:src/</td><td>按文件路径过滤</td></tr>
+            <tr><td>extension:yml</td><td>按文件扩展名过滤</td></tr>
+            <tr><td>repo:facebook/react</td><td>指定仓库搜索</td></tr>
+            <tr><td>org:google</td><td>指定组织搜索</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col" style="flex: 1;">
+        <p style="color: var(--accent2); font-weight: 600; margin-bottom: 12px;">Blame 视图</p>
+        <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/blame.png" class="screenshot" style="max-height: 300px;" alt="Blame 视图">
+        <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 12px;">每一行代码旁边标注了<strong style="color:var(--text);">提交者、时间和提交信息</strong>——快速回答"这行代码为什么这样写"</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 7: Issue ===== -->
+<div class="slide" id="slide-6">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent3); top: -200px; right: -100px;"></div>
+  <div class="row" style="max-width: 1100px;">
+    <div class="col" style="flex: 1; justify-content: center;">
+      <span class="badge badge-orange">协作</span>
+      <h2 style="font-size: 2.2em;"><span class="text-orange">Issue</span><br>任务与问题管理</h2>
+      <p class="text-dim" style="margin-top: 12px; max-width: 420px;">GitHub 上最通用的协作单元，远不止"报告 Bug"</p>
+      <ul class="feature-list" style="margin-top: 24px; max-width: 420px;">
+        <li><div class="bullet" style="background: rgba(247,129,102,0.15); color: var(--accent3);">🏷</div><span><strong style="color:var(--text);">Labels</strong>——<code>bug</code> <code>enhancement</code> <code>good first issue</code></span></li>
+        <li><div class="bullet" style="background: rgba(247,129,102,0.15); color: var(--accent3);">🎯</div><span><strong style="color:var(--text);">Milestones</strong>——归入目标，自动显示完成百分比</span></li>
+        <li><div class="bullet" style="background: rgba(247,129,102,0.15); color: var(--accent3);">👤</div><span><strong style="color:var(--text);">Assignees</strong>——指派负责人</span></li>
+        <li><div class="bullet" style="background: rgba(247,129,102,0.15); color: var(--accent3);">🔗</div><span><strong style="color:var(--text);">关联 PR</strong>——<code>Closes #123</code> 自动关闭 Issue</span></li>
+      </ul>
+    </div>
+    <div class="col" style="flex: 1; justify-content: center; align-items: center;">
+      <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/issues-page.png" class="screenshot" style="max-height: 440px;" alt="Issues 列表页面">
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 8: Pull Request 流程 ===== -->
+<div class="slide" id="slide-7">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-purple">核心</span>
+    <h2><span class="text-purple">Pull Request</span> 完整流程</h2>
+    <p class="text-dim" style="margin-bottom: 24px;">代码在合并前必须经过审查——这是 GitHub 协作的核心</p>
+    <div class="row gap-40" style="max-width: 1100px; align-items: flex-start;">
+      <div class="col" style="flex: 1;">
+        <div class="workflow-steps" style="max-width: 100%;">
+          <div class="workflow-step">
+            <div class="step-num" style="background: rgba(88,166,255,0.15); color: var(--accent);">1</div>
+            <div class="workflow-step-text">
+              <div class="workflow-step-title">推送分支到 GitHub</div>
+              <div class="workflow-step-desc">页面出现黄色横幅提示创建 PR</div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num" style="background: rgba(210,168,255,0.15); color: var(--accent4);">2</div>
+            <div class="workflow-step-text">
+              <div class="workflow-step-title">填写 PR 描述</div>
+              <div class="workflow-step-desc">回答：做了什么改动 + 为什么做</div>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num" style="background: rgba(247,129,102,0.15); color: var(--accent3);">3</div>
+            <div class="workflow-step-text">
+              <div class="workflow-step-title">代码审查</div>
+              <div class="workflow-step-desc">行内评论 · Suggestion · Approve / Request changes</div>
+            </div>
+          </div>
+          <div class="workflow-step" style="border-color: var(--accent2);">
+            <div class="step-num" style="background: rgba(63,185,80,0.2); color: var(--accent2);">4</div>
+            <div class="workflow-step-text">
+              <div class="workflow-step-title" style="color: var(--accent2);">合并 ✓</div>
+              <div class="workflow-step-desc">选择合并策略 → Merge</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col" style="flex: 1; align-items: center; justify-content: center;">
+        <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/pr-detail.png" class="screenshot" style="max-height: 400px;" alt="PR 详情页">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 9: 合并策略 ===== -->
+<div class="slide" id="slide-8">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-purple">PR</span>
+    <h2>三种<span class="text-purple">合并策略</span></h2>
+    <p class="text-dim" style="margin-bottom: 36px;">团队通常统一选择一种，避免混用</p>
+    <div class="merge-row">
+      <div class="merge-box" style="border-top: 3px solid var(--accent);">
+        <div class="merge-box-title text-accent">Merge commit</div>
+        <p>创建一个合并提交，<strong style="color:var(--text);">保留完整历史</strong></p>
+        <div style="margin-top: 16px;">
+          <svg viewBox="0 0 260 80" xmlns="http://www.w3.org/2000/svg" width="260">
+            <line x1="20" y1="50" x2="240" y2="50" stroke="#30363d" stroke-width="2"/>
+            <circle cx="60" cy="50" r="10" fill="#1c2333" stroke="#3fb950" stroke-width="2"/>
+            <circle cx="120" cy="50" r="10" fill="#1c2333" stroke="#3fb950" stroke-width="2"/>
+            <path d="M120,50 C140,50 140,20 160,20" stroke="#d2a8ff" stroke-width="2" fill="none"/>
+            <circle cx="160" cy="20" r="8" fill="#1c2333" stroke="#d2a8ff" stroke-width="2"/>
+            <path d="M160,20 C180,20 180,50 200,50" stroke="#d2a8ff" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+            <circle cx="200" cy="50" r="12" fill="#1c2333" stroke="#58a6ff" stroke-width="2"/>
+            <text x="200" y="54" text-anchor="middle" fill="#58a6ff" font-size="8" font-family="JetBrains Mono" font-weight="700">M</text>
+          </svg>
+        </div>
+      </div>
+      <div class="merge-box" style="border-top: 3px solid var(--accent2);">
+        <div class="merge-box-title text-green">Squash and merge</div>
+        <p>压缩为一个提交，<strong style="color:var(--text);">主分支更干净</strong></p>
+        <div style="margin-top: 16px;">
+          <svg viewBox="0 0 260 80" xmlns="http://www.w3.org/2000/svg" width="260">
+            <line x1="20" y1="50" x2="240" y2="50" stroke="#30363d" stroke-width="2"/>
+            <circle cx="60" cy="50" r="10" fill="#1c2333" stroke="#3fb950" stroke-width="2"/>
+            <circle cx="120" cy="50" r="10" fill="#1c2333" stroke="#3fb950" stroke-width="2"/>
+            <circle cx="120" cy="20" r="6" fill="#1c2333" stroke="#d2a8ff" stroke-width="1.5" opacity="0.4"/>
+            <circle cx="145" cy="20" r="6" fill="#1c2333" stroke="#d2a8ff" stroke-width="1.5" opacity="0.4"/>
+            <circle cx="170" cy="20" r="6" fill="#1c2333" stroke="#d2a8ff" stroke-width="1.5" opacity="0.4"/>
+            <path d="M145,26 L180,44" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <circle cx="180" cy="50" r="12" fill="#1c2333" stroke="#3fb950" stroke-width="2.5"/>
+            <text x="180" y="54" text-anchor="middle" fill="#3fb950" font-size="8" font-family="JetBrains Mono" font-weight="700">S</text>
+          </svg>
+        </div>
+      </div>
+      <div class="merge-box" style="border-top: 3px solid var(--accent4);">
+        <div class="merge-box-title text-purple">Rebase and merge</div>
+        <p>逐个应用提交，<strong style="color:var(--text);">保持线性历史</strong></p>
+        <div style="margin-top: 16px;">
+          <svg viewBox="0 0 260 80" xmlns="http://www.w3.org/2000/svg" width="260">
+            <line x1="20" y1="50" x2="240" y2="50" stroke="#30363d" stroke-width="2"/>
+            <circle cx="50" cy="50" r="10" fill="#1c2333" stroke="#3fb950" stroke-width="2"/>
+            <circle cx="100" cy="50" r="10" fill="#1c2333" stroke="#3fb950" stroke-width="2"/>
+            <circle cx="150" cy="50" r="10" fill="#1c2333" stroke="#d2a8ff" stroke-width="2"/>
+            <circle cx="200" cy="50" r="10" fill="#1c2333" stroke="#d2a8ff" stroke-width="2"/>
+            <text x="130" y="30" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans SC">线性</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 28px; max-width: 600px;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 24px;">
+        <p style="font-size: 0.9em; color: var(--text-dim);"><span style="color: var(--accent3);">💡</span> <strong style="color:var(--text);">Draft PR</strong>——代码还在开发中？创建 Draft PR，团队可以提前看进度，准备好后转为正式 PR</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 10: GitHub Actions ===== -->
+<div class="slide" id="slide-9">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent); bottom: -200px; left: -100px;"></div>
+  <div class="row" style="max-width: 1100px;">
+    <div class="col" style="flex: 1; justify-content: center;">
+      <span class="badge badge-blue">自动化</span>
+      <h2 style="font-size: 2em;"><span class="text-accent">GitHub Actions</span><br>自动化工作流</h2>
+      <p class="text-dim" style="margin-top: 12px; max-width: 420px;">内置 CI/CD 工具，在特定事件发生时自动执行任务</p>
+      <div style="margin-top: 20px;">
+        <div class="code-block" style="max-width: 420px; font-size: 0.88em; line-height: 1.75; padding: 20px 24px;">
+          <div><span class="key">name</span>: <span class="string">Tests</span></div>
+          <div><span class="key">on</span>: [<span class="string">push</span>, <span class="string">pull_request</span>]</div>
+          <div><span class="key">jobs</span>:</div>
+          <div>&nbsp; <span class="key">test</span>:</div>
+          <div>&nbsp;&nbsp;&nbsp; <span class="key">runs-on</span>: <span class="string">ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp; <span class="key">steps</span>:</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="key">uses</span>: <span class="val">actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - <span class="key">run</span>: <span class="string">npm test</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="col" style="flex: 1; justify-content: center;">
+      <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/actions-page.png" class="screenshot" style="max-height: 320px; margin-bottom: 20px;" alt="Actions 页面">
+      <div class="row gap-20" style="max-width: 100%;">
+        <div class="card" style="flex: 1; padding: 18px;">
+          <div class="card-title" style="font-size: 0.95em;"><span style="color: var(--accent2);">✓</span> 自动测试</div>
+          <p style="font-size: 0.85em;">每次提交自动跑测试</p>
+        </div>
+        <div class="card" style="flex: 1; padding: 18px;">
+          <div class="card-title" style="font-size: 0.95em;"><span style="color: var(--accent);">🚀</span> 自动部署</div>
+          <p style="font-size: 0.85em;">合并后自动发布上线</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 11: Pages + Releases ===== -->
+<div class="slide" id="slide-10">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-green">功能</span>
+    <h2>GitHub Pages & <span class="text-green">Releases</span></h2>
+    <div class="row gap-40 mt-40" style="max-width: 1100px; align-items: stretch;">
+      <div class="col" style="flex: 1;">
+        <div class="card" style="flex: 1; border-top: 3px solid var(--accent);">
+          <div class="card-title" style="font-size: 1.4em; margin-bottom: 16px;"><span style="font-size: 1.2em;">🌐</span> GitHub Pages</div>
+          <p style="margin-bottom: 16px;">把仓库中的静态文件发布为网站</p>
+          <ul class="feature-list" style="gap: 8px;">
+            <li style="font-size: 0.95em;"><div class="bullet" style="background: rgba(88,166,255,0.15); color: var(--accent); width: 24px; height: 24px; font-size: 0.7em;">→</div>Settings → Pages 选择发布源</li>
+            <li style="font-size: 0.95em;"><div class="bullet" style="background: rgba(88,166,255,0.15); color: var(--accent); width: 24px; height: 24px; font-size: 0.7em;">→</div>地址：<code style="font-size: 0.85em;">用户名.github.io/仓库名</code></li>
+            <li style="font-size: 0.95em;"><div class="bullet" style="background: rgba(88,166,255,0.15); color: var(--accent); width: 24px; height: 24px; font-size: 0.7em;">→</div>适用：博客、文档、作品集、简历</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col" style="flex: 1;">
+        <div class="card" style="flex: 1; border-top: 3px solid var(--accent2);">
+          <div class="card-title" style="font-size: 1.4em; margin-bottom: 16px;"><span style="font-size: 1.2em;">🏷️</span> Releases</div>
+          <p style="margin-bottom: 16px;">为项目的稳定节点创建版本标记</p>
+          <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/releases.png" class="screenshot" style="max-height: 200px;" alt="Releases">
+          <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 12px;">选择 Tag → 填写说明 → 上传附件 →"Generate release notes"一键生成变更说明</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 12: GitHub CLI ===== -->
+<div class="slide" id="slide-11">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent3); top: -150px; left: 50%; transform: translateX(-50%);"></div>
+  <div class="center">
+    <span class="badge badge-orange">效率</span>
+    <h2>GitHub CLI —— <span class="text-orange">终端里操作 GitHub</span></h2>
+    <p class="text-dim" style="max-width: 600px; margin-bottom: 30px;">不需要打开浏览器，一行命令搞定</p>
+    <div class="row gap-40" style="max-width: 1100px; align-items: flex-start;">
+      <div class="col" style="flex: 1;">
+        <div class="code-block" style="max-width: 100%; font-size: 0.92em; line-height: 1.85;">
+          <div style="margin-bottom: 8px; color: var(--text-dim); font-size: 0.85em;">// 仓库与 PR</div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">repo create</span> <span class="string">my-project</span> <span class="flag">--public</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">repo clone</span> <span class="string">owner/repo</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">pr create</span> <span class="flag">--title</span> <span class="string">"搜索功能"</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">pr review</span> <span class="string">42</span> <span class="flag">--approve</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">pr merge</span> <span class="string">42</span></div>
+        </div>
+      </div>
+      <div class="col" style="flex: 1;">
+        <div class="code-block" style="max-width: 100%; font-size: 0.92em; line-height: 1.85;">
+          <div style="margin-bottom: 8px; color: var(--text-dim); font-size: 0.85em;">// Issue、Actions、Release</div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">issue create</span> <span class="flag">--title</span> <span class="string">"Bug"</span> <span class="flag">--label</span> <span class="string">"bug"</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">issue list</span> <span class="flag">--label</span> <span class="string">"bug"</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">run list</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">run view</span> <span class="string">12345</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">gh</span> <span class="flag">release create</span> <span class="string">v1.0.0</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 24px;">
+      <div class="code-block" style="display: inline-block; padding: 14px 28px; font-size: 0.95em;">
+        <span class="comment"># 安装：</span> <span class="cmd">brew</span> <span class="flag">install</span> <span class="string">gh</span> &nbsp;&nbsp;→&nbsp;&nbsp; <span class="cmd">gh</span> <span class="flag">auth login</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 13: Projects + Notifications + Profile ===== -->
+<div class="slide" id="slide-12">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-purple">管理</span>
+    <h2>Projects · 通知 · <span class="text-purple">个人主页</span></h2>
+    <div class="row gap-20 mt-40" style="max-width: 1100px; align-items: stretch;">
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent4);">
+        <div class="card-title" style="font-size: 1.2em;"><span style="font-size: 1.2em;">📊</span> Projects 看板</div>
+        <p style="margin-bottom: 12px;">内置项目管理工具</p>
+        <ul class="feature-list" style="gap: 6px;">
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(210,168,255,0.15); color: var(--accent4); width: 22px; height: 22px; font-size: 0.7em;">→</div><strong style="color:var(--text);">Board</strong> 看板视图</li>
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(210,168,255,0.15); color: var(--accent4); width: 22px; height: 22px; font-size: 0.7em;">→</div><strong style="color:var(--text);">Table</strong> 表格视图</li>
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(210,168,255,0.15); color: var(--accent4); width: 22px; height: 22px; font-size: 0.7em;">→</div>与 Issue/PR 自动联动</li>
+        </ul>
+      </div>
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent6);">
+        <div class="card-title" style="font-size: 1.2em;"><span style="font-size: 1.2em;">🔔</span> 通知管理</div>
+        <p style="margin-bottom: 12px;">默认通知太多？精细控制</p>
+        <ul class="feature-list" style="gap: 6px;">
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(121,192,255,0.15); color: var(--accent6); width: 22px; height: 22px; font-size: 0.7em;">→</div>推荐：Participating only</li>
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(121,192,255,0.15); color: var(--accent6); width: 22px; height: 22px; font-size: 0.7em;">→</div>核心项目：All Activity</li>
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(121,192,255,0.15); color: var(--accent6); width: 22px; height: 22px; font-size: 0.7em;">→</div>用 <code>reason:</code> 过滤来源</li>
+        </ul>
+      </div>
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent2);">
+        <div class="card-title" style="font-size: 1.2em;"><span style="font-size: 1.2em;">👤</span> 个人主页</div>
+        <p style="margin-bottom: 12px;">你的技术名片</p>
+        <ul class="feature-list" style="gap: 6px;">
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2); width: 22px; height: 22px; font-size: 0.7em;">→</div><strong style="color:var(--text);">Profile README</strong></li>
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2); width: 22px; height: 22px; font-size: 0.7em;">→</div>Pinned Repos（最多 6 个）</li>
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2); width: 22px; height: 22px; font-size: 0.7em;">→</div>贡献图（绿色格子图）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 14: 安全 ===== -->
+<div class="slide" id="slide-13">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-orange">安全</span>
+    <h2>安全相关<span class="text-orange">功能</span></h2>
+    <p class="text-dim" style="margin-bottom: 36px;">保护你的账户和代码</p>
+    <div class="row gap-20" style="max-width: 1000px;">
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent);">
+        <div class="card-title" style="font-size: 1.2em;"><span style="font-size: 1.2em;">🔑</span> SSH 密钥</div>
+        <p style="margin-bottom: 16px;">配置后不再需要每次输入密码</p>
+        <div class="code-block" style="max-width: 100%; font-size: 0.85em; padding: 16px 20px; line-height: 1.75;">
+          <div><span class="prompt">$</span> <span class="cmd">ssh-keygen</span> <span class="flag">-t</span> <span class="string">ed25519</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">cat</span> <span class="string">~/.ssh/id_ed25519.pub</span></div>
+          <div><span class="comment"># 复制到 GitHub Settings → SSH keys</span></div>
+        </div>
+      </div>
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent4);">
+        <div class="card-title" style="font-size: 1.2em;"><span style="font-size: 1.2em;">🎫</span> Personal Access Token</div>
+        <p style="margin-bottom: 16px;">脚本调用 API 时使用 PAT 代替密码</p>
+        <ul class="feature-list" style="gap: 8px;">
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(210,168,255,0.15); color: var(--accent4); width: 22px; height: 22px; font-size: 0.7em;">→</div>推荐 <strong style="color:var(--text);">Fine-grained tokens</strong></li>
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(210,168,255,0.15); color: var(--accent4); width: 22px; height: 22px; font-size: 0.7em;">→</div>限制特定仓库和权限</li>
+        </ul>
+      </div>
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent2);">
+        <div class="card-title" style="font-size: 1.2em;"><span style="font-size: 1.2em;">🤖</span> Dependabot</div>
+        <p style="margin-bottom: 16px;">自动扫描依赖的安全漏洞</p>
+        <ul class="feature-list" style="gap: 8px;">
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2); width: 22px; height: 22px; font-size: 0.7em;">✓</div>发现漏洞自动创建 PR</li>
+          <li style="font-size: 0.9em;"><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2); width: 22px; height: 22px; font-size: 0.7em;">✓</div>默认开启，无需配置</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 15: 发现优秀项目 ===== -->
+<div class="slide" id="slide-14">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent2); top: -200px; left: -100px;"></div>
+  <div class="center">
+    <span class="badge badge-green">探索</span>
+    <h2>发现与探索<span class="text-green">优秀项目</span></h2>
+    <p class="text-dim" style="margin-bottom: 28px;">找到高质量项目并从中学习，本身就是一种重要能力</p>
+    <div class="row gap-20" style="max-width: 1100px; align-items: stretch;">
+      <div class="col" style="flex: 1;">
+        <div class="card" style="flex: 1; padding: 20px; border-left: 3px solid var(--accent); border-top: none; border-right: none; border-bottom: none;">
+          <div class="card-title" style="font-size: 1.1em;">🔥 Trending</div>
+          <p style="font-size: 0.88em;">按日/周/月展示 Star 增长最快的项目</p>
+          <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/trending.png" class="screenshot" style="max-height: 140px; margin-top: 10px;" alt="Trending">
+        </div>
+      </div>
+      <div class="col" style="flex: 1;">
+        <div class="card" style="flex: 1; padding: 20px; border-left: 3px solid var(--accent2); border-top: none; border-right: none; border-bottom: none;">
+          <div class="card-title" style="font-size: 1.1em;">📚 Collections</div>
+          <p style="font-size: 0.88em;">官方编辑团队整理的主题合集</p>
+          <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/collections.png" class="screenshot" style="max-height: 140px; margin-top: 10px;" alt="Collections">
+        </div>
+      </div>
+      <div class="col" style="flex: 1;">
+        <div class="card" style="flex: 1; padding: 20px; border-left: 3px solid var(--accent4); border-top: none; border-right: none; border-bottom: none;">
+          <div class="card-title" style="font-size: 1.1em;">🏷️ Topics</div>
+          <p style="font-size: 0.88em;">按主题标签浏览，按 Star 数排列</p>
+          <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/topics.png" class="screenshot" style="max-height: 140px; margin-top: 10px;" alt="Topics">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 16: 评估项目质量 ===== -->
+<div class="slide" id="slide-15">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-green">探索</span>
+    <h2>如何<span class="text-green">评估</span>一个项目的质量</h2>
+    <p class="text-dim" style="margin-bottom: 30px;">打开一个陌生仓库，快速判断是否值得投入时间</p>
+    <div class="row gap-20" style="max-width: 1100px; align-items: flex-start;">
+      <div class="col" style="flex: 1;">
+        <ul class="feature-list" style="gap: 16px;">
+          <li><div class="bullet" style="background: rgba(88,166,255,0.15); color: var(--accent);">⭐</div><span><strong style="color:var(--text);">Star 数</strong>——社区认可度的粗略参考</span></li>
+          <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">🕐</div><span><strong style="color:var(--text);">最近提交</strong>——半年无更新大概率停止维护</span></li>
+          <li><div class="bullet" style="background: rgba(247,129,102,0.15); color: var(--accent3);">📊</div><span><strong style="color:var(--text);">Issue 处理</strong>——关闭率反映维护者活跃度</span></li>
+          <li><div class="bullet" style="background: rgba(210,168,255,0.15); color: var(--accent4);">👥</div><span><strong style="color:var(--text);">贡献者数量</strong>——多人参与更可持续</span></li>
+          <li><div class="bullet" style="background: rgba(121,192,255,0.15); color: var(--accent6);">📖</div><span><strong style="color:var(--text);">README 质量</strong>——好项目的 README 结构清晰</span></li>
+          <li><div class="bullet" style="background: rgba(255,123,114,0.15); color: var(--accent5);">⚖️</div><span><strong style="color:var(--text);">License</strong>——无协议 = 法律上不允许使用</span></li>
+        </ul>
+      </div>
+      <div class="col" style="flex: 1; align-items: center;">
+        <img src="https://article-images.xlearnity.ai/site/AI技术/git-slide/github-guide/contributors.png" class="screenshot" style="max-height: 260px;" alt="Contributors">
+        <div style="margin-top: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; width: 100%;">
+          <p style="font-size: 0.88em; color: var(--text-dim); line-height: 1.6;">
+            <span style="color: var(--accent3);">💡</span> <strong style="color:var(--text);">Star Lists</strong> 分类管理收藏，<strong style="color:var(--text);">Awesome Lists</strong>（awesome-python 等）是社区精选资源清单
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 17: 实用小技巧 ===== -->
+<div class="slide" id="slide-16">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-orange">技巧</span>
+    <h2>实用<span class="text-orange">小技巧</span></h2>
+    <div class="row gap-40 mt-40" style="max-width: 1100px; align-items: stretch;">
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent);">
+        <div class="card-title" style="font-size: 1.1em;">⌨️ 键盘快捷键</div>
+        <table class="cmd-table" style="max-width: 100%; margin-top: 12px; font-size: 0.85em;">
+          <tbody>
+            <tr><td style="padding: 8px 14px;"><span class="key" style="border: 1px solid var(--border); background: var(--bg-card-alt); border-radius: 4px; padding: 1px 6px;">?</span></td><td style="padding: 8px 14px;">查看所有快捷键</td></tr>
+            <tr><td style="padding: 8px 14px;"><span class="key" style="border: 1px solid var(--border); background: var(--bg-card-alt); border-radius: 4px; padding: 1px 6px;">t</span></td><td style="padding: 8px 14px;">快速搜索文件名</td></tr>
+            <tr><td style="padding: 8px 14px;"><span class="key" style="border: 1px solid var(--border); background: var(--bg-card-alt); border-radius: 4px; padding: 1px 6px;">.</span></td><td style="padding: 8px 14px;">打开在线编辑器</td></tr>
+            <tr><td style="padding: 8px 14px;"><span class="key" style="border: 1px solid var(--border); background: var(--bg-card-alt); border-radius: 4px; padding: 1px 6px;">g</span>+<span class="key" style="border: 1px solid var(--border); background: var(--bg-card-alt); border-radius: 4px; padding: 1px 6px;">i</span></td><td style="padding: 8px 14px;">跳转 Issues</td></tr>
+            <tr><td style="padding: 8px 14px;"><span class="key" style="border: 1px solid var(--border); background: var(--bg-card-alt); border-radius: 4px; padding: 1px 6px;">g</span>+<span class="key" style="border: 1px solid var(--border); background: var(--bg-card-alt); border-radius: 4px; padding: 1px 6px;">p</span></td><td style="padding: 8px 14px;">跳转 Pull Requests</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col" style="flex: 1; gap: 20px;">
+        <div class="card" style="flex: 1; border-top: 3px solid var(--accent2);">
+          <div class="card-title" style="font-size: 1.1em;">🔗 URL 技巧</div>
+          <ul class="feature-list" style="gap: 6px; margin-top: 8px;">
+            <li style="font-size: 0.88em;"><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2); width: 20px; height: 20px; font-size: 0.65em;">→</div><code style="font-size: 0.85em;">/compare/main...分支名</code> 查看差异</li>
+            <li style="font-size: 0.88em;"><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2); width: 20px; height: 20px; font-size: 0.65em;">→</div>替换域名为 <code style="font-size: 0.85em;">raw.githubusercontent.com</code></li>
+            <li style="font-size: 0.88em;"><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2); width: 20px; height: 20px; font-size: 0.65em;">→</div>commit URL + <code style="font-size: 0.85em;">.diff</code> 获取补丁</li>
+          </ul>
+        </div>
+        <div class="card" style="flex: 1; border-top: 3px solid var(--accent3);">
+          <div class="card-title" style="font-size: 1.1em;">📝 Markdown 增强</div>
+          <ul class="feature-list" style="gap: 6px; margin-top: 8px;">
+            <li style="font-size: 0.88em;"><div class="bullet" style="background: rgba(247,129,102,0.15); color: var(--accent3); width: 20px; height: 20px; font-size: 0.65em;">→</div>任务列表 <code style="font-size: 0.85em;">- [ ] / - [x]</code></li>
+            <li style="font-size: 0.88em;"><div class="bullet" style="background: rgba(247,129,102,0.15); color: var(--accent3); width: 20px; height: 20px; font-size: 0.65em;">→</div><code style="font-size: 0.85em;">&lt;details&gt;</code> 折叠内容区域</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 18: 总结 ===== -->
+<div class="slide" id="slide-17">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent); top: -200px; right: -100px;"></div>
+  <div class="bg-glow" style="background: var(--accent2); bottom: -200px; left: -100px;"></div>
+  <div class="center">
+    <svg class="glow-blue" viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="endGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#58a6ff"/><stop offset="100%" style="stop-color:#d2a8ff"/></linearGradient></defs>
+      <circle cx="40" cy="40" r="36" fill="none" stroke="url(#endGrad)" stroke-width="2.5"/>
+      <path d="M40 14C27 14 14 27 14 40c0 11.5 7.45 21.2 17.8 24.6 1.3.23 1.78-.56 1.78-1.23 0-.62-.03-2.67-.03-4.84-6.53 1.2-8.24-1.59-8.77-3.05-.3-.75-1.56-3.05-2.66-3.67-.91-.49-2.21-1.69-.03-1.72 2.04-.03 3.5 1.88 3.99 2.66 2.34 3.93 6.07 2.83 7.56 2.14.23-1.69.91-2.83 1.66-3.47-5.78-.65-11.83-2.89-11.83-12.83 0-2.83 1.01-5.16 2.66-6.98-.26-.65-1.17-3.31.26-6.89 0 0 2.17-.68 7.14 2.66 2.08-.59 4.29-.88 6.5-.88s4.42.3 6.5.88c4.97-3.37 7.14-2.66 7.14-2.66 1.43 3.58.52 6.24.26 6.89 1.66 1.82 2.66 4.12 2.66 6.98 0 9.97-6.07 12.18-11.86 12.83.94.81 1.75 2.37 1.75 4.81 0 3.47-.03 6.27-.03 7.14 0 .68.49 1.49 1.78 1.23C58.58 61.18 66 51.48 66 40 66 27 53 14 40 14z" fill="url(#endGrad)" transform="scale(0.85) translate(7,7)"/>
+    </svg>
+    <h1 style="margin-top: 30px;"><span class="gradient-text">掌握 GitHub 协作</span></h1>
+    <h3>核心功能优先级</h3>
+    <div class="workflow-steps" style="max-width: 700px; margin-top: 16px;">
+      <div class="workflow-step" style="border-color: var(--accent);">
+        <div class="step-num" style="background: rgba(88,166,255,0.2); color: var(--accent);">1</div>
+        <div class="workflow-step-text">
+          <div class="workflow-step-title text-accent">仓库管理和代码浏览</div>
+          <div class="workflow-step-desc">每天都会用到的基础操作</div>
+        </div>
+      </div>
+      <div class="workflow-step" style="border-color: var(--accent3);">
+        <div class="step-num" style="background: rgba(247,129,102,0.2); color: var(--accent3);">2</div>
+        <div class="workflow-step-text">
+          <div class="workflow-step-title text-orange">Issue 和 Pull Request</div>
+          <div class="workflow-step-desc">团队协作的核心工具</div>
+        </div>
+      </div>
+      <div class="workflow-step" style="border-color: var(--accent2);">
+        <div class="step-num" style="background: rgba(63,185,80,0.2); color: var(--accent2);">3</div>
+        <div class="workflow-step-text">
+          <div class="workflow-step-title text-green">GitHub Actions</div>
+          <div class="workflow-step-desc">自动化节省大量重复性工作</div>
+        </div>
+      </div>
+      <div class="workflow-step" style="border-color: var(--accent4);">
+        <div class="step-num" style="background: rgba(210,168,255,0.2); color: var(--accent4);">4</div>
+        <div class="workflow-step-text">
+          <div class="workflow-step-title text-purple">GitHub CLI + 其他</div>
+          <div class="workflow-step-desc">提高效率，按需学习</div>
+        </div>
+      </div>
+    </div>
+    <p class="text-dim" style="margin-top: 28px; font-size: 0.9em; max-width: 600px;">掌握协作流程——Issue 追踪、Branch 隔离、PR 审查、Actions 自动化——比记住每个按钮更重要</p>
+  </div>
+</div>
+
+<script>
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var current = 0;
+  var animating = false;
+
+  var navDots = document.getElementById('navDots');
+  for (var i = 0; i < total; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('data-idx', i);
+    dot.addEventListener('click', function() {
+      goToSlide(parseInt(this.getAttribute('data-idx')));
+    });
+    navDots.appendChild(dot);
+  }
+
+  function updateUI() {
+    document.getElementById('pageIndicator').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('progressBar').style.width = ((current + 1) / total * 100) + '%';
+    var dots = document.querySelectorAll('.nav-dot');
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].className = 'nav-dot' + (i === current ? ' active' : '');
+    }
+  }
+
+  function goToSlide(n) {
+    if (n < 0 || n >= total || n === current || animating) return;
+    animating = true;
+
+    var direction = n > current ? 1 : -1;
+    var leaving = slides[current];
+    var entering = slides[n];
+
+    for (var i = 0; i < total; i++) {
+      if (i !== current) {
+        slides[i].classList.remove('active', 'exit-left', 'exit-right', 'enter-from-left', 'enter-from-right');
+        slides[i].style.visibility = 'hidden';
+        slides[i].style.opacity = '0';
+      }
+    }
+
+    leaving.classList.remove('active');
+    leaving.classList.add(direction > 0 ? 'exit-left' : 'exit-right');
+
+    entering.style.visibility = 'visible';
+    entering.style.opacity = '1';
+    entering.classList.add('active');
+    entering.classList.add(direction > 0 ? 'enter-from-right' : 'enter-from-left');
+
+    current = n;
+    updateUI();
+
+    setTimeout(function() {
+      for (var i = 0; i < total; i++) {
+        slides[i].classList.remove('exit-left', 'exit-right', 'enter-from-left', 'enter-from-right');
+        if (i !== current) {
+          slides[i].classList.remove('active');
+          slides[i].style.visibility = 'hidden';
+          slides[i].style.opacity = '0';
+        } else {
+          slides[i].style.visibility = 'visible';
+          slides[i].style.opacity = '1';
+        }
+      }
+      animating = false;
+    }, 480);
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goToSlide(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goToSlide(current - 1);
+    }
+  });
+
+  var touchX = 0;
+  document.addEventListener('touchstart', function(e) { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', function(e) {
+    var d = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(d) > 50) { d > 0 ? goToSlide(current + 1) : goToSlide(current - 1); }
+  });
+
+  var wheelLock;
+  document.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    if (wheelLock) return;
+    wheelLock = setTimeout(function() { wheelLock = null; }, 700);
+    e.deltaY > 0 ? goToSlide(current + 1) : goToSlide(current - 1);
+  }, { passive: false });
+
+  updateUI();
+})();
+</script>
+</body>
+</html>

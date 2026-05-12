@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extension Architecture - Claude Code vs OpenClaw</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f172a;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  .card {
+    max-width: 960px;
+    width: 100%;
+    background: #1e293b;
+    border-radius: 20px;
+    padding: 48px;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+  }
+  .dim-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #f1f5f9;
+    margin-bottom: 32px;
+  }
+  h1 span { color: #64748b; font-weight: 400; }
+  .vs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .side {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid #334155;
+    position: relative;
+    overflow: hidden;
+  }
+  .side::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .side-claude::before { background: linear-gradient(90deg, #e07c40, #f59e0b); }
+  .side-openclaw::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
+  .side-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .side-claude .side-title { color: #e07c40; }
+  .side-openclaw .side-title { color: #10b981; }
+  .side-subtitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 28px;
+  }
+
+  /* Extension items */
+  .ext-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .ext-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ext-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 2px solid;
+    min-width: 100px;
+  }
+  .ext-mcp { border-color: #f59e0b; color: #f59e0b; background: rgba(245,158,11,0.08); }
+  .ext-plug { border-color: #3b82f6; color: #3b82f6; background: rgba(59,130,246,0.08); }
+  .ext-skill { border-color: #a78bfa; color: #a78bfa; background: rgba(167,139,250,0.08); }
+  .ext-hook { border-color: #f87171; color: #f87171; background: rgba(248,113,113,0.08); }
+  .ext-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .ext-mcp .ext-dot { background: #f59e0b; }
+  .ext-plug .ext-dot { background: #3b82f6; }
+  .ext-skill .ext-dot { background: #a78bfa; }
+  .ext-hook .ext-dot { background: #f87171; }
+
+  .dashed-arrows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #475569;
+  }
+  .dashed-arrows span {
+    font-size: 20px;
+    letter-spacing: 3px;
+  }
+  .agent-box {
+    padding: 20px 16px;
+    border: 2px solid;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .agent-box-claude {
+    border-color: #e07c40;
+    color: #e07c40;
+    background: rgba(224,124,64,0.06);
+  }
+  .agent-box-oc {
+    border-color: #10b981;
+    color: #064e3b;
+    background: #10b981;
+  }
+
+  /* OpenClaw plugins */
+  .plugin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .plugin-chip {
+    padding: 6px 14px;
+    background: #10b981;
+    color: #064e3b;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .registry-box {
+    padding: 14px 16px;
+    border: 2px solid #10b981;
+    border-radius: 10px;
+    background: rgba(16,185,129,0.08);
+    font-size: 14px;
+    font-weight: 700;
+    color: #10b981;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="dim-badge">Dimension 3 of 5</div>
+  <h1>Extension Architecture <span>— 扩展架构</span></h1>
+  <div class="vs-grid">
+
+    <!-- Claude Code -->
+    <div class="side side-claude">
+      <div class="side-title">Claude Code</div>
+      <div class="side-subtitle">Four Parallel Options</div>
+      <div class="ext-flow">
+        <div class="ext-list">
+          <div class="ext-chip ext-mcp"><span class="ext-dot"></span>MCP</div>
+          <div class="ext-chip ext-plug"><span class="ext-dot"></span>plug</div>
+          <div class="ext-chip ext-skill"><span class="ext-dot"></span>skill</div>
+          <div class="ext-chip ext-hook"><span class="ext-dot"></span>hook</div>
+        </div>
+        <div class="dashed-arrows">
+          <span>--&gt;</span>
+          <span>--&gt;</span>
+          <span>--&gt;</span>
+          <span>--&gt;</span>
+        </div>
+        <div class="agent-box agent-box-claude">Claude Code<br>Agent</div>
+      </div>
+    </div>
+
+    <!-- OpenClaw -->
+    <div class="side side-openclaw">
+      <div class="side-title">OpenClaw</div>
+      <div class="side-subtitle">Manifest-first plugin system</div>
+      <div class="ext-flow">
+        <div class="plugin-list">
+          <div class="plugin-chip">Plugin</div>
+          <div class="plugin-chip">Plugin</div>
+          <div class="plugin-chip">Plugin</div>
+          <div class="plugin-chip">Plugin</div>
+          <div class="plugin-chip">Plugin</div>
+        </div>
+        <div class="dashed-arrows">
+          <span style="font-size:20px;">--&gt;</span>
+        </div>
+        <div class="registry-box">Registry</div>
+        <div class="dashed-arrows">
+          <span style="font-size:20px;">--&gt;</span>
+        </div>
+        <div class="agent-box agent-box-oc">Pi<br>Agent</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

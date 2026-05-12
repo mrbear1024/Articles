@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(135deg, #0f0c29 0%, #1a1744 50%, #24243e 100%);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 40px;
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  }
+  .card {
+    width: 820px; background: rgba(26, 23, 68, 0.6);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+    padding: 36px 40px; backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .card-title {
+    font-size: 20px; font-weight: 700; color: #4facfe;
+    margin-bottom: 6px;
+  }
+  .card-subtitle {
+    font-size: 13px; color: #6b7280; margin-bottom: 24px;
+  }
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border-radius: 12px; overflow: hidden;
+  }
+  thead th {
+    background: rgba(79, 172, 254, 0.12); color: #4facfe;
+    font-size: 14px; font-weight: 600; padding: 14px 18px;
+    text-align: left; border-bottom: 1px solid rgba(79, 172, 254, 0.2);
+  }
+  tbody td {
+    padding: 13px 18px; font-size: 13px; color: #c9d1d9;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(79, 172, 254, 0.04); }
+  .col-config {
+    color: #00f2fe; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12.5px;
+    font-weight: 600; white-space: nowrap;
+  }
+  .col-option {
+    color: #f6d365; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px;
+  }
+  .col-effect { color: #8b95a5; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-title">OpenClaw · 上下文隔离配置</div>
+    <div class="card-subtitle">多线程并发的会话隔离 — 没有对错，取决于使用场景</div>
+    <table>
+      <thead>
+        <tr><th>配置</th><th>选项</th><th>效果</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-config">sandbox.scope</td>
+          <td class="col-option">agent / session</td>
+          <td class="col-effect">按 Agent 隔离还是按会话隔离</td>
+        </tr>
+        <tr>
+          <td class="col-config">session.dmScope</td>
+          <td class="col-option">main / per-channel-peer</td>
+          <td class="col-effect">私聊消息共享上下文还是独立上下文</td>
+        </tr>
+        <tr>
+          <td class="col-config">并发控制</td>
+          <td class="col-option">Bull Queue，默认最大 10</td>
+          <td class="col-effect">防止多条消息同时修改同一个上下文</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

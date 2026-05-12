@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(135deg, #0f0c29 0%, #1a1744 50%, #24243e 100%);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 40px;
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  }
+  .card {
+    width: 780px; background: rgba(26, 23, 68, 0.6);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+    padding: 36px 40px; backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .card-title {
+    font-size: 20px; font-weight: 700; color: #f5576c;
+    margin-bottom: 6px;
+  }
+  .card-subtitle {
+    font-size: 13px; color: #6b7280; margin-bottom: 24px;
+  }
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border-radius: 12px; overflow: hidden;
+  }
+  thead th {
+    background: rgba(245, 87, 108, 0.12); color: #f5576c;
+    font-size: 14px; font-weight: 600; padding: 14px 18px;
+    text-align: left; border-bottom: 1px solid rgba(245, 87, 108, 0.2);
+  }
+  tbody td {
+    padding: 13px 18px; font-size: 13px; color: #c9d1d9;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(245, 87, 108, 0.04); }
+  .mode-tag {
+    display: inline-block; padding: 3px 12px; border-radius: 6px;
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12.5px;
+    font-weight: 600;
+  }
+  .mode-default { background: rgba(156, 163, 175, 0.15); color: #9ca3af; }
+  .mode-accept { background: rgba(67, 233, 123, 0.15); color: #43e97b; }
+  .mode-plan { background: rgba(79, 172, 254, 0.15); color: #4facfe; }
+  .mode-auto { background: rgba(246, 211, 101, 0.15); color: #f6d365; }
+  .col-behavior { color: #e2e8f0; }
+  .col-scene { color: #8b95a5; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-title">Claude Code · 多层权限模式</div>
+    <div class="card-subtitle">围绕工具调用设计 — Shift+Tab 切换 · deny → ask → allow 优先级匹配</div>
+    <table>
+      <thead>
+        <tr><th>模式</th><th>行为</th><th>适用场景</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="mode-tag mode-default">default</span></td>
+          <td class="col-behavior">每个工具调用都需确认</td>
+          <td class="col-scene">探索、学习</td>
+        </tr>
+        <tr>
+          <td><span class="mode-tag mode-accept">acceptEdits</span></td>
+          <td class="col-behavior">自动批准文件编辑和安全命令</td>
+          <td class="col-scene">日常开发</td>
+        </tr>
+        <tr>
+          <td><span class="mode-tag mode-plan">plan</span></td>
+          <td class="col-behavior">只读，不能改任何东西</td>
+          <td class="col-scene">安全探索</td>
+        </tr>
+        <tr>
+          <td><span class="mode-tag mode-auto">auto</span></td>
+          <td class="col-behavior">后台安全检查，风险操作才提示</td>
+          <td class="col-scene">信任的工作流</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

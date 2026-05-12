@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude 101 中文版：从零开始掌握 Claude</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#fafaf9;--card:#fff;--text:#1c1917;--text2:#57534e;--text3:#a8a29e;
+  --border:#e7e5e4;--accent:#c4704b;--accent-light:#fdf0ec;--accent-dark:#a85a3a;
+  --sidebar-w:300px;--header-h:56px;
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:-apple-system,"SF Pro Text","Helvetica Neue","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.75;-webkit-font-smoothing:antialiased}
+
+/* Header */
+.site-header{position:fixed;top:0;left:0;right:0;height:var(--header-h);background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:100;display:flex;align-items:center;padding:0 24px}
+.site-header .logo{font-size:15px;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.site-header .logo span{color:var(--accent);margin-right:6px}
+.site-header .badge{margin-left:10px;font-size:11px;font-weight:600;background:var(--accent-light);color:var(--accent);padding:2px 8px;border-radius:99px}
+.menu-btn{display:none;background:none;border:none;cursor:pointer;padding:4px;margin-right:12px}
+.menu-btn svg{width:22px;height:22px;stroke:var(--text);stroke-width:2;fill:none}
+
+/* Sidebar */
+.sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;width:var(--sidebar-w);background:var(--card);border-right:1px solid var(--border);overflow-y:auto;padding:20px 0;z-index:90;transition:transform .25s ease}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.sidebar .module-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:16px 20px 6px;margin-top:4px}
+.sidebar .module-label:first-child{margin-top:0;padding-top:8px}
+.sidebar a{display:flex;align-items:flex-start;gap:10px;padding:8px 20px;font-size:13.5px;color:var(--text2);text-decoration:none;transition:all .15s;line-height:1.45}
+.sidebar a:hover{background:var(--accent-light);color:var(--accent-dark)}
+.sidebar a.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.sidebar a .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text3);margin-top:1px}
+.sidebar a.active .num{background:var(--accent);color:#fff}
+.sidebar a:hover .num{background:var(--accent-light);color:var(--accent)}
+.sidebar a.active:hover .num{background:var(--accent)}
+.sidebar .progress-bar{margin:16px 20px 0;padding-top:16px;border-top:1px solid var(--border)}
+.sidebar .progress-bar .label{font-size:11px;color:var(--text3);margin-bottom:6px;display:flex;justify-content:space-between}
+.sidebar .progress-track{height:4px;background:var(--border);border-radius:4px;overflow:hidden}
+.sidebar .progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .4s ease;width:0}
+
+/* Main */
+.main{margin-left:var(--sidebar-w);padding-top:var(--header-h)}
+.lesson{display:none;max-width:740px;margin:0 auto;padding:48px 32px 80px}
+.lesson.active{display:block}
+
+/* Typography */
+.lesson h1{font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.25;margin-bottom:8px;color:var(--text)}
+.lesson .module-tag{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-light);padding:3px 10px;border-radius:99px;margin-bottom:24px}
+.lesson h2{font-size:20px;font-weight:700;letter-spacing:-.02em;margin:40px 0 16px;color:var(--text);padding-bottom:8px;border-bottom:1px solid var(--border)}
+.lesson p{margin-bottom:16px;color:var(--text)}
+.lesson strong{font-weight:600;color:var(--text)}
+.lesson ul,.lesson ol{margin:0 0 16px 20px;color:var(--text)}
+.lesson li{margin-bottom:6px}
+.lesson li strong{color:var(--text)}
+.lesson blockquote{border-left:3px solid var(--accent);background:var(--accent-light);padding:12px 16px;margin:16px 0;border-radius:0 6px 6px 0;font-size:14px;color:var(--accent-dark)}
+
+/* Tables */
+.lesson table{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:14px}
+.lesson th{text-align:left;padding:10px 14px;background:#f5f5f4;border:1px solid var(--border);font-weight:600;font-size:13px;color:var(--text2)}
+.lesson td{padding:10px 14px;border:1px solid var(--border);vertical-align:top}
+
+/* Code */
+.lesson code{font-family:"SF Mono",Menlo,monospace;font-size:13px;background:#f5f5f4;padding:2px 6px;border-radius:4px;color:var(--accent-dark)}
+.lesson pre{background:#1c1917;color:#e7e5e4;padding:16px 20px;border-radius:8px;margin:16px 0 24px;overflow-x:auto;font-size:13px;line-height:1.6}
+.lesson pre code{background:none;padding:0;color:inherit}
+
+/* Key Points */
+.key-points{background:#f5f5f4;border-radius:10px;padding:20px 24px;margin:32px 0}
+.key-points .kp-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.key-points ul{margin-left:18px}
+.key-points li{margin-bottom:8px;font-size:14.5px;color:var(--text2)}
+
+/* Nav Footer */
+.lesson-nav{display:flex;justify-content:space-between;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border)}
+.lesson-nav button{display:flex;align-items:center;gap:6px;padding:10px 18px;border:1px solid var(--border);border-radius:8px;background:var(--card);font-size:13.5px;font-weight:500;color:var(--text);cursor:pointer;transition:all .15s}
+.lesson-nav button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.lesson-nav button:disabled{opacity:.3;cursor:not-allowed}
+.lesson-nav button:disabled:hover{border-color:var(--border);color:var(--text);background:var(--card)}
+.lesson-nav button svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none}
+
+/* Hero (lesson 0) */
+.hero{text-align:center;padding:56px 0 40px}
+.hero h1{font-size:36px;margin-bottom:12px}
+.hero .subtitle{font-size:16px;color:var(--text2);max-width:520px;margin:0 auto 28px}
+.hero .meta{display:flex;gap:24px;justify-content:center;font-size:13px;color:var(--text3)}
+.hero .meta span{display:flex;align-items:center;gap:5px}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:32px 0}
+.features .feat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;text-align:left}
+.features .feat .feat-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.features .feat .feat-desc{font-size:13px;color:var(--text2);line-height:1.5}
+.start-btn{display:inline-flex;align-items:center;gap:8px;margin-top:32px;padding:12px 28px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s}
+.start-btn:hover{background:var(--accent-dark)}
+.start-btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none}
+
+/* Mobile */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:85}
+@media(max-width:840px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .overlay.open{display:block}
+  .main{margin-left:0}
+  .menu-btn{display:block}
+  .lesson{padding:36px 20px 64px}
+  .hero h1{font-size:28px}
+  .features{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <button class="menu-btn" onclick="toggleSidebar()" aria-label="菜单">
+    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="logo"><span>◆</span>Claude 101 中文版</div>
+  <div class="badge">免费课程</div>
+</header>
+
+<div class="overlay" onclick="toggleSidebar()"></div>
+
+<nav class="sidebar" id="sidebar">
+  <div class="module-label">课程概览</div>
+  <a href="#" data-lesson="0" class="active"><span class="num">○</span>课程概览</a>
+
+  <div class="module-label">一、认识 Claude</div>
+  <a href="#" data-lesson="1"><span class="num">1</span>Claude 是什么</a>
+
+  <div class="module-label">二、迈出第一步</div>
+  <a href="#" data-lesson="2"><span class="num">2</span>你与 Claude 的第一次对话</a>
+  <a href="#" data-lesson="3"><span class="num">3</span>获得更好的结果</a>
+  <a href="#" data-lesson="4"><span class="num">4</span>Claude 桌面应用</a>
+
+  <div class="module-label">三、组织工作与知识</div>
+  <a href="#" data-lesson="5"><span class="num">5</span>Projects 入门</a>
+  <a href="#" data-lesson="6"><span class="num">6</span>用 Artifacts 创作</a>
+  <a href="#" data-lesson="7"><span class="num">7</span>使用 Skills</a>
+
+  <div class="module-label">四、扩展能力边界</div>
+  <a href="#" data-lesson="8"><span class="num">8</span>连接你的工具</a>
+  <a href="#" data-lesson="9"><span class="num">9</span>企业搜索</a>
+  <a href="#" data-lesson="10"><span class="num">10</span>深度研究模式</a>
+
+  <div class="module-label">五、融会贯通</div>
+  <a href="#" data-lesson="11"><span class="num">11</span>Claude 实战</a>
+  <a href="#" data-lesson="12"><span class="num">12</span>更多方式与进阶资源</a>
+
+  <div class="progress-bar">
+    <div class="label"><span>学习进度</span><span id="progress-text">0 / 12</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- Lesson 0: 课程概览 -->
+<div class="lesson active" data-lesson="0">
+  <div class="hero">
+    <h1>Claude 101 中文版</h1>
+    <p class="subtitle">基于 Anthropic Academy 官方课程，从零开始掌握 Claude 的核心能力与实战技巧</p>
+    <div class="meta">
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 12 节课</span>
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 约 1 小时</span>
+      <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> 零基础</span>
+    </div>
+  </div>
+
+  <h2>你将学到什么</h2>
+  <div class="features">
+    <div class="feat"><div class="feat-title">理解 Claude</div><div class="feat-desc">Claude 是什么，与搜索引擎和传统聊天机器人有何本质区别</div></div>
+    <div class="feat"><div class="feat-title">高效对话</div><div class="feat-desc">掌握提示词技巧，让 Claude 给出更准确、更有用的回答</div></div>
+    <div class="feat"><div class="feat-title">三种工作模式</div><div class="feat-desc">Chat 对话、Cowork 任务执行、Code 编程协作</div></div>
+    <div class="feat"><div class="feat-title">Projects 与 Artifacts</div><div class="feat-desc">组织持久化知识，创建可编辑、可复用的独立内容</div></div>
+    <div class="feat"><div class="feat-title">Skills 与集成</div><div class="feat-desc">用 Skills 扩展专业能力，用 MCP 连接你的工具</div></div>
+    <div class="feat"><div class="feat-title">深度研究</div><div class="feat-desc">让 Claude 自主进行多步骤调研，输出带引用的完整报告</div></div>
+  </div>
+
+  <h2>适合谁学习</h2>
+  <ul>
+    <li>刚接触 Claude 的新用户</li>
+    <li>用过 ChatGPT 但没有深入探索 Claude 的人</li>
+    <li>团队中负责 AI 工具导入的管理者</li>
+    <li>想系统了解 Claude 全部能力的任何人</li>
+  </ul>
+
+  <h2>课程结构</h2>
+  <table>
+    <tr><th>模块</th><th>课程</th></tr>
+    <tr><td rowspan="1"><strong>一、认识 Claude</strong></td><td>1. Claude 是什么</td></tr>
+    <tr><td rowspan="3"><strong>二、迈出第一步</strong></td><td>2. 你与 Claude 的第一次对话</td></tr>
+    <tr><td>3. 获得更好的结果</td></tr>
+    <tr><td>4. Claude 桌面应用：Chat、Cowork、Code</td></tr>
+    <tr><td rowspan="3"><strong>三、组织工作与知识</strong></td><td>5. Projects 入门</td></tr>
+    <tr><td>6. 用 Artifacts 创作</td></tr>
+    <tr><td>7. 使用 Skills</td></tr>
+    <tr><td rowspan="3"><strong>四、扩展能力边界</strong></td><td>8. 连接你的工具</td></tr>
+    <tr><td>9. 企业搜索</td></tr>
+    <tr><td>10. 深度研究模式</td></tr>
+    <tr><td rowspan="2"><strong>五、融会贯通</strong></td><td>11. Claude 实战：不同角色的使用场景</td></tr>
+    <tr><td>12. 更多方式与进阶资源</td></tr>
+  </table>
+
+  <p style="text-align:center;margin-top:24px">
+    <button class="start-btn" onclick="goToLesson(1)">开始学习 <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+  </p>
+
+  <p style="margin-top:32px;font-size:13px;color:var(--text3);text-align:center">
+    本课程基于 <a href="https://anthropic.skilljar.com/claude-101" style="color:var(--accent)" target="_blank">Anthropic Academy 官方 Claude 101</a> 课程结构编译
+  </p>
+</div>
+
+<!-- Lesson 1 -->
+<div class="lesson" data-lesson="1">
+  <div class="module-tag">模块一：认识 Claude</div>
+  <h1>第一课：Claude 是什么</h1>
+
+  <h2>一句话定义</h2>
+  <p>Claude 是 Anthropic 公司开发的 AI 助手。它能阅读、推理、生成内容，帮助你完成从写作到编程、从分析到决策的各种工作。</p>
+  <p>但仅仅知道这一点远远不够。要真正用好 Claude，你需要理解它与你以前用过的工具有什么本质区别。</p>
+
+  <h2>Claude 不是搜索引擎</h2>
+  <p>搜索引擎接收关键词，返回链接列表，由你自己去筛选和阅读。Claude 接收你的完整问题，理解你的意图，直接给出经过推理的回答。</p>
+  <p>你不需要拆解问题成关键词组合，也不需要在十几个搜索结果中挑选。你只需要像对一个聪明的同事那样，把问题说清楚。</p>
+
+  <h2>Claude 不是传统聊天机器人</h2>
+  <p>传统聊天机器人基于预设的规则树运作——你说 A，它回复 B。Claude 能理解语境，能处理模糊的问题，能在推理中发现你没有明确提出的需求。</p>
+  <p>更关键的是，Claude 能处理长文档、能生成结构化内容、能编写代码、能创建交互式应用。它的能力边界远超"问答"。</p>
+
+  <h2>Anthropic 是谁</h2>
+  <p>Anthropic 是一家 AI 安全公司，由 Dario Amodei 和 Daniela Amodei 等人于 2021 年创立。公司的核心使命是开发安全、可靠的 AI 系统。</p>
+  <p>这意味着 Claude 在设计上就强调：</p>
+  <ul>
+    <li><strong>诚实</strong>：不确定的时候会告诉你"我不确定"，而不是编造答案</li>
+    <li><strong>无害</strong>：拒绝帮助完成有害的请求</li>
+    <li><strong>有用</strong>：在安全的前提下尽可能帮你解决问题</li>
+  </ul>
+
+  <h2>Claude 的模型家族</h2>
+  <p>Anthropic 提供三个级别的模型，适应不同场景：</p>
+  <table>
+    <tr><th>模型</th><th>定位</th><th>适用场景</th></tr>
+    <tr><td><strong>Opus</strong></td><td>最强能力</td><td>复杂推理、长篇分析、困难编程任务</td></tr>
+    <tr><td><strong>Sonnet</strong></td><td>均衡之选</td><td>日常工作、写作、分析，兼顾能力与速度</td></tr>
+    <tr><td><strong>Haiku</strong></td><td>轻量高速</td><td>简单问答、快速分类、批量处理</td></tr>
+  </table>
+  <p>最新版本为 Claude Opus 4.7，是目前能力最强的模型。</p>
+
+  <h2>你可以在哪里使用 Claude</h2>
+  <ul>
+    <li><strong>claude.ai</strong>：网页版，打开浏览器即可使用</li>
+    <li><strong>Claude 桌面应用</strong>：macOS 和 Windows 客户端，支持 Cowork 模式</li>
+    <li><strong>Claude 移动端</strong>：iOS 和 Android 应用</li>
+    <li><strong>Claude Code</strong>：命令行工具，面向开发者</li>
+    <li><strong>API</strong>：面向开发者和企业的编程接口</li>
+  </ul>
+
+  <h2>订阅方案</h2>
+  <table>
+    <tr><th>方案</th><th>适用对象</th></tr>
+    <tr><td><strong>Free</strong></td><td>个人体验，有使用量限制</td></tr>
+    <tr><td><strong>Pro</strong></td><td>个人用户，更高额度和更多功能</td></tr>
+    <tr><td><strong>Max</strong></td><td>高频用户，最大使用额度</td></tr>
+    <tr><td><strong>Team</strong></td><td>团队协作</td></tr>
+    <tr><td><strong>Enterprise</strong></td><td>大型组织，自定义部署</td></tr>
+  </table>
+
+  <h2>Claude 能帮你做什么</h2>
+  <p><strong>写作与内容创作</strong></p>
+  <ul><li>撰写邮件、报告、提案</li><li>润色和改进文章风格</li><li>头脑风暴创意方案</li></ul>
+  <p><strong>学习与理解</strong></p>
+  <ul><li>用简单的语言解释复杂概念</li><li>上传文档让 Claude 帮你总结和分析</li><li>准备面试或考试</li></ul>
+  <p><strong>编程与开发</strong></p>
+  <ul><li>调试代码、解释代码逻辑</li><li>编写新功能、重构现有代码</li><li>生成测试用例</li></ul>
+  <p><strong>研究与分析</strong></p>
+  <ul><li>从多个来源综合信息</li><li>生成带引用的研究报告</li><li>分析数据并创建可视化</li></ul>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>Claude 是一个能推理的 AI 助手，不只是搜索或问答</li>
+      <li>Anthropic 重视 AI 安全，Claude 被设计为诚实、有用、无害</li>
+      <li>根据需求选择合适的模型：Opus（最强）、Sonnet（均衡）、Haiku（快速）</li>
+      <li>Claude 可以通过网页、桌面应用、移动端、命令行和 API 使用</li>
+      <li>Claude 的能力覆盖写作、编程、研究、分析、任务执行等多个领域</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 2 -->
+<div class="lesson" data-lesson="2">
+  <div class="module-tag">模块二：迈出第一步</div>
+  <h1>第二课：你与 Claude 的第一次对话</h1>
+
+  <h2>对话的正确心态</h2>
+  <p>大多数人第一次使用 Claude 时，会像使用搜索引擎一样输入简短的关键词。这是效率最低的用法。</p>
+  <p>Claude 的最佳使用方式，是把它当作一个聪明、博学的同事来沟通。你在向同事交代任务时会怎么说？你会提供背景、说明目标、描述你期望的结果格式。对 Claude 也一样。</p>
+
+  <h2>开始你的第一次对话</h2>
+  <p>打开 claude.ai 或 Claude 桌面应用，你会看到一个对话框。输入你的问题或请求，按回车发送。</p>
+  <p>试试这些第一次对话：</p>
+  <p><strong>简单问答</strong></p>
+  <blockquote>用三句话解释量子计算是什么，假设我是一个没有物理学背景的产品经理。</blockquote>
+  <p><strong>写作辅助</strong></p>
+  <blockquote>帮我写一封邮件，向客户解释项目延期两周的原因。语气要专业但不生硬，控制在 200 字以内。延期原因是第三方 API 接口变更导致需要重新开发对接模块。</blockquote>
+  <p><strong>分析任务</strong></p>
+  <blockquote>比较远程办公和混合办公模式的优缺点，用表格形式呈现，从员工满意度、协作效率、管理成本三个维度分析。</blockquote>
+
+  <h2>对话是可以持续的</h2>
+  <p>Claude 会记住当前对话中的上下文。你可以在一个对话中不断深入：</p>
+  <ol>
+    <li>先让 Claude 帮你列出一份市场分析的提纲</li>
+    <li>然后让它展开其中某一部分</li>
+    <li>接着让它调整语气或格式</li>
+    <li>最后让它生成最终版本</li>
+  </ol>
+  <p>每一轮对话都建立在之前的基础上，不需要重复说明背景。</p>
+
+  <h2>上传文件</h2>
+  <p>Claude 能处理多种文件格式：</p>
+  <ul>
+    <li><strong>PDF</strong>：合同、报告、论文</li>
+    <li><strong>Word/Excel/PPT</strong>：办公文档</li>
+    <li><strong>图片</strong>：截图、照片、设计稿</li>
+    <li><strong>代码文件</strong>：各种编程语言</li>
+    <li><strong>CSV</strong>：数据文件</li>
+  </ul>
+  <p>上传方式很简单：点击对话框旁边的附件按钮，或者直接把文件拖入对话框。</p>
+
+  <h2>使用截图获取视觉上下文</h2>
+  <p>Claude 具备强大的图像理解能力。你可以：</p>
+  <ul>
+    <li>截取仪表盘截图，让 Claude 分析数据趋势</li>
+    <li>拍下竞品网站的页面，让 Claude 提出改进建议</li>
+    <li>上传设计稿，让 Claude 给出 UI/UX 反馈</li>
+    <li>截取报错信息的截图，让 Claude 帮你诊断问题</li>
+  </ul>
+
+  <h2>第一次对话的常见误区</h2>
+  <p><strong>误区一：提问太短</strong></p>
+  <ul>
+    <li>差：<code>写个邮件</code></li>
+    <li>好：<code>帮我写一封给供应商的催货邮件，我们上周下的订单（订单号 A-2345）至今没有物流信息，语气要坚定但保持合作关系</code></li>
+  </ul>
+  <p><strong>误区二：不给背景</strong></p>
+  <ul>
+    <li>差：<code>分析一下这个数据</code></li>
+    <li>好：<code>这是我们 Q1 的用户增长数据（见附件），帮我找出增长最快的渠道，以及可能的原因。我需要在下周一的管理层会议上汇报</code></li>
+  </ul>
+  <p><strong>误区三：一次问太多不相关的问题</strong></p>
+  <p>每个对话围绕一个主题会更高效。如果你要处理三个完全不同的任务，开三个对话比在一个对话里混着问效果更好。</p>
+  <p><strong>误区四：不迭代</strong></p>
+  <p>第一次回复不完美是正常的。告诉 Claude 哪里需要调整：</p>
+  <ul>
+    <li>"语气太正式了，更口语化一些"</li>
+    <li>"表格里加上同比增长率这一列"</li>
+    <li>"第二段的论证不够有力，加入具体数据支撑"</li>
+  </ul>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>把 Claude 当作聪明的同事，而非搜索引擎</li>
+      <li>提供充足的背景信息和明确的期望</li>
+      <li>善用文件上传和截图功能获取更多上下文</li>
+      <li>在同一对话中持续迭代，逐步打磨结果</li>
+      <li>不同任务开不同对话，保持上下文清晰</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 3 -->
+<div class="lesson" data-lesson="3">
+  <div class="module-tag">模块二：迈出第一步</div>
+  <h1>第三课：获得更好的结果</h1>
+
+  <h2>为什么你的提示词效果不好</h2>
+  <p>大多数人使用 Claude 的方式，和他们在搜索引擎里输入关键词的方式一模一样——简短、模糊、缺乏上下文。搜索引擎需要短查询，但 Claude 需要的是一份简明的工作简报。</p>
+  <p>当一个回复没有达到你的预期时，问题几乎总是出在四个方面之一：角色不清、上下文不足、任务模糊、格式未指定。</p>
+
+  <h2>让 Claude 进入正确角色</h2>
+  <p>给 Claude 一个角色，能显著提升输出质量。这让 Claude 知道用什么视角、什么深度、什么语气来回应。</p>
+  <table>
+    <tr><th>场景</th><th>角色设定</th></tr>
+    <tr><td>写市场文案</td><td>"你是一位有 10 年经验的品牌营销专家"</td></tr>
+    <tr><td>审查合同</td><td>"你是一位专注商业合同的法律顾问"</td></tr>
+    <tr><td>解释技术概念</td><td>"你是一位擅长向非技术人员解释复杂概念的技术写作者"</td></tr>
+    <tr><td>分析财务数据</td><td>"你是一位 CFA 持证的财务分析师"</td></tr>
+  </table>
+
+  <h2>提供充足的上下文</h2>
+  <p>上下文是获得好结果的关键杠杆。具体来说：</p>
+  <p><strong>说明背景</strong></p>
+  <ul><li>这份报告是给谁看的？</li><li>读者对这个话题了解多少？</li><li>这项工作属于什么更大的项目？</li></ul>
+  <p><strong>提供约束</strong></p>
+  <ul><li>字数限制、格式要求</li><li>必须包含或必须避免的内容</li><li>时间范围、地域范围</li></ul>
+  <p><strong>给出参考</strong></p>
+  <ul><li>"风格参考这篇文章：[粘贴文章片段]"</li><li>"类似于我们之前做过的 X，但这次需要 Y"</li></ul>
+
+  <h2>明确你的任务</h2>
+  <p>模糊的指令得到模糊的回复。对比以下两种写法：</p>
+  <p><strong>模糊</strong></p>
+  <blockquote>帮我写个产品介绍</blockquote>
+  <p><strong>明确</strong></p>
+  <blockquote>为我们的项目管理工具写一段产品介绍，发布在官网首页。目标用户是 10-50 人规模的创业团队 CTO。重点突出三个差异化优势：AI 自动排期、实时协作看板、与 GitHub 深度集成。控制在 300 字以内，语气专业但不刻板。</blockquote>
+
+  <h2>使用示例引导</h2>
+  <p>当你很难用语言描述你想要的结果时，给 Claude 2-3 个示例比长篇解释更有效。</p>
+  <blockquote>
+    我需要为以下产品名称写一行标语。<br><br>
+    示例：<br>
+    - 产品名：CloudSync → 标语：文件永远跟着你走<br>
+    - 产品名：MeetingBot → 标语：开会的不是你，但笔记是你的<br><br>
+    现在请为这些产品写标语：DataLens、CodeReview Pro、TeamPulse
+  </blockquote>
+
+  <h2>允许 Claude 表达不确定性</h2>
+  <p>明确告诉 Claude 可以说"我不确定"，能显著减少虚构内容（幻觉）的风险。</p>
+  <blockquote>根据这份财报分析公司的财务健康状况。如果某些数据不足以得出确定结论，请明确指出你的不确定性，而不是猜测。</blockquote>
+
+  <h2>长文档的处理技巧</h2>
+  <p>当你处理超长文档（2 万字以上）时：</p>
+  <ul>
+    <li>把长文档放在提示词的前面，你的问题和指令放在最后</li>
+    <li>测试表明，将查询放在复杂多文档输入的末尾，可以提升最高 30% 的回复质量</li>
+    <li>如果文档特别长，可以分段上传，每段附带具体问题</li>
+  </ul>
+
+  <h2>指定不要做什么</h2>
+  <p>说明你不想要什么，和说明你想要什么同样重要：</p>
+  <ul>
+    <li>"不要使用'在当今时代'之类的套话"</li>
+    <li>"不要重复我已经知道的背景信息"</li>
+    <li>"不要生成代码，只描述实现思路"</li>
+    <li>"不要超过 500 字"</li>
+  </ul>
+
+  <h2>提示词框架速查</h2>
+  <p>当你不知道从哪里开始时，用这个结构：</p>
+  <pre><code>角色：你是一位 [专业角色]
+背景：[任务的背景和上下文]
+任务：[具体要做什么]
+格式：[输出格式要求]
+约束：[限制条件和注意事项]</code></pre>
+  <p>你不需要每次都用全部五个要素。当回复偏离预期时，检查是哪个要素缺失了。</p>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>把提示词当作工作简报，提供角色、上下文、任务、格式</li>
+      <li>用 2-3 个示例比长篇描述更高效</li>
+      <li>明确指定不要做什么，和指定要做什么同样重要</li>
+      <li>长文档放在前面，问题和指令放在最后</li>
+      <li>允许 Claude 表达不确定，减少幻觉</li>
+      <li>迭代时给出具体、局部的反馈</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 4 -->
+<div class="lesson" data-lesson="4">
+  <div class="module-tag">模块二：迈出第一步</div>
+  <h1>第四课：Claude 桌面应用——Chat、Cowork、Code</h1>
+
+  <h2>三种工作模式</h2>
+  <p>Claude 桌面应用提供三种不同的工作模式，适应从简单问答到复杂任务执行的各种需求：</p>
+  <table>
+    <tr><th>模式</th><th>本质</th><th>适用场景</th></tr>
+    <tr><td><strong>Chat</strong></td><td>对话式交互</td><td>问答、写作、分析、头脑风暴</td></tr>
+    <tr><td><strong>Cowork</strong></td><td>任务执行代理</td><td>多步骤复杂任务、文件处理、自动化工作流</td></tr>
+    <tr><td><strong>Code</strong></td><td>命令行开发工具</td><td>编程、代码审查、项目开发</td></tr>
+  </table>
+
+  <h2>Chat 模式</h2>
+  <p>Chat 是最基础也是使用最广泛的模式。它就是你在 claude.ai 上使用的那个对话界面。</p>
+  <p><strong>核心能力：</strong></p>
+  <ul>
+    <li>自然语言对话，支持多轮上下文</li>
+    <li>文件上传（PDF、Word、Excel、图片等）</li>
+    <li>图像理解和分析</li>
+    <li>网页搜索获取最新信息</li>
+    <li>语音输入和输出</li>
+    <li>生成 Artifacts（代码、文档、交互式应用）</li>
+  </ul>
+
+  <h2>Cowork 模式</h2>
+  <p>Cowork 是 Claude 的"代理模式"。它能自主完成多步骤的复杂任务，直接在你的电脑上操作文件。</p>
+  <p><strong>与 Chat 的核心区别：</strong></p>
+  <p>Chat 是你在主导——你提问，Claude 回答，你再提问。Cowork 是 Claude 在执行——你描述任务，Claude 制定计划、拆解步骤、逐步执行，最终交付结果。</p>
+  <p><strong>Cowork 能做什么：</strong></p>
+  <ul>
+    <li>整理你电脑上的文件夹（比如把 Downloads 里几百个文件按类型和日期分类）</li>
+    <li>把会议录音的转录文本整理成结构化的会议纪要</li>
+    <li>从多个数据源综合信息，生成完整的研究报告</li>
+    <li>创建带有公式和格式的 Excel 电子表格</li>
+    <li>制作 PowerPoint 演示文稿</li>
+  </ul>
+  <p><strong>权限与安全：</strong></p>
+  <ul>
+    <li>Claude 只能访问你明确授权的文件夹</li>
+    <li>代码在隔离的虚拟机中执行，与主操作系统分离</li>
+    <li>删除文件前需要你明确许可</li>
+    <li>你可以随时暂停或终止任务</li>
+  </ul>
+
+  <h2>Code 模式</h2>
+  <p>Claude Code 是面向开发者的命令行工具。它直接在终端中运行，能读取你的代码仓库、理解项目结构、编写和修改代码。</p>
+  <p><strong>核心能力：</strong></p>
+  <ul>
+    <li>理解整个代码仓库的结构和逻辑</li>
+    <li>编写新功能、修复 Bug</li>
+    <li>执行测试、运行构建</li>
+    <li>代码审查和重构</li>
+    <li>Git 操作（提交、创建分支、创建 PR）</li>
+  </ul>
+  <p>Claude Code 也可以在 VS Code 和 JetBrains IDE 中以扩展的形式使用，无需离开你的编辑器。</p>
+
+  <h2>如何选择正确的模式</h2>
+  <pre><code>需要快速问答或写作？ → Chat
+需要 Claude 自主完成多步骤任务？ → Cowork
+需要编写或修改代码？ → Code</code></pre>
+  <p>这三种模式使用同样的底层模型，区别在于交互方式和权限范围。Chat 是对话，Cowork 是委托，Code 是编程协作。</p>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>Claude 桌面应用提供 Chat、Cowork、Code 三种模式</li>
+      <li>Chat 适合即时对话和问答，最通用</li>
+      <li>Cowork 让 Claude 自主执行复杂的多步骤任务，直接操作你的文件</li>
+      <li>Code 是命令行开发工具，面向程序员</li>
+      <li>三种模式使用相同的底层模型，区别在于交互方式和权限</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 5 -->
+<div class="lesson" data-lesson="5">
+  <div class="module-tag">模块三：组织工作与知识</div>
+  <h1>第五课：Projects 入门</h1>
+
+  <h2>问题：每次对话都从零开始</h2>
+  <p>在使用 Projects 之前，你和 Claude 的每一次新对话都是从零开始的。你需要反复解释你的工作背景、写作风格、项目上下文。这就像每天早上到公司，你的同事都失忆了，你得重新介绍自己是谁、在做什么项目。</p>
+  <p>Projects 解决的就是这个问题。</p>
+
+  <h2>什么是 Projects</h2>
+  <p>Project 是一个持久化的上下文容器。你可以把它理解为一个专属工作空间——里面存储着 Claude 需要知道的所有背景信息。在这个 Project 中开始的每一个对话，Claude 都已经了解相关的上下文。</p>
+  <p>一个 Project 包含：</p>
+  <ul>
+    <li><strong>系统提示词</strong>：关于语气、格式、角色、约束的常驻指令</li>
+    <li><strong>知识文档</strong>：你上传的参考资料、规范、数据</li>
+    <li><strong>Artifact 库</strong>：在这个 Project 中创建的所有 Artifact</li>
+    <li><strong>对话历史</strong>：这个 Project 下的所有对话记录</li>
+  </ul>
+
+  <h2>什么时候应该创建 Project</h2>
+  <p>当你发现自己在多次对话中重复提供相同的背景信息时，就该创建一个 Project。</p>
+  <p>典型场景：</p>
+  <ul>
+    <li>一个持续数周的市场调研项目</li>
+    <li>你的个人写作助手（附带你的写作风格样本）</li>
+    <li>公司产品的客户支持知识库</li>
+    <li>一门课程的学习笔记和问答</li>
+    <li>季度财务报告的准备工作</li>
+  </ul>
+
+  <h2>如何创建和使用 Project</h2>
+  <p><strong>创建 Project：</strong></p>
+  <ol>
+    <li>在 Claude 侧边栏点击"Projects"</li>
+    <li>点击"New Project"</li>
+    <li>输入项目名称和描述</li>
+    <li>添加自定义指令（可选）</li>
+    <li>上传知识文档（可选）</li>
+  </ol>
+  <p><strong>编写自定义指令：</strong></p>
+  <p>自定义指令告诉 Claude 在这个 Project 中应该如何工作。例如：</p>
+  <pre><code>你是一位资深数据分析师，帮助我分析用户行为数据。
+
+输出规范：
+- 所有数据分析必须包含样本量和置信区间
+- 图表优先使用柱状图和折线图
+- 结论部分需要明确指出可执行的行动建议
+- 中文回复，专业术语可保留英文
+
+背景：我们是一家 B2B SaaS 公司，主要客户是中型企业的 HR 部门。</code></pre>
+
+  <h2>Project 的组织策略</h2>
+  <p><strong>按工作流组织：</strong></p>
+  <ul>
+    <li>"Q2 营销方案"——包含品牌指南、竞品分析、预算文件</li>
+    <li>"产品文档写作"——包含 API 文档、产品 PRD、风格指南</li>
+    <li>"周报生成"——包含团队 OKR、上周周报样本</li>
+  </ul>
+  <p><strong>按角色组织：</strong></p>
+  <ul>
+    <li>"写作助手"——包含你的写作风格样本和偏好</li>
+    <li>"代码审查"——包含团队的编码规范和架构文档</li>
+    <li>"会议助手"——包含议程模板和决策记录格式</li>
+  </ul>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>Project 是一个持久化的上下文容器，避免每次对话从零开始</li>
+      <li>包含系统指令、知识文档、Artifact 库和对话历史</li>
+      <li>当你反复提供相同背景信息时，就该创建 Project</li>
+      <li>自定义指令让 Claude 知道在这个 Project 中如何工作</li>
+      <li>上传知识文档让 Claude 能参考你的专有资料</li>
+      <li>Team/Enterprise 方案支持 Project 共享</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 6 -->
+<div class="lesson" data-lesson="6">
+  <div class="module-tag">模块三：组织工作与知识</div>
+  <h1>第六课：用 Artifacts 创作</h1>
+
+  <h2>什么是 Artifacts</h2>
+  <p>Artifact 是 Claude 生成的独立内容块，显示在对话窗口旁边的专用面板中。它不是混在聊天文本里的一段回复，而是一个可以预览、编辑、下载的独立作品。</p>
+  <p>当 Claude 生成的内容满足以下条件时，会自动创建 Artifact：</p>
+  <ul>
+    <li>内容较长（通常超过 15 行）</li>
+    <li>内容是自包含的，能独立存在</li>
+    <li>你可能想要编辑、迭代或在对话之外复用它</li>
+  </ul>
+
+  <h2>Artifact 能创建什么</h2>
+  <table>
+    <tr><th>类型</th><th>说明</th><th>典型用途</th></tr>
+    <tr><td><strong>Markdown 文档</strong></td><td>格式化的文本内容</td><td>报告、提案、文档</td></tr>
+    <tr><td><strong>代码</strong></td><td>各种编程语言</td><td>脚本、函数、完整程序</td></tr>
+    <tr><td><strong>HTML 页面</strong></td><td>单页网站</td><td>落地页、邮件模板、原型</td></tr>
+    <tr><td><strong>SVG 图形</strong></td><td>矢量图像</td><td>图标、图表、插图</td></tr>
+    <tr><td><strong>React 组件</strong></td><td>交互式应用</td><td>计算器、表单、数据仪表盘</td></tr>
+    <tr><td><strong>Mermaid 图表</strong></td><td>流程图和架构图</td><td>流程图、时序图、思维导图</td></tr>
+  </table>
+
+  <h2>如何触发 Artifact 创建</h2>
+  <p>你不需要使用特殊命令。只要你的请求暗示了需要一个独立的内容块，Claude 就会自动用 Artifact 的形式呈现：</p>
+  <ul>
+    <li>"帮我做一个计算器" → React 交互式组件</li>
+    <li>"画一个用户注册的流程图" → Mermaid 图表</li>
+    <li>"写一个 Python 数据处理脚本" → 代码 Artifact</li>
+    <li>"帮我设计一个简单的产品落地页" → HTML 页面</li>
+  </ul>
+
+  <h2>编辑和迭代 Artifact</h2>
+  <p><strong>通过对话修改：</strong></p>
+  <p>在聊天中告诉 Claude 你想改什么：</p>
+  <ul>
+    <li>"把标题改成蓝色"</li>
+    <li>"增加一个搜索功能"</li>
+    <li>"把表格第三列的数据格式改成百分比"</li>
+  </ul>
+  <p>修改会即时反映在 Artifact 面板中。</p>
+  <p><strong>版本对比：</strong></p>
+  <p>Artifact 面板上方有版本选择器，你可以在不同版本之间切换对比。你的编辑不会改变 Claude 对原始内容的记忆，所以你可以放心探索不同方向。</p>
+
+  <h2>导出和分享 Artifact</h2>
+  <p>Artifact 面板右下角提供：</p>
+  <ul>
+    <li>查看底层代码</li>
+    <li>复制到剪贴板</li>
+    <li>下载为文件</li>
+  </ul>
+  <p>对于交互式 Artifact（如 React 组件），你还可以发布它，让其他人通过链接访问。</p>
+
+  <h2>AI 驱动的 Artifact</h2>
+  <p>Artifact 可以集成 Claude 的 AI 能力，变成智能应用。比如问答型知识库、个性化教练、互动式测验、创意写作工具。</p>
+  <p>当你分享这类 AI Artifact 给他人时，他人使用时消耗的是他们自己的 Claude 额度，不是你的。</p>
+
+  <h2>持久化存储</h2>
+  <p>付费方案支持 Artifact 的跨会话数据持久化：</p>
+  <ul>
+    <li><strong>个人存储</strong>：你的数据只有你自己能看到</li>
+    <li><strong>共享存储</strong>：所有访问者看到相同的数据</li>
+    <li>每个 Artifact 最多 20 MB 存储</li>
+    <li>仅支持文本数据</li>
+    <li>发布后才能启用持久化存储</li>
+  </ul>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>Artifact 是独立于对话的可编辑内容块，显示在专用面板中</li>
+      <li>支持文档、代码、HTML、SVG、React 组件、流程图等多种类型</li>
+      <li>通过对话自然描述需求即可触发创建，无需特殊命令</li>
+      <li>支持版本管理、迭代修改和导出分享</li>
+      <li>可以集成 AI 能力和 MCP 外部服务</li>
+      <li>所有方案（包括免费版）均可使用基础 Artifact 功能</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 7 -->
+<div class="lesson" data-lesson="7">
+  <div class="module-tag">模块三：组织工作与知识</div>
+  <h1>第七课：使用 Skills</h1>
+
+  <h2>什么是 Skills</h2>
+  <p>Skill 是一个给 Claude 的专业操作手册。它用一个 SKILL.md 文件定义，包含一套指令、模板和上下文，让 Claude 能按照特定的方法论完成特定类型的任务。</p>
+  <p>打个比方：如果 Claude 本身是一个聪明的通才，那 Skill 就是给这个通才一本"做这件事的标准操作手册"。装备了 Skill 的 Claude 按最佳实践执行，而非即兴发挥。</p>
+
+  <h2>Skill 与普通提示词的区别</h2>
+  <table>
+    <tr><th></th><th>普通提示词</th><th>Skill</th></tr>
+    <tr><td>持久性</td><td>一次性使用</td><td>持久化存储，反复调用</td></tr>
+    <tr><td>结构化</td><td>自由文本</td><td>标准化的 YAML 前言 + Markdown 指令</td></tr>
+    <tr><td>可共享</td><td>复制粘贴</td><td>安装即用，可发布到社区</td></tr>
+    <tr><td>触发方式</td><td>手动输入</td><td>自动匹配或斜杠命令调用</td></tr>
+    <tr><td>复杂度</td><td>通常较短</td><td>可以包含详细的多步骤流程和示例</td></tr>
+  </table>
+
+  <h2>Skill 怎么工作</h2>
+  <p>Skill 采用两层渐进式加载机制：</p>
+  <ol>
+    <li><strong>启动时</strong>：Claude 只加载 Skill 的名称和描述（元数据），不加载完整内容，避免占用过多上下文</li>
+    <li><strong>需要时</strong>：当 Claude 判断某个任务与某个 Skill 相关时，才加载该 Skill 的完整指令</li>
+  </ol>
+  <p>这意味着你可以安装很多 Skill，它们不会在不需要时拖慢 Claude。</p>
+
+  <h2>如何使用 Skill</h2>
+  <p><strong>自动触发：</strong>Claude 会根据你的任务描述自动判断是否需要调用某个 Skill。比如，如果你安装了一个"PDF 生成"Skill，当你说"帮我把这份报告导出为 PDF"时，Claude 会自动使用它。</p>
+  <p><strong>手动调用：</strong>在 Claude Code 中，你可以用斜杠命令直接调用：</p>
+  <pre><code>/pdf 把这份报告生成为 PDF 文件</code></pre>
+
+  <h2>去哪里找 Skill</h2>
+  <ul>
+    <li><strong>官方 Skill 仓库</strong>：Anthropic 在 GitHub 上维护了官方 Skill 仓库（github.com/anthropics/skills）</li>
+    <li><strong>社区 Skill</strong>：涵盖文档创建、前端设计、数据分析、内容写作、代码审查等</li>
+    <li><strong>合作伙伴 Skill</strong>：Asana、Atlassian、Canva、Figma、Sentry、Zapier 等公司提供官方 Skill</li>
+  </ul>
+
+  <h2>安装 Skill</h2>
+  <p><strong>在 claude.ai 中：</strong>通过 Plugins 功能安装，在设置中浏览和启用。</p>
+  <p><strong>在 Claude Code 中：</strong>Skill 存储在两个位置：</p>
+  <ul>
+    <li><code>~/.claude/skills/</code>——你的个人 Skill，所有项目可用</li>
+    <li><code>.claude/skills/</code>——项目级 Skill，仅在该项目中生效</li>
+  </ul>
+
+  <h2>实际案例</h2>
+  <p><strong>文档生成 Skill：</strong>告诉 Claude 如何创建格式规范的 PDF、Word、Excel 文件。</p>
+  <p><strong>前端设计 Skill：</strong>给 Claude 一套设计系统——排版、配色、动画规范，让它生成的 UI 不再看起来像"AI 生成的紫色渐变卡片"。</p>
+  <p><strong>代码审查 Skill：</strong>定义代码审查的检查清单、关注点和输出格式。</p>
+  <p><strong>内容写作 Skill：</strong>包含品牌语气、术语规范、目标受众描述。</p>
+
+  <h2>跨平台特性</h2>
+  <p>Skill 是一个开放标准，可以在 claude.ai、Claude Code 和 API 之间移植。开放标准的规范发布在 agentskills.io，目标是让 Skill 成为跨 AI 平台的通用能力扩展格式。</p>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>Skill 是给 Claude 的标准化操作手册，让它按最佳实践完成特定任务</li>
+      <li>采用渐进式加载：平时只加载元数据，用到时才加载完整内容</li>
+      <li>可以通过自动匹配或手动斜杠命令调用</li>
+      <li>可从官方仓库、社区和合作伙伴处获取</li>
+      <li>Skill 是开放标准，可跨平台使用</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 8 -->
+<div class="lesson" data-lesson="8">
+  <div class="module-tag">模块四：扩展能力边界</div>
+  <h1>第八课：连接你的工具</h1>
+
+  <h2>为什么需要集成</h2>
+  <p>Claude 本身的知识和能力很强，但它默认无法访问你的实际工作环境——你的项目管理系统、你的代码仓库、你的客户数据、你的邮件。集成（Integrations）让 Claude 能够连接到你真正使用的工具，从"一个聪明的对话伙伴"变成"一个能真正帮你干活的助手"。</p>
+
+  <h2>MCP：连接一切的协议</h2>
+  <p>集成的底层技术是 MCP（Model Context Protocol，模型上下文协议）。MCP 是 Anthropic 于 2024 年 11 月发布的开放标准，它定义了 AI 应用连接外部工具和数据源的通用方式。</p>
+  <p>你可以把 MCP 理解为"AI 世界的 USB 接口"——有了统一的标准，任何工具只要实现了 MCP 协议，就能被 Claude 连接和使用。</p>
+
+  <h2>已支持的集成</h2>
+  <table>
+    <tr><th>工具</th><th>类别</th><th>能力</th></tr>
+    <tr><td><strong>Google Workspace</strong></td><td>办公套件</td><td>搜索 Gmail、Google Drive、Calendar</td></tr>
+    <tr><td><strong>Slack</strong></td><td>即时通讯</td><td>搜索和查看频道和消息</td></tr>
+    <tr><td><strong>Atlassian</strong></td><td>项目管理</td><td>访问 Jira 工单和 Confluence 文档</td></tr>
+    <tr><td><strong>Asana</strong></td><td>任务管理</td><td>查看和管理项目任务</td></tr>
+    <tr><td><strong>Linear</strong></td><td>问题追踪</td><td>查看和创建 Issue</td></tr>
+    <tr><td><strong>Zapier</strong></td><td>自动化</td><td>连接数千个应用</td></tr>
+    <tr><td><strong>Sentry</strong></td><td>错误追踪</td><td>查看和分析应用错误</td></tr>
+    <tr><td><strong>Figma</strong></td><td>设计</td><td>访问设计文件和组件</td></tr>
+  </table>
+  <p>更多集成持续增加中，包括 Stripe、GitLab、Box 等。</p>
+
+  <h2>如何连接工具</h2>
+  <ol>
+    <li>在 Claude 界面中找到集成设置</li>
+    <li>选择你想连接的工具</li>
+    <li>通过 OAuth 授权（标准的"登录并授权"流程）</li>
+    <li>连接成功后，Claude 就能访问该工具中的数据</li>
+  </ol>
+  <p>每个用户需要用自己的账号单独授权。Claude 只能看到你在原始工具中有权限访问的数据——权限继承你的原有权限，不会越界。</p>
+
+  <h2>连接后 Claude 能做什么</h2>
+  <p><strong>跨工具信息综合：</strong></p>
+  <blockquote>总结一下上周关于新产品发布的 Slack 讨论、Jira 工单进度和 Google Docs 里的方案文档</blockquote>
+  <p>Claude 会同时搜索你连接的多个工具，综合信息给出完整回答，并附上来源引用。</p>
+
+  <h2>自定义集成</h2>
+  <p>如果你使用的工具没有官方集成，你（或你的开发团队）可以创建自定义 MCP 连接器。一个基本的 MCP 服务器可以在 30 分钟内搭建完成。</p>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>集成让 Claude 能连接你实际使用的工具和数据源</li>
+      <li>MCP 是底层的开放标准协议，相当于"AI 世界的 USB 接口"</li>
+      <li>已支持 Google Workspace、Slack、Atlassian、Asana 等主流工具</li>
+      <li>通过 OAuth 授权连接，权限继承你的原有权限</li>
+      <li>支持自定义 MCP 连接器扩展</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 9 -->
+<div class="lesson" data-lesson="9">
+  <div class="module-tag">模块四：扩展能力边界</div>
+  <h1>第九课：企业搜索</h1>
+
+  <h2>什么是企业搜索</h2>
+  <p>企业搜索（Enterprise Search）是 Claude 的一项预配置功能，以一个名为"Ask Your Org"的特殊 Project 形式呈现。它的作用是让你在一个统一的界面中搜索整个组织的知识——Slack 消息、Google Drive 文档、SharePoint 文件、Gmail 邮件，一次搜索覆盖所有来源。</p>
+
+  <h2>与普通 Project 的区别</h2>
+  <table>
+    <tr><th>方面</th><th>普通 Project</th><th>企业搜索</th></tr>
+    <tr><td>系统提示词</td><td>用户自定义</td><td>Anthropic 维护的搜索优化提示词</td></tr>
+    <tr><td>用途</td><td>通用</td><td>专为组织内部知识检索设计</td></tr>
+    <tr><td>连接器配置</td><td>手动逐个设置</td><td>引导式设置，推荐必要连接器</td></tr>
+    <tr><td>更新</td><td>手动维护</td><td>Anthropic 持续自动优化</td></tr>
+  </table>
+  <p>仅限 Team 和 Enterprise 方案。</p>
+
+  <h2>使用场景</h2>
+  <p><strong>日常工作信息获取：</strong></p>
+  <ul>
+    <li>"昨天我不在的时候发生了什么重要的事？"</li>
+    <li>"关于 Q2 预算的最新讨论在哪里？"</li>
+  </ul>
+  <p><strong>项目调研：</strong></p>
+  <ul>
+    <li>"客户最常提到的竞品是哪些？"</li>
+    <li>"基础设施项目当前的阻碍因素有哪些？"</li>
+  </ul>
+  <p><strong>新人入职：</strong></p>
+  <ul>
+    <li>"我们的认证系统是怎么工作的？"</li>
+    <li>"关于 X 的问题应该找谁？"</li>
+  </ul>
+
+  <h2>搜索技巧</h2>
+  <p><strong>指定数据源：</strong></p>
+  <blockquote>搜索 Slack 和 Google Drive 中关于 Q4 产品发布的讨论</blockquote>
+  <p><strong>使用时间范围：</strong></p>
+  <blockquote>总结上周关于预算审核的邮件</blockquote>
+  <p>指定来源和时间范围能大幅缩小搜索范围，提高结果质量。</p>
+
+  <h2>隐私与安全</h2>
+  <ul>
+    <li><strong>权限感知</strong>：你只能看到你在原始工具中有权限访问的内容</li>
+    <li><strong>用户级认证</strong>：每个用户用自己的凭证授权</li>
+    <li><strong>无外部索引</strong>：连接服务中的数据不会被建立索引</li>
+  </ul>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>企业搜索是一个预配置的 Project，统一搜索组织内所有连接的数据源</li>
+      <li>仅限 Team 和 Enterprise 方案</li>
+      <li>搜索时指定数据源和时间范围可以提高效率</li>
+      <li>严格遵守权限控制，你只能看到你有权限的内容</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 10 -->
+<div class="lesson" data-lesson="10">
+  <div class="module-tag">模块四：扩展能力边界</div>
+  <h1>第十课：深度研究模式</h1>
+
+  <h2>什么是 Research 模式</h2>
+  <p>Research（深度研究）是 Claude 的一项高级能力。启用后，Claude 不再只是回答一个问题，而是像一个研究员那样自主工作：制定搜索策略、执行多次搜索、评估结果、决定下一步调查方向，最终交付一份带引用的完整研究报告。</p>
+
+  <h2>与普通搜索的区别</h2>
+  <table>
+    <tr><th></th><th>普通网页搜索</th><th>Research 模式</th></tr>
+    <tr><td>搜索次数</td><td>通常 1-2 次</td><td>多次迭代搜索，自动调整关键词</td></tr>
+    <tr><td>耗时</td><td>秒级</td><td>5-45 分钟</td></tr>
+    <tr><td>搜索范围</td><td>网页</td><td>网页 + Google Workspace + 已连接工具</td></tr>
+    <tr><td>输出</td><td>简短回答</td><td>结构化的研究报告，带引用</td></tr>
+    <tr><td>推理深度</td><td>直接回答</td><td>多角度分析，交叉验证</td></tr>
+  </table>
+
+  <h2>如何启用</h2>
+  <ol>
+    <li>在对话界面底部左侧找到"Research"按钮</li>
+    <li>按钮为白色表示关闭，点击后变为蓝色表示启用</li>
+    <li>启用后正常提问即可</li>
+  </ol>
+  <p>需要付费方案（Pro、Max、Team 或 Enterprise）。</p>
+
+  <h2>适合什么样的问题</h2>
+  <p><strong>适合 Research：</strong></p>
+  <ul>
+    <li>"调研一下 2026 年东南亚市场 SaaS 产品的竞争格局"</li>
+    <li>"分析近三年远程办公对员工生产力影响的研究"</li>
+    <li>"找出关于 [技术方案] 的优缺点和真实使用案例"</li>
+  </ul>
+  <p><strong>不适合 Research：</strong></p>
+  <ul>
+    <li>"Python 的 list 和 tuple 有什么区别"——太简单，普通对话秒答</li>
+    <li>"帮我写封邮件"——不需要搜索</li>
+  </ul>
+  <p>简单规则：如果你的问题需要"调研"而不只是"知道"，用 Research。</p>
+
+  <h2>提问技巧</h2>
+  <p><strong>提供充足的上下文：</strong></p>
+  <blockquote>我是一家 B2B SaaS 公司的产品经理，正在评估是否在东南亚市场推出本地化版本。请调研该地区 B2B SaaS 的市场规模、增长趋势、主要玩家和进入壁垒。</blockquote>
+  <p><strong>指定搜索范围：</strong></p>
+  <blockquote>请主要从学术论文和行业报告中搜索，不要引用博客文章</blockquote>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>Research 模式让 Claude 像研究员一样自主进行多步骤调研</li>
+      <li>耗时 5-45 分钟，输出带引用的结构化研究报告</li>
+      <li>搜索范围覆盖网页、Google Workspace 和已连接的集成工具</li>
+      <li>适合需要深入调研的复杂问题，简单问答请用普通模式</li>
+      <li>提供充足上下文和明确的输出格式期望能显著提升结果质量</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 11 -->
+<div class="lesson" data-lesson="11">
+  <div class="module-tag">模块五：融会贯通</div>
+  <h1>第十一课：Claude 实战——不同角色的使用场景</h1>
+
+  <h2>前面学了什么</h2>
+  <p>到这里，你已经掌握了 Claude 的核心工具箱：对话技巧、三种工作模式、Projects、Artifacts、Skills、集成、企业搜索、深度研究。这一课把这些能力串起来，看看不同角色的人如何把 Claude 融入实际工作。</p>
+
+  <h2>市场与内容团队</h2>
+  <p><strong>内容创作工作流：</strong></p>
+  <ol>
+    <li>创建一个"品牌内容"Project，上传品牌指南、语气规范、过往优秀文章</li>
+    <li>用 Research 模式调研行业趋势和热门话题</li>
+    <li>在对话中头脑风暴内容选题和角度</li>
+    <li>用 Artifact 生成文章草稿，迭代打磨</li>
+    <li>连接 Google Docs，直接在工作流中同步</li>
+  </ol>
+  <p><strong>社交媒体管理：</strong>批量生成一周的内容，为同一内容适配不同平台，分析竞品的内容策略。</p>
+
+  <h2>产品经理</h2>
+  <p><strong>PRD 编写：</strong></p>
+  <ol>
+    <li>创建产品 Project，上传技术架构文档、用户调研数据</li>
+    <li>描述功能需求，让 Claude 生成 PRD 初稿</li>
+    <li>迭代细化需求描述、用户故事和验收标准</li>
+    <li>用 Artifact 生成流程图和原型草图</li>
+  </ol>
+  <p><strong>数据分析：</strong>上传 CSV 用户行为数据找出关键趋势，生成交互式数据仪表盘，准备会议的数据汇报材料。</p>
+
+  <h2>工程师与开发者</h2>
+  <p><strong>日常开发（Claude Code）：</strong></p>
+  <ul>
+    <li>理解不熟悉的代码库</li>
+    <li>修复 Bug：描述问题，Claude 定位代码并修复</li>
+    <li>编写新功能：描述需求，Claude 编写代码和测试</li>
+    <li>代码审查：自动检查潜在问题</li>
+  </ul>
+  <p><strong>DevOps 与运维：</strong>连接 Sentry 分析错误趋势，编写部署脚本和 CI/CD 配置。</p>
+
+  <h2>销售与客户成功</h2>
+  <ul>
+    <li>用 Research 调研目标客户的公司背景和业务需求</li>
+    <li>生成定制化的产品演示脚本</li>
+    <li>上传 CRM 导出数据，分析客户画像</li>
+    <li>为不同客户生成定制化提案</li>
+  </ul>
+
+  <h2>人力资源与行政</h2>
+  <ul>
+    <li>根据岗位需求生成职位描述</li>
+    <li>批量筛选简历（上传简历 PDF，提取关键信息）</li>
+    <li>整理会议纪要、起草内部通知</li>
+    <li>准备月度/季度报告</li>
+  </ul>
+
+  <h2>构建你自己的工作流</h2>
+  <p>不要试图一次性把所有功能都用上。从你日常工作中最耗时的一个任务开始：</p>
+  <ol>
+    <li>识别一个你每周都在做的重复性任务</li>
+    <li>尝试用 Claude 完成它</li>
+    <li>如果效果好，创建一个 Project 固化你的工作流</li>
+    <li>逐步扩展到更多任务</li>
+  </ol>
+
+  <div class="key-points">
+    <div class="kp-title">📌 本课要点</div>
+    <ul>
+      <li>不同角色有不同的 Claude 使用侧重点，但核心能力是通用的</li>
+      <li>关键在于把 Claude 的多个功能组合起来形成工作流</li>
+      <li>从你最耗时的单个任务开始，逐步扩展</li>
+      <li>Project 是固化工作流的核心——把成功的实践模板化</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Lesson 12 -->
+<div class="lesson" data-lesson="12">
+  <div class="module-tag">模块五：融会贯通</div>
+  <h1>第十二课：使用 Claude 的更多方式与进阶资源</h1>
+
+  <h2>更多使用 Claude 的方式</h2>
+  <p><strong>移动端：iOS 和 Android</strong></p>
+  <ul>
+    <li>通勤路上用语音模式头脑风暴</li>
+    <li>随时随地快速查询和问答</li>
+    <li>拍照上传让 Claude 分析</li>
+  </ul>
+  <p><strong>浏览器扩展：Chrome 集成</strong></p>
+  <ul>
+    <li>看到一篇长文，一键让 Claude 总结</li>
+    <li>看到竞品网站，让 Claude 分析</li>
+    <li>带着当前页面上下文向 Claude 提问</li>
+  </ul>
+  <p><strong>在其他产品中使用 Claude：</strong></p>
+  <ul>
+    <li><strong>Slack</strong>：通过 Claude for Slack 直接在频道中与 Claude 对话</li>
+    <li><strong>VS Code / JetBrains</strong>：通过扩展在 IDE 中使用 Claude Code</li>
+    <li><strong>API</strong>：将 Claude 集成到你自己的产品或工作流中</li>
+  </ul>
+
+  <h2>进阶课程推荐</h2>
+  <p>Anthropic Academy（anthropic.skilljar.com）提供完整的进阶学习路径：</p>
+  <p><strong>AI 素养方向：</strong></p>
+  <ul>
+    <li>AI Fluency: Framework & Foundations——AI 基础框架和思维模型</li>
+    <li>AI Fluency for Educators / Students——面向教育者和学生</li>
+  </ul>
+  <p><strong>开发者方向：</strong></p>
+  <ul>
+    <li>Building with the Claude API——Claude API 完整教程（84 节课，8 小时）</li>
+    <li>Claude with Amazon Bedrock / Google Cloud Vertex AI</li>
+  </ul>
+  <p><strong>Claude Code 方向：</strong></p>
+  <ul>
+    <li>Claude Code 101——入门（12 节课，1 小时）</li>
+    <li>Claude Code in Action——实战案例（15 节课，1 小时）</li>
+    <li>Introduction to Subagents / Agent Skills</li>
+  </ul>
+  <p><strong>协议与高级主题：</strong></p>
+  <ul>
+    <li>Introduction to Model Context Protocol（16 节课，1 小时）</li>
+    <li>MCP: Advanced Topics（15 节课，1.1 小时）</li>
+  </ul>
+  <p>所有课程免费、自主学习进度、完成后颁发官方证书。</p>
+
+  <h2>关键资源</h2>
+  <table>
+    <tr><th>资源</th><th>说明</th></tr>
+    <tr><td>support.claude.com</td><td>Claude 帮助中心</td></tr>
+    <tr><td>platform.claude.com/docs</td><td>开发者文档</td></tr>
+    <tr><td>code.claude.com/docs</td><td>Claude Code 文档</td></tr>
+    <tr><td>claude.com/blog</td><td>产品更新和最佳实践</td></tr>
+    <tr><td>anthropic.com/engineering</td><td>工程深度文章</td></tr>
+    <tr><td>github.com/anthropics/skills</td><td>官方 Skills 仓库</td></tr>
+    <tr><td>anthropic.skilljar.com</td><td>Anthropic Academy 全部课程</td></tr>
+  </table>
+
+  <h2>建立你的 AI 工作习惯</h2>
+  <ol>
+    <li><strong>从今天开始</strong>：选择一个你今天就要做的任务，用 Claude 来完成它</li>
+    <li><strong>建立肌肉记忆</strong>：连续两周每天至少用 Claude 完成一个工作任务</li>
+    <li><strong>总结什么有效</strong>：记录哪些场景 Claude 效果最好，哪些还不行</li>
+    <li><strong>分享给同事</strong>：教别人使用的过程中，你自己也会理解得更深</li>
+    <li><strong>持续探索新功能</strong>：Claude 在快速迭代，定期尝试新功能</li>
+  </ol>
+
+  <h2>课程总结</h2>
+  <p>Claude 101 的核心信息只有一条：</p>
+  <blockquote>Claude 不只是一个你向它提问的工具。它是一个你可以与之协作的伙伴——当你给它足够的上下文、正确的工具和清晰的期望时，它能完成远超你想象的工作。</blockquote>
+  <p>你现在拥有了开始的一切。去用起来吧。</p>
+
+  <div class="key-points">
+    <div class="kp-title">📌 课程完成</div>
+    <ul>
+      <li>Claude 可通过移动端、浏览器扩展、Slack、IDE 等多种方式使用</li>
+      <li>Anthropic Academy 提供完整的进阶学习路径，全部免费</li>
+      <li>从今天开始用 Claude 完成一个真实任务，建立 AI 工作习惯</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;margin-top:40px">
+    <button class="start-btn" onclick="goToLesson(0)">回到课程首页</button>
+  </p>
+
+  <p style="margin-top:32px;font-size:12px;color:var(--text3);text-align:center;line-height:1.8">
+    参考来源：Anthropic Academy · Claude 产品页面 · Claude 帮助中心 · Anthropic 开发者文档 · Anthropic 工程博客<br>
+    本课程基于 <a href="https://anthropic.skilljar.com/claude-101" style="color:var(--accent)" target="_blank">Anthropic Academy 官方 Claude 101</a> 课程结构编译为中文版本
+  </p>
+</div>
+
+</div><!-- .main -->
+
+<script>
+const lessons = document.querySelectorAll('.lesson');
+const links = document.querySelectorAll('.sidebar a[data-lesson]');
+const totalLessons = 12;
+let visited = new Set();
+
+try {
+  const saved = JSON.parse(localStorage.getItem('claude101-visited') || '[]');
+  visited = new Set(saved);
+} catch(e) {}
+
+function updateProgress() {
+  const count = [...visited].filter(n => n > 0 && n <= totalLessons).length;
+  document.getElementById('progress-text').textContent = count + ' / ' + totalLessons;
+  document.getElementById('progress-fill').style.width = (count / totalLessons * 100) + '%';
+}
+
+function goToLesson(n) {
+  lessons.forEach(l => l.classList.remove('active'));
+  links.forEach(a => a.classList.remove('active'));
+  const target = document.querySelector('.lesson[data-lesson="' + n + '"]');
+  const link = document.querySelector('.sidebar a[data-lesson="' + n + '"]');
+  if (target) target.classList.add('active');
+  if (link) link.classList.add('active');
+  window.scrollTo({top: 0});
+
+  if (n > 0) {
+    visited.add(n);
+    try { localStorage.setItem('claude101-visited', JSON.stringify([...visited])); } catch(e) {}
+    updateProgress();
+  }
+
+  // close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('open');
+  document.querySelector('.overlay').classList.remove('open');
+}
+
+links.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    goToLesson(parseInt(a.dataset.lesson));
+  });
+});
+
+// Add nav buttons to each lesson
+lessons.forEach(l => {
+  const n = parseInt(l.dataset.lesson);
+  if (n === 0) return; // skip overview, it has its own button
+  const nav = document.createElement('div');
+  nav.className = 'lesson-nav';
+  const prevN = n - 1;
+  const nextN = n + 1;
+  const prevDisabled = n <= 1;
+  const nextDisabled = n >= totalLessons;
+  nav.innerHTML =
+    '<button ' + (prevDisabled ? 'disabled' : 'onclick="goToLesson(' + prevN + ')"') + '><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> 上一课</button>' +
+    '<button ' + (nextDisabled ? 'disabled' : 'onclick="goToLesson(' + nextN + ')"') + '>下一课 <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button>';
+  l.appendChild(nav);
+});
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.querySelector('.overlay').classList.toggle('open');
+}
+
+updateProgress();
+</script>
+</body>
+</html>

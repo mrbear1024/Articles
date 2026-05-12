@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 800px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .container {
+    position: relative;
+    width: 700px;
+    height: 520px;
+  }
+
+  /* 中心圆环 */
+  .center-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 2.5px dashed #d0d0d0;
+  }
+  .center-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .center-label .icon {
+    font-size: 32px;
+    color: #bbb;
+    margin-bottom: 4px;
+  }
+  .center-label .title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 3px;
+  }
+  .center-label .sub {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* 节点 */
+  .node {
+    position: absolute;
+    width: 120px;
+    text-align: center;
+    transform: translate(-50%, -50%);
+  }
+  .node .box {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+  }
+  .node .desc {
+    margin-top: 7px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.5;
+  }
+  .node .num {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #ccc;
+    font-size: 11px;
+    font-weight: 700;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  /* 六个位置（顺时针，从顶部开始） */
+  .node-1 { top: 6%;   left: 50%; }
+  .node-2 { top: 28%;  left: 88%; }
+  .node-3 { top: 72%;  left: 88%; }
+  .node-4 { top: 94%;  left: 50%; }
+  .node-5 { top: 72%;  left: 12%; }
+  .node-6 { top: 28%;  left: 12%; }
+
+  /* 颜色 */
+  .c1 .box { background: #1a1a2e; }
+  .c2 .box { background: #16213e; }
+  .c3 .box { background: #0f3460; }
+  .c4 .box { background: #1a535c; }
+  .c5 .box { background: #2b2d42; }
+  .c6 .box { background: #533483; }
+
+  .c1 .num { border-color: #1a1a2e; color: #1a1a2e; }
+  .c2 .num { border-color: #16213e; color: #16213e; }
+  .c3 .num { border-color: #0f3460; color: #0f3460; }
+  .c4 .num { border-color: #1a535c; color: #1a535c; }
+  .c5 .num { border-color: #2b2d42; color: #2b2d42; }
+  .c6 .num { border-color: #533483; color: #533483; }
+
+  /* SVG 箭头层 */
+  .arrows {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- SVG 箭头 -->
+  <svg class="arrows" viewBox="0 0 700 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6" fill="#c0c0c0"/>
+      </marker>
+    </defs>
+    <!-- 1→2 -->
+    <path d="M 400,52 Q 520,50 560,120" stroke="#c0c0c0" stroke-width="2" marker-end="url(#arrow)"/>
+    <!-- 2→3 -->
+    <path d="M 610,185 Q 630,280 610,340" stroke="#c0c0c0" stroke-width="2" marker-end="url(#arrow)"/>
+    <!-- 3→4 -->
+    <path d="M 560,405 Q 520,470 400,475" stroke="#c0c0c0" stroke-width="2" marker-end="url(#arrow)"/>
+    <!-- 4→5 -->
+    <path d="M 300,475 Q 180,470 140,405" stroke="#c0c0c0" stroke-width="2" marker-end="url(#arrow)"/>
+    <!-- 5→6 -->
+    <path d="M 90,340 Q 70,280 90,185" stroke="#c0c0c0" stroke-width="2" marker-end="url(#arrow)"/>
+    <!-- 6→1 -->
+    <path d="M 140,120 Q 180,50 300,52" stroke="#c0c0c0" stroke-width="2" marker-end="url(#arrow)"/>
+  </svg>
+
+  <!-- 中心 -->
+  <div class="center-ring"></div>
+  <div class="center-label">
+    <div class="icon">↻</div>
+    <div class="title">增长飞轮</div>
+    <div class="sub">每转一圈，升级一次</div>
+  </div>
+
+  <!-- 六个节点 -->
+  <div class="node node-1 c1">
+    <div class="num">1</div>
+    <div class="box">定位</div>
+    <div class="desc">领域 · 视角 · 立场</div>
+  </div>
+  <div class="node node-2 c2">
+    <div class="num">2</div>
+    <div class="box">人设</div>
+    <div class="desc">Profile · 调性 · 一致性</div>
+  </div>
+  <div class="node node-3 c3">
+    <div class="num">3</div>
+    <div class="box">内容体系</div>
+    <div class="desc">四种类型 · 比例 · 节奏</div>
+  </div>
+  <div class="node node-4 c4">
+    <div class="num">4</div>
+    <div class="box">有机分发</div>
+    <div class="desc">搜索 · 推荐 · 社交</div>
+  </div>
+  <div class="node node-5 c5">
+    <div class="num">5</div>
+    <div class="box">互动运营</div>
+    <div class="desc">评论 · 引用 · 深度连接</div>
+  </div>
+  <div class="node node-6 c6">
+    <div class="num">6</div>
+    <div class="box">数据复盘</div>
+    <div class="desc">指标 · 分析 · 迭代</div>
+  </div>
+
+</div>
+</body>
+</html>

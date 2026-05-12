@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Scope - Claude Code vs OpenClaw</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f172a;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  .card {
+    max-width: 960px;
+    width: 100%;
+    background: #1e293b;
+    border-radius: 20px;
+    padding: 48px;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+  }
+  .dim-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #f1f5f9;
+    margin-bottom: 32px;
+  }
+  h1 span { color: #64748b; font-weight: 400; }
+  .vs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .side {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid #334155;
+    position: relative;
+    overflow: hidden;
+  }
+  .side::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .side-claude::before { background: linear-gradient(90deg, #e07c40, #f59e0b); }
+  .side-openclaw::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
+  .side-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .side-claude .side-title { color: #e07c40; }
+  .side-openclaw .side-title { color: #10b981; }
+  .side-subtitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 28px;
+  }
+
+  /* Claude side: short-lived process */
+  .claude-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .actor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .actor-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    height: 48px;
+    justify-content: center;
+  }
+  .connector-line {
+    width: 2px;
+    height: 100%;
+    border-left: 2px dashed #475569;
+  }
+  .connector-label {
+    position: absolute;
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    background: #0f172a;
+    padding: 2px 8px;
+    white-space: nowrap;
+  }
+  .connector-label.right { left: 16px; }
+  .process-box {
+    width: 160px;
+    border: 2px solid #e07c40;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    background: rgba(224,124,64,0.06);
+    position: relative;
+  }
+  .process-box .name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #e07c40;
+  }
+  .process-box .desc {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+  .lifecycle {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 20px;
+  }
+  .lifecycle-step {
+    text-align: center;
+  }
+  .lifecycle-step .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin: 0 auto 6px;
+  }
+  .lifecycle-step .label {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
+  }
+  .dot-start { background: #10b981; }
+  .dot-run { background: #f59e0b; }
+  .dot-end { background: #ef4444; }
+  .lifecycle-arrow {
+    color: #475569;
+    font-size: 16px;
+  }
+
+  /* OpenClaw side: daemon */
+  .daemon-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .gateway-box {
+    width: 160px;
+    border: 2px solid #10b981;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    background: rgba(16,185,129,0.08);
+    position: relative;
+  }
+  .gateway-box .name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #10b981;
+  }
+  .gateway-box .desc {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+  .ws-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #06b6d4;
+    background: rgba(6,182,212,0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+  .apps-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .app-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #334155;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+  .app-chip .icon { font-size: 14px; }
+  .pulse-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    animation: pulse 2s ease-in-out infinite;
+    margin-left: auto;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+  }
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 8px 16px;
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #10b981;
+    font-weight: 600;
+  }
+  .connector-split {
+    position: relative;
+    width: 100%;
+    height: 48px;
+  }
+  .connector-split svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="dim-badge">Dimension 1 of 5</div>
+  <h1>System Scope <span>— 系统范围</span></h1>
+  <div class="vs-grid">
+
+    <!-- Claude Code -->
+    <div class="side side-claude">
+      <div class="side-title">Claude Code</div>
+      <div class="side-subtitle">A short-lived process</div>
+      <div class="claude-flow">
+        <div class="actor">
+          <div class="actor-icon" style="background:rgba(224,124,64,0.15);">👤</div>
+          User
+        </div>
+        <div class="connector" style="height:40px;">
+          <div class="connector-line"></div>
+          <span class="connector-label right">launch</span>
+        </div>
+        <div class="process-box">
+          <div class="name">Claude Code Process</div>
+          <div class="desc">单次会话，用完退出</div>
+        </div>
+        <div class="connector" style="height:40px;">
+          <div class="connector-line"></div>
+          <span class="connector-label right">exit</span>
+        </div>
+        <div style="font-size:12px; color:#64748b; font-weight:500;">进程结束，释放资源</div>
+        <div class="lifecycle">
+          <div class="lifecycle-step">
+            <div class="dot dot-start"></div>
+            <div class="label">启动</div>
+          </div>
+          <span class="lifecycle-arrow">→</span>
+          <div class="lifecycle-step">
+            <div class="dot dot-run"></div>
+            <div class="label">执行</div>
+          </div>
+          <span class="lifecycle-arrow">→</span>
+          <div class="lifecycle-step">
+            <div class="dot dot-end"></div>
+            <div class="label">退出</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OpenClaw -->
+    <div class="side side-openclaw">
+      <div class="side-title">OpenClaw</div>
+      <div class="side-subtitle">A long-running background daemon</div>
+      <div class="daemon-flow">
+        <div class="actor">
+          <div class="actor-icon" style="background:rgba(16,185,129,0.15);">👤</div>
+          User
+        </div>
+        <div class="connector" style="height:40px;">
+          <div class="connector-line"></div>
+          <span class="connector-label right">launch</span>
+        </div>
+        <div class="gateway-box">
+          <div class="name">Gateway</div>
+          <div class="desc">中枢网关，持久在线</div>
+        </div>
+        <div class="connector" style="height:36px;">
+          <div class="connector-line"></div>
+          <span class="connector-label right"><span class="ws-label">WebSocket</span></span>
+        </div>
+        <div class="apps-row">
+          <div class="app-chip"><span class="icon">💬</span>Discord</div>
+          <div class="app-chip"><span class="icon">💼</span>Slack</div>
+          <div class="app-chip"><span class="icon">📱</span>WhatsApp</div>
+        </div>
+        <div class="status-bar">
+          <span class="pulse-dot"></span>
+          24/7 在线，持续监听消息
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Harness 与 Sandbox 的边界</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+    background: #fafaf7;
+    padding: 50px 30px;
+    color: #1a1a1a;
+  }
+  .canvas {
+    width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 16px;
+    padding: 48px 40px 40px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 44px;
+  }
+
+  .flow-container {
+    display: flex;
+    gap: 40px;
+    align-items: stretch;
+  }
+
+  .column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .col-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .col-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .col-header p {
+    font-size: 12px;
+    color: #999;
+  }
+  .col-harness .col-header h3 { color: #3366cc; }
+  .col-sandbox .col-header h3 { color: #2d8a56; }
+
+  .col-body {
+    flex: 1;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .col-harness .col-body {
+    background: #f6f8ff;
+    border: 1.5px solid #d4dff4;
+  }
+  .col-sandbox .col-body {
+    background: #f4fbf6;
+    border: 1.5px solid #c4e4d0;
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid transparent;
+  }
+  .col-harness .step { border-color: #dce6f4; }
+  .col-sandbox .step { border-color: #c8e4d4; }
+
+  .step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .col-harness .step-num {
+    background: #3366cc;
+    color: #fff;
+  }
+  .col-sandbox .step-num {
+    background: #2d8a56;
+    color: #fff;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+  .step-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .step-desc {
+    font-size: 12px;
+    color: #777;
+    line-height: 1.6;
+  }
+
+  .middle-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    gap: 8px;
+  }
+
+  .arrow-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .arrow-icon {
+    font-size: 22px;
+    color: #ccc;
+  }
+  .arrow-label {
+    font-size: 10px;
+    color: #aaa;
+    text-align: center;
+    writing-mode: vertical-rl;
+    letter-spacing: 2px;
+  }
+  .boundary-line {
+    width: 2px;
+    flex: 1;
+    background: repeating-linear-gradient(
+      to bottom,
+      #e05050 0px,
+      #e05050 6px,
+      transparent 6px,
+      transparent 12px
+    );
+  }
+  .boundary-tag {
+    font-size: 10px;
+    font-weight: 700;
+    color: #e05050;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    writing-mode: vertical-rl;
+    padding: 8px 0;
+  }
+
+  .bottom-note {
+    margin-top: 32px;
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+  }
+  .note-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #888;
+  }
+  .note-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .note-dot.harness { background: #3366cc; }
+  .note-dot.sandbox { background: #2d8a56; }
+  .note-dot.boundary { background: #e05050; }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="title">Harness 与 Sandbox 的职责边界</div>
+  <div class="subtitle">控制面保管凭证与状态，计算面执行模型生成的操作，两者通过信任边界隔离</div>
+
+  <div class="flow-container">
+    <!-- Harness Column -->
+    <div class="column col-harness">
+      <div class="col-header">
+        <h3>Harness · 控制面</h3>
+        <p>可信基础设施 · 你的服务器</p>
+      </div>
+      <div class="col-body">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">接收用户指令</div>
+            <div class="step-desc">解析任务描述，初始化 Agent 循环</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">调用模型</div>
+            <div class="step-desc">携带凭证发起 API 请求，获取模型响应</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">路由工具调用</div>
+            <div class="step-desc">将模型请求的工具操作路由到 Sandbox 执行</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">审批与追踪</div>
+            <div class="step-desc">记录所有操作日志，执行权限审批策略</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">状态持久化</div>
+            <div class="step-desc">外化运行状态，支持中断后恢复</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Boundary -->
+    <div class="middle-col">
+      <div class="boundary-line"></div>
+      <div class="boundary-tag">TRUST BOUNDARY</div>
+      <div class="boundary-line"></div>
+    </div>
+
+    <!-- Sandbox Column -->
+    <div class="column col-sandbox">
+      <div class="col-header">
+        <h3>Sandbox · 计算面</h3>
+        <p>隔离环境 · 沙箱提供商</p>
+      </div>
+      <div class="col-body">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">初始化工作空间</div>
+            <div class="step-desc">按 Manifest 描述准备文件、仓库、存储挂载</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">执行文件操作</div>
+            <div class="step-desc">基于 patch 的文件编辑，差量操作可审计可回滚</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">运行 Shell 命令</div>
+            <div class="step-desc">在隔离环境中执行命令、安装依赖、运行测试</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">记忆与技能</div>
+            <div class="step-desc">跨运行学习经验，动态发现和加载 Skills</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">快照与恢复</div>
+            <div class="step-desc">保存工作空间状态，支持在新容器中重建</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-note">
+    <div class="note-item">
+      <div class="note-dot harness"></div>
+      控制面保管 API 密钥和凭证
+    </div>
+    <div class="note-item">
+      <div class="note-dot boundary"></div>
+      模型生成的代码无法穿越信任边界
+    </div>
+    <div class="note-item">
+      <div class="note-dot sandbox"></div>
+      Sandbox 崩溃不影响运行状态
+    </div>
+  </div>
+</div>
+</body>
+</html>

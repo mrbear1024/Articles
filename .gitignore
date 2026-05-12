@@ -2,3 +2,5 @@
 .obsidian/
 .gstack/
 _site/
+_r2_cache.json
+.claude/worktrees/

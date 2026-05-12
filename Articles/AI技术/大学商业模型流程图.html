@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大学商业模型流程图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0e1a;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #e0e0e0;
+    overflow: hidden;
+  }
+  .container {
+    width: 1200px;
+    height: 900px;
+    position: relative;
+  }
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+  /* Glow filter for connections */
+  .glow-line {
+    filter: drop-shadow(0 0 4px rgba(100, 180, 255, 0.4));
+  }
+</style>
+</head>
+<body>
+<div class="container">
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradient backgrounds for nodes -->
+    <linearGradient id="grad-traffic" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a3a5c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d2137;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-circle" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d1b4e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a0f30;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-platform" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a4a3a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d2a20;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-teach" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a3a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a200d;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-assess" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a1a2a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a0d15;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-brand" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a3a4a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d202a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad-center" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a1a0a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1005;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Arrow marker -->
+    <marker id="arrow" viewBox="0 0 10 6" refX="10" refY="3"
+            markerWidth="10" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3 L 0 6 z" fill="#4a7aa8" />
+    </marker>
+    <marker id="arrow-gold" viewBox="0 0 10 6" refX="10" refY="3"
+            markerWidth="10" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3 L 0 6 z" fill="#b8943e" />
+    </marker>
+    <marker id="arrow-inner" viewBox="0 0 8 5" refX="8" refY="2.5"
+            markerWidth="8" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 0 L 8 2.5 L 0 5 z" fill="#5a6a7a" />
+    </marker>
+
+    <!-- Glow filters -->
+    <filter id="glow-blue">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-gold">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="52" text-anchor="middle" fill="#c8d8e8" font-size="28" font-weight="700" letter-spacing="4">大学商业模型</text>
+  <text x="600" y="80" text-anchor="middle" fill="#6a7a8a" font-size="14" letter-spacing="2">六维飞轮 · 自增强循环</text>
+
+  <!-- ====== OUTER RING: 6 nodes in hexagonal layout ====== -->
+  <!-- Positions (center 600, 480), radius ~300 -->
+  <!-- Node 1: 流量 (top) cx=600 cy=175 -->
+  <!-- Node 2: 圈子 (top-right) cx=858 cy=305 -->
+  <!-- Node 3: 平台 (bottom-right) cx=858 cy=565 -->
+  <!-- Node 4: 教学 (bottom) cx=600 cy=695 -->
+  <!-- Node 5: 考核 (bottom-left) cx=342 cy=565 -->
+  <!-- Node 6: 口碑 (top-left) cx=342 cy=305 -->
+
+  <!-- ====== CONNECTION ARROWS (outer ring, clockwise) ====== -->
+  <g class="glow-line">
+    <!-- 流量 → 圈子 -->
+    <path d="M 680 195 Q 780 220 820 280" fill="none" stroke="#4a7aa8" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+    <text x="765" y="228" fill="#5a8ab8" font-size="11" transform="rotate(18, 765, 228)">筛选入学</text>
+
+    <!-- 圈子 → 平台 -->
+    <path d="M 878 365 Q 888 430 878 505" fill="none" stroke="#4a7aa8" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+    <text x="898" y="438" fill="#5a8ab8" font-size="11" transform="rotate(90, 898, 438)">连接多边</text>
+
+    <!-- 平台 → 教学 -->
+    <path d="M 820 600 Q 750 650 680 680" fill="none" stroke="#4a7aa8" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+    <text x="762" y="660" fill="#5a8ab8" font-size="11" transform="rotate(-22, 762, 660)">规模交付</text>
+
+    <!-- 教学 → 考核 -->
+    <path d="M 520 690 Q 440 670 382 610" fill="none" stroke="#4a7aa8" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+    <text x="435" y="665" fill="#5a8ab8" font-size="11" transform="rotate(22, 435, 665)">认证发放</text>
+
+    <!-- 考核 → 口碑 -->
+    <path d="M 325 505 Q 310 430 325 365" fill="none" stroke="#4a7aa8" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+    <text x="297" y="438" fill="#5a8ab8" font-size="11" transform="rotate(-90, 297, 438)">校友成就</text>
+
+    <!-- 口碑 → 流量 -->
+    <path d="M 385 280 Q 460 220 530 195" fill="none" stroke="#4a7aa8" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+    <text x="440" y="228" fill="#5a8ab8" font-size="11" transform="rotate(-18, 440, 228)">品牌引力</text>
+  </g>
+
+  <!-- ====== INNER ARROWS TO CENTER ====== -->
+  <g opacity="0.35">
+    <line x1="600" y1="235" x2="600" y2="385" stroke="#5a6a7a" stroke-width="1.2" marker-end="url(#arrow-inner)"/>
+    <line x1="808" y1="335" x2="690" y2="405" stroke="#5a6a7a" stroke-width="1.2" marker-end="url(#arrow-inner)"/>
+    <line x1="808" y1="555" x2="690" y2="490" stroke="#5a6a7a" stroke-width="1.2" marker-end="url(#arrow-inner)"/>
+    <line x1="600" y1="645" x2="600" y2="505" stroke="#5a6a7a" stroke-width="1.2" marker-end="url(#arrow-inner)"/>
+    <line x1="392" y1="555" x2="510" y2="490" stroke="#5a6a7a" stroke-width="1.2" marker-end="url(#arrow-inner)"/>
+    <line x1="392" y1="335" x2="510" y2="405" stroke="#5a6a7a" stroke-width="1.2" marker-end="url(#arrow-inner)"/>
+  </g>
+
+  <!-- ====== CENTER NODE ====== -->
+  <g filter="url(#glow-gold)">
+    <circle cx="600" cy="445" r="62" fill="url(#grad-center)" stroke="#b8943e" stroke-width="2"/>
+  </g>
+  <text x="600" y="436" text-anchor="middle" fill="#e8c860" font-size="20" font-weight="700">大学</text>
+  <text x="600" y="460" text-anchor="middle" fill="#a08838" font-size="12">结构性垄断</text>
+
+  <!-- ====== NODE 1: 流量 (top) ====== -->
+  <g filter="url(#shadow)">
+    <rect x="500" y="125" width="200" height="100" rx="14" fill="url(#grad-traffic)" stroke="#2a6090" stroke-width="1.5"/>
+  </g>
+  <text x="530" y="157" fill="#5aaadd" font-size="13" font-weight="600">01</text>
+  <text x="555" y="157" fill="#8ac4ee" font-size="17" font-weight="700">流量</text>
+  <line x1="520" y1="168" x2="680" y2="168" stroke="#2a5070" stroke-width="0.5"/>
+  <text x="530" y="188" fill="#7a9ab8" font-size="12">社会制度自动导流</text>
+  <text x="530" y="207" fill="#5a7a98" font-size="11">获客成本 ≈ 0</text>
+
+  <!-- ====== NODE 2: 圈子 (top-right) ====== -->
+  <g filter="url(#shadow)">
+    <rect x="758" y="255" width="200" height="100" rx="14" fill="url(#grad-circle)" stroke="#5a3090" stroke-width="1.5"/>
+  </g>
+  <text x="788" y="287" fill="#9a6add" font-size="13" font-weight="600">02</text>
+  <text x="813" y="287" fill="#b88aee" font-size="17" font-weight="700">圈子</text>
+  <line x1="778" y1="298" x2="938" y2="298" stroke="#3a2060" stroke-width="0.5"/>
+  <text x="788" y="318" fill="#8a6ab8" font-size="12">筛选机制构建同层网络</text>
+  <text x="788" y="337" fill="#6a5098" font-size="11">校友价值随时间自增长</text>
+
+  <!-- ====== NODE 3: 平台 (bottom-right) ====== -->
+  <g filter="url(#shadow)">
+    <rect x="758" y="515" width="200" height="100" rx="14" fill="url(#grad-platform)" stroke="#2a8060" stroke-width="1.5"/>
+  </g>
+  <text x="788" y="547" fill="#5adda0" font-size="13" font-weight="600">03</text>
+  <text x="813" y="547" fill="#8aeec4" font-size="17" font-weight="700">平台</text>
+  <line x1="778" y1="558" x2="938" y2="558" stroke="#205a40" stroke-width="0.5"/>
+  <text x="788" y="578" fill="#6ab898" font-size="12">学生·教授·雇主·资助方</text>
+  <text x="788" y="597" fill="#509878" font-size="11">多边网络效应飞轮</text>
+
+  <!-- ====== NODE 4: 教学 (bottom) ====== -->
+  <g filter="url(#shadow)">
+    <rect x="500" y="645" width="200" height="100" rx="14" fill="url(#grad-teach)" stroke="#908030" stroke-width="1.5"/>
+  </g>
+  <text x="530" y="677" fill="#ddaa5a" font-size="13" font-weight="600">04</text>
+  <text x="555" y="677" fill="#eec88a" font-size="17" font-weight="700">教学</text>
+  <line x1="520" y1="688" x2="680" y2="688" stroke="#5a5020" stroke-width="0.5"/>
+  <text x="530" y="708" fill="#b89a6a" font-size="12">一套内容服务数百人</text>
+  <text x="530" y="727" fill="#987a50" font-size="11">客户生命周期 4-10 年</text>
+
+  <!-- ====== NODE 5: 考核 (bottom-left) ====== -->
+  <g filter="url(#shadow)">
+    <rect x="242" y="515" width="200" height="100" rx="14" fill="url(#grad-assess)" stroke="#902a40" stroke-width="1.5"/>
+  </g>
+  <text x="272" y="547" fill="#dd5a7a" font-size="13" font-weight="600">05</text>
+  <text x="297" y="547" fill="#ee8aaa" font-size="17" font-weight="700">考核</text>
+  <line x1="262" y1="558" x2="422" y2="558" stroke="#5a2030" stroke-width="0.5"/>
+  <text x="272" y="578" fill="#b86a7a" font-size="12">垄断学位认证发放权</text>
+  <text x="272" y="597" fill="#985060" font-size="11">知识可开源，认证不行</text>
+
+  <!-- ====== NODE 6: 口碑 (top-left) ====== -->
+  <g filter="url(#shadow)">
+    <rect x="242" y="255" width="200" height="100" rx="14" fill="url(#grad-brand)" stroke="#2a7090" stroke-width="1.5"/>
+  </g>
+  <text x="272" y="287" fill="#5abcdd" font-size="13" font-weight="600">06</text>
+  <text x="297" y="287" fill="#8adcee" font-size="17" font-weight="700">口碑</text>
+  <line x1="262" y1="298" x2="422" y2="298" stroke="#204050" stroke-width="0.5"/>
+  <text x="272" y="318" fill="#6a98b8" font-size="12">品牌以百年计积累</text>
+  <text x="272" y="337" fill="#507898" font-size="11">排名制度固化分层格局</text>
+
+  <!-- ====== OUTER FLYWHEEL ARC ====== -->
+  <g opacity="0.12">
+    <circle cx="600" cy="435" r="340" fill="none" stroke="#4a8ac0" stroke-width="1" stroke-dasharray="3,8"/>
+  </g>
+
+  <!-- ====== BOTTOM ANNOTATION ====== -->
+  <g>
+    <rect x="340" y="810" width="520" height="50" rx="8" fill="#0e1220" stroke="#2a3a4a" stroke-width="1" opacity="0.8"/>
+    <text x="600" y="833" text-anchor="middle" fill="#6a8aa8" font-size="13">六个优势互相强化，构成几乎无法复制的飞轮</text>
+    <text x="600" y="851" text-anchor="middle" fill="#4a6a88" font-size="11">在线教育只触及"教学"一个维度，无法动摇结构性优势</text>
+  </g>
+
+</svg>
+</div>
+</body>
+</html>

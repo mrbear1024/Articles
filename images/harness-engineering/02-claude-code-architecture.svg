@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" font-family="'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="50%" style="stop-color:#1a1744"/>
+      <stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="layerOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f5576c"/>
+      <stop offset="100%" style="stop-color:#f093fb"/>
+    </linearGradient>
+    <linearGradient id="layerBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4facfe"/>
+      <stop offset="100%" style="stop-color:#00f2fe"/>
+    </linearGradient>
+    <linearGradient id="layerGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#43e97b"/>
+      <stop offset="100%" style="stop-color:#38f9d7"/>
+    </linearGradient>
+    <linearGradient id="layerPurple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#a18cd1"/>
+      <stop offset="100%" style="stop-color:#fbc2eb"/>
+    </linearGradient>
+    <linearGradient id="layerYellow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f6d365"/>
+      <stop offset="100%" style="stop-color:#fda085"/>
+    </linearGradient>
+    <filter id="shadow2">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="700" fill="url(#bg2)"/>
+
+  <!-- Title -->
+  <text x="450" y="45" text-anchor="middle" fill="#e2e8f0" font-size="22" font-weight="700">Claude Code · 十层堆叠架构</text>
+  <text x="450" y="68" text-anchor="middle" fill="#6b7280" font-size="13">纵深型 — 一个用户 · 一个终端 · 一条深度对话链</text>
+
+  <!-- Layer function: draw a stack layer -->
+  <!-- Layer 1: MCP -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="90" width="700" height="48" rx="10" fill="#4facfe" opacity="0.12" stroke="url(#layerBlue)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="114" r="12" fill="#4facfe" opacity="0.2"/>
+  <text x="135" y="119" text-anchor="middle" fill="#4facfe" font-size="13" font-weight="700">10</text>
+  <text x="170" y="119" fill="#4facfe" font-size="15" font-weight="600">MCP 协议</text>
+  <text x="520" y="119" text-anchor="middle" fill="#8b95a5" font-size="12.5">标准化外部服务连接（GitHub · Linear · Slack · Puppeteer …）</text>
+
+  <!-- Layer 2: Hooks -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="148" width="700" height="48" rx="10" fill="#a18cd1" opacity="0.12" stroke="url(#layerPurple)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="172" r="12" fill="#a18cd1" opacity="0.2"/>
+  <text x="135" y="177" text-anchor="middle" fill="#a18cd1" font-size="13" font-weight="700">9</text>
+  <text x="170" y="177" fill="#a18cd1" font-size="15" font-weight="600">Hooks 系统</text>
+  <text x="520" y="177" text-anchor="middle" fill="#8b95a5" font-size="12.5">事件驱动的生命周期钩子 — PreToolUse 拦截 · PostToolUse 响应</text>
+
+  <!-- Layer 3: Skill -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="206" width="700" height="48" rx="10" fill="#43e97b" opacity="0.12" stroke="url(#layerGreen)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="230" r="12" fill="#43e97b" opacity="0.2"/>
+  <text x="135" y="235" text-anchor="middle" fill="#43e97b" font-size="13" font-weight="700">8</text>
+  <text x="170" y="235" fill="#43e97b" font-size="15" font-weight="600">Skill 系统</text>
+  <text x="520" y="235" text-anchor="middle" fill="#8b95a5" font-size="12.5">可复用工作流的按需加载 — /slash-command 封装多步骤任务</text>
+
+  <!-- Layer 4: Auto Memory -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="264" width="700" height="48" rx="10" fill="#f6d365" opacity="0.12" stroke="url(#layerYellow)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="288" r="12" fill="#f6d365" opacity="0.2"/>
+  <text x="135" y="293" text-anchor="middle" fill="#f6d365" font-size="13" font-weight="700">7</text>
+  <text x="170" y="293" fill="#f6d365" font-size="15" font-weight="600">Auto Memory</text>
+  <text x="520" y="293" text-anchor="middle" fill="#8b95a5" font-size="12.5">结构化跨会话记忆 — user · feedback · project · reference 四种类型</text>
+
+  <!-- Layer 5: CLAUDE.md -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="322" width="700" height="48" rx="10" fill="#4facfe" opacity="0.12" stroke="url(#layerBlue)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="346" r="12" fill="#4facfe" opacity="0.2"/>
+  <text x="135" y="351" text-anchor="middle" fill="#4facfe" font-size="13" font-weight="700">6</text>
+  <text x="170" y="351" fill="#4facfe" font-size="15" font-weight="600">CLAUDE.md</text>
+  <text x="520" y="351" text-anchor="middle" fill="#8b95a5" font-size="12.5">四级项目指令层级 — 组织 → 项目 → 用户 → 子目录，拼接生效</text>
+
+  <!-- Layer 6: Permission & Sandbox -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="380" width="700" height="48" rx="10" fill="#f5576c" opacity="0.12" stroke="url(#layerOrange)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="404" r="12" fill="#f5576c" opacity="0.2"/>
+  <text x="135" y="409" text-anchor="middle" fill="#f5576c" font-size="13" font-weight="700">5</text>
+  <text x="170" y="409" fill="#f5576c" font-size="15" font-weight="600">权限与沙箱</text>
+  <text x="520" y="409" text-anchor="middle" fill="#8b95a5" font-size="12.5">多级权限模式 + OS 级隔离 — deny → ask → allow 优先级匹配</text>
+
+  <!-- Layer 7: Context Management -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="438" width="700" height="48" rx="10" fill="#a18cd1" opacity="0.12" stroke="url(#layerPurple)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="462" r="12" fill="#a18cd1" opacity="0.2"/>
+  <text x="135" y="467" text-anchor="middle" fill="#a18cd1" font-size="13" font-weight="700">4</text>
+  <text x="170" y="467" fill="#a18cd1" font-size="15" font-weight="600">上下文管理</text>
+  <text x="520" y="467" text-anchor="middle" fill="#8b95a5" font-size="12.5">自动压缩 + 关键内容重注入 — 压缩到原始量的 ~12%</text>
+
+  <!-- Layer 8: System Prompt -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="496" width="700" height="48" rx="10" fill="#43e97b" opacity="0.12" stroke="url(#layerGreen)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="520" r="12" fill="#43e97b" opacity="0.2"/>
+  <text x="135" y="525" text-anchor="middle" fill="#43e97b" font-size="13" font-weight="700">3</text>
+  <text x="170" y="525" fill="#43e97b" font-size="15" font-weight="600">System Prompt</text>
+  <text x="520" y="525" text-anchor="middle" fill="#8b95a5" font-size="12.5">几千 token 的行为操作手册 — 定义"你是谁、你怎么做"</text>
+
+  <!-- Layer 9: Tools -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="554" width="700" height="48" rx="10" fill="#f6d365" opacity="0.12" stroke="url(#layerYellow)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="578" r="12" fill="#f6d365" opacity="0.2"/>
+  <text x="135" y="583" text-anchor="middle" fill="#f6d365" font-size="13" font-weight="700">2</text>
+  <text x="170" y="583" fill="#f6d365" font-size="15" font-weight="600">工具架构</text>
+  <text x="520" y="583" text-anchor="middle" fill="#8b95a5" font-size="12.5">30+ 内置工具 — Read · Write · Edit · Bash · Grep · Agent · Skill …</text>
+
+  <!-- Layer 10: Agentic Loop (bottom, foundation) -->
+  <g filter="url(#shadow2)">
+    <rect x="100" y="612" width="700" height="48" rx="10" fill="#f5576c" opacity="0.12" stroke="url(#layerOrange)" stroke-width="1.5"/>
+  </g>
+  <circle cx="135" cy="636" r="12" fill="#f5576c" opacity="0.2"/>
+  <text x="135" y="641" text-anchor="middle" fill="#f5576c" font-size="13" font-weight="700">1</text>
+  <text x="170" y="641" fill="#f5576c" font-size="15" font-weight="600">Agentic Loop</text>
+  <text x="520" y="641" text-anchor="middle" fill="#8b95a5" font-size="12.5">驱动模型从回答变为行动 — 收集上下文 → 执行 → 验证 → 循环</text>
+
+  <!-- Right side bracket with label -->
+  <line x1="825" y1="100" x2="835" y2="100" stroke="#4b5563" stroke-width="1.5"/>
+  <line x1="835" y1="100" x2="835" y2="650" stroke="#4b5563" stroke-width="1.5"/>
+  <line x1="825" y1="650" x2="835" y2="650" stroke="#4b5563" stroke-width="1.5"/>
+  <text x="855" y="380" text-anchor="middle" fill="#6b7280" font-size="13" font-weight="500" transform="rotate(90, 855, 380)">每一层可独立替换</text>
+</svg>

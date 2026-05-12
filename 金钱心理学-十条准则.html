@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金钱心理学 · 十条行为准则</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    overflow-x: hidden;
+  }
+
+  /* Export button */
+  .export-bar {
+    width: 1080px;
+    max-width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    gap: 12px;
+    position: relative;
+    z-index: 100;
+  }
+
+  .export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    border-radius: 12px;
+    background: rgba(212, 175, 55, 0.08);
+    color: #d4af37;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+  }
+
+  .export-btn:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
+  }
+
+  .export-btn:active {
+    transform: translateY(0);
+  }
+
+  .export-btn .icon {
+    font-size: 18px;
+  }
+
+  .export-btn.saving {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    backdrop-filter: blur(16px);
+    color: #d4af37;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 15px;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: all 0.4s ease;
+    z-index: 999;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Poster */
+  .poster {
+    width: 1080px;
+    max-width: 100%;
+    background: linear-gradient(170deg, #0f1923 0%, #0a0e17 40%, #111827 100%);
+    border-radius: 24px;
+    padding: 80px 72px 70px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(212, 175, 55, 0.08),
+      0 40px 80px rgba(0,0,0,0.6),
+      0 0 120px rgba(212, 175, 55, 0.03);
+  }
+
+  /* Subtle background texture */
+  .poster::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse 700px 500px at 20% 10%, rgba(212, 175, 55, 0.04), transparent),
+      radial-gradient(ellipse 600px 600px at 80% 90%, rgba(59, 130, 246, 0.03), transparent);
+    pointer-events: none;
+  }
+
+  /* Top decorative line */
+  .top-accent {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 64px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .book-label {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #d4af37;
+    margin-bottom: 22px;
+    opacity: 0.9;
+  }
+
+  .title-en {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    color: rgba(212, 175, 55, 0.5);
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+
+  .title-main {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: #f0e6d0;
+    letter-spacing: 8px;
+    line-height: 1.3;
+    text-shadow: 0 2px 20px rgba(212, 175, 55, 0.15);
+  }
+
+  .subtitle {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 20px;
+    letter-spacing: 5px;
+  }
+
+  .divider {
+    width: 70px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    margin: 0 auto;
+    margin-top: 28px;
+  }
+
+  /* Rules grid */
+  .rules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .rule {
+    padding: 26px 30px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.018);
+    border: 1px solid rgba(255, 255, 255, 0.035);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rule:hover {
+    background: rgba(212, 175, 55, 0.04);
+    border-color: rgba(212, 175, 55, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .rule-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .rule-number {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 34px;
+    font-weight: 400;
+    color: #d4af37;
+    opacity: 0.7;
+    min-width: 38px;
+    line-height: 1;
+  }
+
+  .rule-icon {
+    font-size: 24px;
+    line-height: 1;
+    filter: grayscale(0.2);
+  }
+
+  .rule-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 21px;
+    font-weight: 700;
+    color: #e8dcc8;
+    line-height: 1.5;
+    letter-spacing: 1.5px;
+  }
+
+  .rule-desc {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.42);
+    line-height: 1.8;
+    padding-left: 54px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 56px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.15), transparent);
+    margin-bottom: 32px;
+  }
+
+  .quote {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 19px;
+    font-weight: 400;
+    color: rgba(212, 175, 55, 0.5);
+    font-style: italic;
+    line-height: 1.9;
+    letter-spacing: 1.5px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .author {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.22);
+    margin-top: 18px;
+    letter-spacing: 3px;
+  }
+
+  /* Responsive */
+  @media (max-width: 800px) {
+    .poster { padding: 56px 32px 44px; }
+    .title-main { font-size: 36px; letter-spacing: 4px; }
+    .rules { grid-template-columns: 1fr; }
+    .rule-title { font-size: 19px; }
+    .rule-desc { padding-left: 54px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="export-bar">
+  <button class="export-btn" id="exportBtn" onclick="exportImage()">
+    <span class="icon">📷</span>
+    <span id="btnText">导出图片</span>
+  </button>
+</div>
+
+<div class="poster" id="poster">
+  <div class="top-accent"></div>
+
+  <div class="header">
+    <div class="book-label">读书笔记 · 行为准则</div>
+    <div class="title-en">The Psychology of Money</div>
+    <div class="title-main">金钱心理学</div>
+    <div class="subtitle">十条行为准则</div>
+    <div class="divider"></div>
+  </div>
+
+  <div class="rules">
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">01</span>
+        <span class="rule-icon">🪞</span>
+      </div>
+      <div class="rule-title">没有人是疯的</div>
+      <div class="rule-desc">每个人都是自己经历的产物。不要用你的经验审判别人的金融行为。</div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">02</span>
+        <span class="rule-icon">🎲</span>
+      </div>
+      <div class="rule-title">运气与风险是孪生兄弟</div>
+      <div class="rule-desc">少崇拜英雄，少审判失败者。你看到的结果里，藏着你看不见的运气。</div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">03</span>
+        <span class="rule-icon">⚖️</span>
+      </div>
+      <div class="rule-title">"够了"是终身技能</div>
+      <div class="rule-desc">别用你已经拥有并需要的，去冒险换取你没有也不需要的。</div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">04</span>
+        <span class="rule-icon">⏳</span>
+      </div>
+      <div class="rule-title">时间是复利最强的燃料</div>
+      <div class="rule-desc">活得久、投得早，胜过选得对。耐心是最被低估的投资能力。</div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">05</span>
+        <span class="rule-icon">🛡️</span>
+      </div>
+      <div class="rule-title">致富靠进攻，守富靠防守</div>
+      <div class="rule-desc">两种心态必须切换。生存永远是第一优先，只有活下来，才能享受复利。</div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">06</span>
+        <span class="rule-icon">🎯</span>
+      </div>
+      <div class="rule-title">少数事件决定绝大多数结果</div>
+      <div class="rule-desc">容忍失败，不要出局。你可以错很多次，只要对的那次足够大。</div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">07</span>
+        <span class="rule-icon">🕊️</span>
+      </div>
+      <div class="rule-title">金钱的终极用途是购买自由</div>
+      <div class="rule-desc">对自己时间的控制权，是财富最被低估、也最珍贵的回报。</div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">08</span>
+        <span class="rule-icon">👁️</span>
+      </div>
+      <div class="rule-title">财富是"看不见的"</div>
+      <div class="rule-desc">财富是没被花掉的收入——是选择权，不是消费品。</div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">09</span>
+        <span class="rule-icon">🌙</span>
+      </div>
+      <div class="rule-title">合理 > 理性</div>
+      <div class="rule-desc">选你能坚持的策略，而非最优的策略。能睡着觉的方案就是最好的方案。</div>
+    </div>
+
+    <div class="rule">
+      <div class="rule-top">
+        <span class="rule-number">10</span>
+        <span class="rule-icon">🌊</span>
+      </div>
+      <div class="rule-title">给未来留空间</div>
+      <div class="rule-desc">你、世界、市场都会变。容错空间是一切的基础，永远不要满仓你的人生。</div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div class="footer-divider"></div>
+    <div class="quote">"管理金钱的最终目的，不是赚更多，<br>而是晚上能睡得着觉。"</div>
+    <div class="author">— Morgan Housel ·《金钱心理学》</div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function exportImage() {
+  const btn = document.getElementById('exportBtn');
+  const btnText = document.getElementById('btnText');
+  btn.classList.add('saving');
+  btnText.textContent = '正在生成…';
+
+  const poster = document.getElementById('poster');
+
+  html2canvas(poster, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#0a0e17',
+    logging: false,
+    onclone: function(doc) {
+      // Ensure cloned poster has no border-radius for clean export
+      const cloned = doc.getElementById('poster');
+      cloned.style.boxShadow = 'none';
+    }
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = '金钱心理学-十条准则.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.classList.remove('saving');
+    btnText.textContent = '导出图片';
+    showToast('✅ 图片已保存，可直接分享到社交媒体');
+  }).catch(err => {
+    btn.classList.remove('saving');
+    btnText.textContent = '导出图片';
+    showToast('❌ 导出失败，请重试');
+    console.error(err);
+  });
+}
+</script>
+
+</body>
+</html>

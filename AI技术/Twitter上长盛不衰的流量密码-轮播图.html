@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twitter 上长盛不衰的流量密码</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: #0a0a0f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  .carousel-wrapper {
+    position: relative;
+    width: 420px;
+    height: 560px;
+    user-select: none;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 40px;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+
+  /* Slide 0: Cover */
+  .slide-0 {
+    background: linear-gradient(160deg, #0f0f1a 0%, #1a1a2e 40%, #16213e 100%);
+    position: relative;
+    justify-content: flex-end;
+    padding-bottom: 60px;
+  }
+  .slide-0::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .slide-0::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .slide-0 .icon-cluster {
+    position: absolute;
+    top: 52px; left: 40px;
+    display: flex;
+    gap: 12px;
+  }
+  .slide-0 .icon-cluster span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    font-size: 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .slide-0 .cover-label {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .slide-0 h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.35;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .slide-0 h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .slide-0 .subtitle {
+    font-size: 15px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.7;
+  }
+
+  /* Slide 1-8: Content slides */
+  .slide-1 { background: linear-gradient(160deg, #1e1b4b 0%, #312e81 50%, #3730a3 100%); }
+  .slide-2 { background: linear-gradient(160deg, #4a1942 0%, #6b2fa0 50%, #7c3aed 100%); }
+  .slide-3 { background: linear-gradient(160deg, #134e4a 0%, #0f766e 50%, #0d9488 100%); }
+  .slide-4 { background: linear-gradient(160deg, #1e3a5f 0%, #1d4ed8 50%, #2563eb 100%); }
+  .slide-5 { background: linear-gradient(160deg, #78350f 0%, #b45309 50%, #d97706 100%); }
+  .slide-6 { background: linear-gradient(160deg, #14532d 0%, #15803d 50%, #16a34a 100%); }
+  .slide-7 { background: linear-gradient(160deg, #7f1d1d 0%, #b91c1c 50%, #dc2626 100%); }
+  .slide-8 { background: linear-gradient(160deg, #1e3a5f 0%, #0369a1 50%, #0284c7 100%); }
+
+  .slide-num {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 72px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.08);
+    position: absolute;
+    top: 28px; right: 36px;
+    line-height: 1;
+  }
+
+  .slide-tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  .slide-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.4;
+    margin-bottom: 24px;
+  }
+
+  .slide-body {
+    font-size: 14.5px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.85;
+    flex-grow: 1;
+  }
+
+  .slide-body strong {
+    color: rgba(255,255,255,0.95);
+    font-weight: 500;
+  }
+
+  .slide-quote {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.06);
+    border-left: 3px solid rgba(255,255,255,0.25);
+    border-radius: 0 10px 10px 0;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.8;
+    font-style: italic;
+  }
+
+  .key-points {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .key-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.65;
+  }
+  .key-point .dot {
+    flex-shrink: 0;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    margin-top: 8px;
+  }
+
+  /* Slide 9: Closing */
+  .slide-9 {
+    background: linear-gradient(160deg, #0f0f1a 0%, #1a1a2e 40%, #16213e 100%);
+    justify-content: center;
+    text-align: center;
+    position: relative;
+  }
+  .slide-9::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 60%);
+    border-radius: 50%;
+  }
+  .slide-9 .closing-icon {
+    font-size: 48px;
+    margin-bottom: 28px;
+    opacity: 0.9;
+  }
+  .slide-9 h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 24px;
+    line-height: 1.4;
+  }
+  .slide-9 .closing-text {
+    font-size: 15px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.9;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  .slide-9 .closing-text em {
+    font-style: normal;
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* Navigation */
+  .nav-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    padding: 0;
+  }
+  .nav-dot.active {
+    background: rgba(255,255,255,0.8);
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.6);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+  }
+  .nav-arrow:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+  }
+  .nav-arrow.prev { left: -56px; }
+  .nav-arrow.next { right: -56px; }
+
+  .page-indicator {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+
+<div class="carousel-wrapper" id="carousel">
+
+  <div class="page-indicator" id="pageIndicator">1 / 10</div>
+
+  <!-- Slide 0: Cover -->
+  <div class="slide slide-0 active" data-index="0">
+    <div class="icon-cluster">
+      <span>&#x1D54F;</span>
+      <span>&#x1F4C8;</span>
+      <span>&#x1F9E0;</span>
+    </div>
+    <div class="cover-label">Social Media Strategy</div>
+    <h1>Twitter 上<br>长盛不衰的<br><em>流量密码</em></h1>
+    <div class="subtitle">八种经过时间验证的内容模式<br>算法在变，人性从未变过</div>
+  </div>
+
+  <!-- Slide 1 -->
+  <div class="slide slide-1" data-index="1">
+    <div class="slide-num">01</div>
+    <div class="slide-tag">Pattern 01</div>
+    <div class="slide-title">个人经历叙事</div>
+    <div class="slide-body">
+      最古老也最强大的内容形态。人类对叙事的偏好写在基因里，几万年前围着篝火讲故事的机制，和今天在信息流中被一段经历吸引的机制，用的是<strong>同一套神经回路</strong>。
+      <div class="key-points">
+        <div class="key-point"><div class="dot"></div><span><strong>具体的数字和时间线</strong>——为读者提供定位锚点</span></div>
+        <div class="key-point"><div class="dot"></div><span><strong>状态的反差</strong>——天然制造好奇心缺口</span></div>
+        <div class="key-point"><div class="dot"></div><span><strong>情感的真实感</strong>——脆弱感是信任的催化剂</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide slide-2" data-index="2">
+    <div class="slide-num">02</div>
+    <div class="slide-tag">Pattern 02</div>
+    <div class="slide-title">反常识判断</div>
+    <div class="slide-body">
+      当信息与已有认知冲突时，大脑进入高度警觉状态。在每天刷过上千条信息的环境里，<strong>反常识判断能穿透注意力过滤层</strong>，触发认知冲突——一种让人不得不停下来的心理反应。
+      <div class="slide-quote">
+        你的反常识判断必须是真正想透了的结论，而非为了吸引注意力临时构造的对立面。前者带来尊重，后者带来信誉损耗。
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide slide-3" data-index="3">
+    <div class="slide-num">03</div>
+    <div class="slide-tag">Pattern 03</div>
+    <div class="slide-title">信息不对称的填补</div>
+    <div class="slide-body">
+      让人觉得<strong>"只有在你这里能看到"</strong>。人类对稀缺信息有本能的追逐倾向，掌握了别人不知道的信息，意味着在资源竞争中占据优势。
+      <div class="key-points">
+        <div class="key-point"><div class="dot"></div><span>亲身经历的一手信息</span></div>
+        <div class="key-point"><div class="dot"></div><span>专业能力的深度解读</span></div>
+        <div class="key-point"><div class="dot"></div><span>跨领域的知识迁移</span></div>
+        <div class="key-point"><div class="dot"></div><span>时间差的信息优势</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slide slide-4" data-index="4">
+    <div class="slide-num">04</div>
+    <div class="slide-tag">Pattern 04</div>
+    <div class="slide-title">框架化输出</div>
+    <div class="slide-body">
+      把复杂问题装进一个简洁的结构。面对复杂问题，大多数人的痛苦不是缺少信息，而是<strong>信息过于零散</strong>。框架提供认知脚手架，让读者把经验和困惑挂在上面。
+      <div class="slide-quote">
+        一个好框架的三个特征：<br>能记住 / 能复用 / 能传播
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5 -->
+  <div class="slide slide-5" data-index="5">
+    <div class="slide-num">05</div>
+    <div class="slide-tag">Pattern 05</div>
+    <div class="slide-title">清单体与资源聚合</div>
+    <div class="slide-body">
+      实用价值的极致表达。清单体精准命中了人在信息过载环境中的核心需求——<strong>"帮我筛选"</strong>。你替读者做了筛选、排序、总结的工作，他自然愿意用关注和收藏来回报。
+      <div class="slide-quote">
+        高质量清单不是一张目录，它是一份经过专业判断的推荐——读者要的不是选项，是结论。
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6 -->
+  <div class="slide slide-6" data-index="6">
+    <div class="slide-num">06</div>
+    <div class="slide-tag">Pattern 06</div>
+    <div class="slide-title">过程透明化</div>
+    <div class="slide-body">
+      建设中的房子比建好的更有吸引力。人类对"过程"的好奇远大于对"结果"的好奇。连续跟踪产生的<strong>投入感</strong>，比任何单次的震撼更能锁定注意力。
+      <div class="slide-quote">
+        过程透明化的核心是"不确定性"。读者不知道你最终会成功还是失败，这种悬念驱动他持续关注。
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7 -->
+  <div class="slide slide-7" data-index="7">
+    <div class="slide-num">07</div>
+    <div class="slide-tag">Pattern 07</div>
+    <div class="slide-title">观点对撞与立场表达</div>
+    <div class="slide-body">
+      立场类内容天然具备更高的互动率，因为它触发了人类的基本社会行为——<strong>"站队"</strong>。同意的人转发以表达立场，不同意的人评论以维护认知，双方都在帮你增加曝光。
+      <div class="slide-quote">
+        真正有效的立场表达：观点清晰但论证诚实。有立场，也有边界。
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8 -->
+  <div class="slide slide-8" data-index="8">
+    <div class="slide-num">08</div>
+    <div class="slide-tag">Pattern 08</div>
+    <div class="slide-title">教学类内容</div>
+    <div class="slide-body">
+      教别人做一件事，是最稳定的价值交付。教学内容满足的是<strong>刚性需求</strong>，几乎不受任何周期影响。
+      <div class="key-points">
+        <div class="key-point"><div class="dot"></div><span><strong>起点明确</strong>——读者两秒判断是否适合自己</span></div>
+        <div class="key-point"><div class="dot"></div><span><strong>步骤有因果</strong>——理解逻辑才能举一反三</span></div>
+        <div class="key-point"><div class="dot"></div><span><strong>附带失败案例</strong>——承认犯错更值得信赖</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: Closing -->
+  <div class="slide slide-9" data-index="9">
+    <div class="closing-icon">&#x1F513;</div>
+    <h2>流量密码的本质<br>是人性密码</h2>
+    <div class="closing-text">
+      好奇心驱动点开，共情驱动感受，<br>
+      对确定性的渴望驱动收藏，<br>
+      对不确定性的迷恋驱动跟踪，<br>
+      身份认同驱动转发，<br>
+      实用需求驱动学习。<br><br>
+      <em>理解人性，是唯一不会贬值的技能。</em>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <button class="nav-arrow prev" id="prevBtn">&#x2039;</button>
+  <button class="nav-arrow next" id="nextBtn">&#x203A;</button>
+
+  <div class="nav-dots" id="navDots"></div>
+
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const navDotsContainer = document.getElementById('navDots');
+  const pageIndicator = document.getElementById('pageIndicator');
+  const total = slides.length;
+  let current = 0;
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  // Build dots
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    navDotsContainer.appendChild(dot);
+  }
+
+  function goTo(index) {
+    if (index < 0) index = total - 1;
+    if (index >= total) index = 0;
+    slides[current].classList.remove('active');
+    navDotsContainer.children[current].classList.remove('active');
+    current = index;
+    slides[current].classList.add('active');
+    navDotsContainer.children[current].classList.add('active');
+    pageIndicator.textContent = (current + 1) + ' / ' + total;
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+    if (e.key === 'ArrowRight') goTo(current + 1);
+  });
+
+  // Touch / swipe
+  const wrapper = document.getElementById('carousel');
+  wrapper.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  wrapper.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goTo(current + 1);
+      else goTo(current - 1);
+    }
+  }, { passive: true });
+</script>
+
+</body>
+</html>

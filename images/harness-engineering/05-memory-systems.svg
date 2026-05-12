@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" font-family="'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif">
+  <defs>
+    <linearGradient id="bg5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="50%" style="stop-color:#1a1744"/>
+      <stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="ccMemGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb"/>
+      <stop offset="100%" style="stop-color:#f5576c"/>
+    </linearGradient>
+    <linearGradient id="ocMemGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe"/>
+      <stop offset="100%" style="stop-color:#00f2fe"/>
+    </linearGradient>
+    <filter id="shadow5">
+      <feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="620" fill="url(#bg5)"/>
+
+  <!-- Title -->
+  <text x="450" y="40" text-anchor="middle" fill="#e2e8f0" font-size="22" font-weight="700">记忆系统对比</text>
+
+  <!-- ===== Left: Claude Code ===== -->
+  <text x="225" y="80" text-anchor="middle" fill="#f093fb" font-size="17" font-weight="700">Claude Code</text>
+  <text x="225" y="102" text-anchor="middle" fill="#6b7280" font-size="12">图书馆模型 — 分类 · 索引 · 管理员维护</text>
+
+  <!-- MEMORY.md index box -->
+  <g filter="url(#shadow5)">
+    <rect x="50" y="125" width="350" height="70" rx="12" fill="#f093fb" opacity="0.08" stroke="#f093fb" stroke-width="1.5"/>
+  </g>
+  <text x="225" y="150" text-anchor="middle" fill="#f093fb" font-size="14" font-weight="600">MEMORY.md 索引文件</text>
+  <text x="225" y="173" text-anchor="middle" fill="#8b95a5" font-size="11">启动时加载前 200 行 · 每条记忆只占一行</text>
+
+  <!-- Arrow down -->
+  <line x1="225" y1="200" x2="225" y2="220" stroke="#f093fb" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+  <text x="225" y="235" text-anchor="middle" fill="#6b7280" font-size="10">按需读取</text>
+
+  <!-- 4 memory type boxes -->
+  <g filter="url(#shadow5)">
+    <rect x="50" y="250" width="160" height="55" rx="10" fill="#f5576c" opacity="0.1" stroke="#f5576c" stroke-width="1.2"/>
+  </g>
+  <text x="130" y="273" text-anchor="middle" fill="#f5576c" font-size="13" font-weight="600">user</text>
+  <text x="130" y="292" text-anchor="middle" fill="#8b95a5" font-size="10">角色 · 偏好 · 知识背景</text>
+
+  <g filter="url(#shadow5)">
+    <rect x="240" y="250" width="160" height="55" rx="10" fill="#f093fb" opacity="0.1" stroke="#f093fb" stroke-width="1.2"/>
+  </g>
+  <text x="320" y="273" text-anchor="middle" fill="#f093fb" font-size="13" font-weight="600">feedback</text>
+  <text x="320" y="292" text-anchor="middle" fill="#8b95a5" font-size="10">行为纠正与确认</text>
+
+  <g filter="url(#shadow5)">
+    <rect x="50" y="320" width="160" height="55" rx="10" fill="#f6d365" opacity="0.1" stroke="#f6d365" stroke-width="1.2"/>
+  </g>
+  <text x="130" y="343" text-anchor="middle" fill="#f6d365" font-size="13" font-weight="600">project</text>
+  <text x="130" y="362" text-anchor="middle" fill="#8b95a5" font-size="10">项目动态 · 目标 · 截止日期</text>
+
+  <g filter="url(#shadow5)">
+    <rect x="240" y="320" width="160" height="55" rx="10" fill="#43e97b" opacity="0.1" stroke="#43e97b" stroke-width="1.2"/>
+  </g>
+  <text x="320" y="343" text-anchor="middle" fill="#43e97b" font-size="13" font-weight="600">reference</text>
+  <text x="320" y="362" text-anchor="middle" fill="#8b95a5" font-size="10">外部资源指针</text>
+
+  <!-- CC key traits -->
+  <g transform="translate(225, 420)">
+    <rect x="-160" y="-14" width="320" height="26" rx="6" fill="#f093fb" opacity="0.06"/>
+    <text x="0" y="2" text-anchor="middle" fill="#9ca3af" font-size="11">Markdown 独立文件 + YAML frontmatter · 人类可审查编辑</text>
+  </g>
+
+  <!-- ===== Separator ===== -->
+  <line x1="450" y1="95" x2="450" y2="450" stroke="#2d2b55" stroke-width="1.5"/>
+
+  <!-- ===== Right: OpenClaw ===== -->
+  <text x="675" y="80" text-anchor="middle" fill="#4facfe" font-size="17" font-weight="700">OpenClaw</text>
+  <text x="675" y="102" text-anchor="middle" fill="#6b7280" font-size="12">大脑模型 — 经历沉淀 · 联想检索 · 自我进化</text>
+
+  <!-- Layer 1: JSONL -->
+  <g filter="url(#shadow5)">
+    <rect x="500" y="125" width="350" height="85" rx="12" fill="#4facfe" opacity="0.08" stroke="#4facfe" stroke-width="1.5"/>
+  </g>
+  <text x="675" y="150" text-anchor="middle" fill="#4facfe" font-size="14" font-weight="600">第一层：JSONL 日志（事实层）</text>
+  <text x="675" y="173" text-anchor="middle" fill="#8b95a5" font-size="11">append-only · 全量保留 · 跨通道统一</text>
+  <text x="675" y="193" text-anchor="middle" fill="#8b95a5" font-size="11">原始事实源 — 不直接参与上下文注入</text>
+
+  <!-- Arrow: AI distillation -->
+  <line x1="675" y1="215" x2="675" y2="250" stroke="#4facfe" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+  <text x="675" y="245" text-anchor="middle" fill="#00f2fe" font-size="10" font-weight="500">AI 自主提炼</text>
+
+  <!-- Layer 2: MEMORY.md -->
+  <g filter="url(#shadow5)">
+    <rect x="500" y="260" width="350" height="75" rx="12" fill="#00f2fe" opacity="0.08" stroke="#00f2fe" stroke-width="1.5"/>
+  </g>
+  <text x="675" y="287" text-anchor="middle" fill="#00f2fe" font-size="14" font-weight="600">第二层：MEMORY.md（提炼层）</text>
+  <text x="675" y="310" text-anchor="middle" fill="#8b95a5" font-size="11">AI 从日志中主动提炼 · 自由组织 · 持续更新</text>
+
+  <!-- Arrow: semantic search -->
+  <line x1="675" y1="340" x2="675" y2="370" stroke="#a18cd1" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+  <text x="675" y="365" text-anchor="middle" fill="#a18cd1" font-size="10" font-weight="500">语义检索</text>
+
+  <!-- Semantic layer -->
+  <g filter="url(#shadow5)">
+    <rect x="500" y="375" width="350" height="55" rx="12" fill="#a18cd1" opacity="0.08" stroke="#a18cd1" stroke-width="1.2"/>
+  </g>
+  <text x="675" y="400" text-anchor="middle" fill="#a18cd1" font-size="13" font-weight="600">混合语义搜索</text>
+  <text x="675" y="418" text-anchor="middle" fill="#8b95a5" font-size="11">关键词 + 语义相关性 · 跨时间检索历史片段</text>
+
+  <!-- ===== Bottom: Evolution timeline ===== -->
+  <line x1="60" y1="465" x2="840" y2="465" stroke="#2d2b55" stroke-width="1"/>
+
+  <text x="450" y="495" text-anchor="middle" fill="#e2e8f0" font-size="15" font-weight="600">OpenClaw 渐进式人格学习</text>
+
+  <!-- Timeline -->
+  <line x1="100" y1="535" x2="800" y2="535" stroke="#4b5563" stroke-width="1.5"/>
+
+  <!-- Week 1 -->
+  <circle cx="150" cy="535" r="6" fill="#4facfe" opacity="0.8"/>
+  <text x="150" y="520" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">第 1 周</text>
+  <text x="150" y="558" text-anchor="middle" fill="#8b95a5" font-size="10">按通用套路写</text>
+  <text x="150" y="572" text-anchor="middle" fill="#6b7280" font-size="10">质量一般</text>
+
+  <!-- Week 2 -->
+  <circle cx="350" cy="535" r="6" fill="#43e97b" opacity="0.8"/>
+  <text x="350" y="520" text-anchor="middle" fill="#43e97b" font-size="12" font-weight="600">第 2 周</text>
+  <text x="350" y="558" text-anchor="middle" fill="#8b95a5" font-size="10">发现"偏好反问句开头"</text>
+  <text x="350" y="572" text-anchor="middle" fill="#6b7280" font-size="10">开始学习模式</text>
+
+  <!-- Month 1 -->
+  <circle cx="550" cy="535" r="6" fill="#f6d365" opacity="0.8"/>
+  <text x="550" y="520" text-anchor="middle" fill="#f6d365" font-size="12" font-weight="600">第 1 个月</text>
+  <text x="550" y="558" text-anchor="middle" fill="#8b95a5" font-size="10">提炼"数据驱动偏好"</text>
+  <text x="550" y="572" text-anchor="middle" fill="#6b7280" font-size="10">30 条交互积累</text>
+
+  <!-- Month 3 -->
+  <circle cx="750" cy="535" r="6" fill="#f093fb" opacity="0.8"/>
+  <text x="750" y="520" text-anchor="middle" fill="#f093fb" font-size="12" font-weight="600">第 3 个月</text>
+  <text x="750" y="558" text-anchor="middle" fill="#8b95a5" font-size="10">内化写作风格</text>
+  <text x="750" y="572" text-anchor="middle" fill="#6b7280" font-size="10">越来越像你</text>
+</svg>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>控制反转示意图</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #fafaf7;
+    padding: 60px 40px;
+    color: #1a1a1a;
+  }
+  .canvas {
+    width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 16px;
+    padding: 56px 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 48px;
+  }
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 40px;
+    align-items: stretch;
+  }
+  .divider {
+    background: #ebe9e3;
+    width: 1px;
+  }
+  .panel-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #2a2a2a;
+  }
+  .panel-tag {
+    display: inline-block;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+  .left .panel-tag {
+    background: #fdecea;
+    color: #b94a3b;
+  }
+  .right .panel-tag {
+    background: #e8f3ec;
+    color: #2f7a52;
+  }
+  .layer {
+    background: #fdfcf8;
+    border: 1px solid #ece9e1;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+  }
+  .layer .role {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 600;
+    flex-shrink: 0;
+    min-width: 36px;
+    text-align: center;
+  }
+  .role.human { background: #1a1a1a; color: #fff; }
+  .role.ai { background: #d6efe0; color: #2f7a52; }
+  .layer .text { color: #3a3a3a; }
+  .arrow-down {
+    text-align: center;
+    color: #c4c0b6;
+    font-size: 14px;
+    margin: 2px 0;
+    line-height: 1;
+  }
+  .left .layer { border-left: 3px solid #d97a6c; }
+  .right .layer.human-controlled { border-left: 3px solid #1a1a1a; }
+  .right .layer.ai-executed { border-left: 3px solid #5fa87f; background: #f6fbf8; }
+  .summary {
+    margin-top: 24px;
+    padding: 14px 16px;
+    background: #faf8f3;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #6a6a6a;
+    line-height: 1.7;
+  }
+  .summary strong { color: #2a2a2a; font-weight: 600; }
+  .footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="title">控制反转：两种人机协作姿势</div>
+  <div class="subtitle">谁在控制每一步具体动作，决定了你能力的天花板</div>
+
+  <div class="compare">
+    <div class="left">
+      <div class="panel-title">传统协作</div>
+      <span class="panel-tag">打字机模式</span>
+
+      <div class="layer"><span class="role human">人</span><span class="text">下一条具体指令</span></div>
+      <div class="arrow-down">↓</div>
+      <div class="layer"><span class="role ai">AI</span><span class="text">执行这一条</span></div>
+      <div class="arrow-down">↓</div>
+      <div class="layer"><span class="role human">人</span><span class="text">看结果，再下一条</span></div>
+      <div class="arrow-down">↓</div>
+      <div class="layer"><span class="role ai">AI</span><span class="text">执行这一条</span></div>
+      <div class="arrow-down">↓</div>
+      <div class="layer"><span class="role human">人</span><span class="text">再看，再下一条……</span></div>
+
+      <div class="summary">
+        <strong>特征：</strong>人参与每一个具体决策，AI 只是更快的手。<br>
+        <strong>能力增长：</strong>线性 —— AI 多干一件，你多产一件。
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="right">
+      <div class="panel-title">控制反转</div>
+      <span class="panel-tag">IoC 模式</span>
+
+      <div class="layer human-controlled"><span class="role human">人</span><span class="text">定义目标 / 边界 / 品味</span></div>
+      <div class="arrow-down">↓</div>
+      <div class="layer human-controlled"><span class="role human">人</span><span class="text">设定抽象接口与约束</span></div>
+      <div class="arrow-down">↓</div>
+      <div class="layer ai-executed"><span class="role ai">AI</span><span class="text">自主拆解任务</span></div>
+      <div class="layer ai-executed"><span class="role ai">AI</span><span class="text">自主选择路径</span></div>
+      <div class="layer ai-executed"><span class="role ai">AI</span><span class="text">自主执行 / 验证 / 产出</span></div>
+      <div class="arrow-down">↑</div>
+      <div class="layer human-controlled"><span class="role human">人</span><span class="text">只在边界处做判断</span></div>
+
+      <div class="summary">
+        <strong>特征：</strong>人退到上层定义抽象，AI 在边界内自由发挥。<br>
+        <strong>能力增长：</strong>指数 —— 抽象提升一层，下面全部被放大。
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">人控制抽象 · AI 执行具体</div>
+</div>
+</body>
+</html>

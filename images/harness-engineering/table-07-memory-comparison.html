@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(135deg, #0f0c29 0%, #1a1744 50%, #24243e 100%);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 40px;
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  }
+  .card {
+    width: 860px; background: rgba(26, 23, 68, 0.6);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+    padding: 36px 40px; backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .card-title {
+    font-size: 20px; font-weight: 700; color: #e2e8f0;
+    margin-bottom: 6px;
+  }
+  .card-subtitle {
+    font-size: 13px; color: #6b7280; margin-bottom: 24px;
+  }
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border-radius: 12px; overflow: hidden;
+  }
+  thead th {
+    background: rgba(255, 255, 255, 0.06); color: #9ca3af;
+    font-size: 14px; font-weight: 600; padding: 14px 18px;
+    text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  thead th:nth-child(2) { color: #f093fb; }
+  thead th:nth-child(3) { color: #4facfe; }
+  tbody td {
+    padding: 13px 18px; font-size: 13px; color: #c9d1d9;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+  .col-dim { color: #9ca3af; font-weight: 600; white-space: nowrap; }
+  .col-cc { color: #f0b8f8; }
+  .col-oc { color: #87d4fe; }
+  .highlight-cc {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    background: rgba(240, 147, 251, 0.1); color: #f093fb; font-weight: 500;
+  }
+  .highlight-oc {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    background: rgba(79, 172, 254, 0.1); color: #4facfe; font-weight: 500;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-title">记忆系统 · 核心对比</div>
+    <div class="card-subtitle">图书馆 vs 大脑 — 两种截然不同的记忆哲学</div>
+    <table>
+      <thead>
+        <tr><th>维度</th><th>Claude Code</th><th>OpenClaw</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-dim">记忆隐喻</td>
+          <td class="col-cc"><span class="highlight-cc">图书馆</span> — 分类、索引、管理员维护</td>
+          <td class="col-oc"><span class="highlight-oc">大脑</span> — 经历沉淀、联想检索、自我进化</td>
+        </tr>
+        <tr>
+          <td class="col-dim">记忆写入</td>
+          <td class="col-cc">结构化（四种类型 + frontmatter）</td>
+          <td class="col-oc">提炼式（AI 从日志自主提取）</td>
+        </tr>
+        <tr>
+          <td class="col-dim">记忆检索</td>
+          <td class="col-cc">索引 + 按需文件读取</td>
+          <td class="col-oc">混合语义搜索</td>
+        </tr>
+        <tr>
+          <td class="col-dim">记忆衰减</td>
+          <td class="col-cc">引用前验证 + 人工修剪</td>
+          <td class="col-oc">持续提炼 + 自然覆盖</td>
+        </tr>
+        <tr>
+          <td class="col-dim">可控性</td>
+          <td class="col-cc"><span class="highlight-cc">高</span> — 人类随时审查和编辑</td>
+          <td class="col-oc"><span class="highlight-oc">中</span> — 需要通过对话纠正</td>
+        </tr>
+        <tr>
+          <td class="col-dim">进化能力</td>
+          <td class="col-cc"><span class="highlight-cc">弱</span> — 依赖人机协作</td>
+          <td class="col-oc"><span class="highlight-oc">强</span> — AI 自主学习</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(135deg, #0f0c29 0%, #1a1744 50%, #24243e 100%);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 40px;
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  }
+  .card {
+    width: 780px; background: rgba(26, 23, 68, 0.6);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+    padding: 36px 40px; backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .card-title {
+    font-size: 20px; font-weight: 700; color: #4facfe;
+    margin-bottom: 6px;
+  }
+  .card-subtitle {
+    font-size: 13px; color: #6b7280; margin-bottom: 24px;
+  }
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border-radius: 12px; overflow: hidden;
+  }
+  thead th {
+    background: rgba(79, 172, 254, 0.12); color: #4facfe;
+    font-size: 14px; font-weight: 600; padding: 14px 18px;
+    text-align: left; border-bottom: 1px solid rgba(79, 172, 254, 0.2);
+  }
+  tbody td {
+    padding: 13px 18px; font-size: 13px; color: #c9d1d9;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(79, 172, 254, 0.04); }
+  .col-component { color: #4facfe; font-weight: 600; white-space: nowrap; }
+  .col-content { color: #e2e8f0; }
+  .col-timing { color: #8b95a5; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-title">OpenClaw · 身份导向的 Agent 配置</div>
+    <div class="card-subtitle">指令按 Agent 角色和通道组织 — 每个 Agent 有独立的人格和技能集</div>
+    <table>
+      <thead>
+        <tr><th>组件</th><th>内容</th><th>加载时机</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-component">Agent 配置</td>
+          <td class="col-content">名称、性格、可用技能、API Provider 选择</td>
+          <td class="col-timing">启动时全量加载</td>
+        </tr>
+        <tr>
+          <td class="col-component">System Prompt</td>
+          <td class="col-content">Agent 的行为准则和角色定义</td>
+          <td class="col-timing">每次对话注入</td>
+        </tr>
+        <tr>
+          <td class="col-component">Skill 定义</td>
+          <td class="col-content">具体技能的触发条件和执行步骤</td>
+          <td class="col-timing">匹配意图时加载</td>
+        </tr>
+        <tr>
+          <td class="col-component">Channel 配置</td>
+          <td class="col-content">各通道的权限策略（dmPolicy、mentionGating）</td>
+          <td class="col-timing">消息路由时检查</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

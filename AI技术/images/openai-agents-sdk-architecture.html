@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>OpenAI Agents SDK 架构概览</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+    background: #fafaf7;
+    padding: 50px 30px;
+    color: #1a1a1a;
+  }
+  .canvas {
+    width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e8e6e0;
+    border-radius: 16px;
+    padding: 48px 40px 40px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 40px;
+  }
+
+  .arch-container {
+    display: flex;
+    gap: 0;
+    position: relative;
+  }
+
+  .side-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 12px;
+    font-weight: 600;
+    color: #999;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    text-transform: uppercase;
+  }
+  .side-label.left { transform: rotate(180deg); }
+
+  .layers {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .layer {
+    border-radius: 12px;
+    padding: 28px 32px;
+    position: relative;
+  }
+
+  .layer-harness {
+    background: #f0f4ff;
+    border: 1.5px solid #c4d4f0;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .layer-sandbox {
+    background: #f0faf4;
+    border: 1.5px solid #b8e0c8;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .layer-label {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .layer-harness .layer-label { color: #3366cc; }
+  .layer-sandbox .layer-label { color: #2d8a56; }
+
+  .layer-desc {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 20px;
+  }
+
+  .modules {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .module {
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
+    position: relative;
+  }
+
+  .module-harness {
+    background: #fff;
+    border: 1px solid #c4d4f0;
+    color: #2952a3;
+  }
+
+  .module-sandbox {
+    background: #fff;
+    border: 1px solid #b8e0c8;
+    color: #1e6b3e;
+  }
+
+  .module-icon {
+    font-size: 18px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .trust-boundary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 32px;
+    height: 44px;
+    position: relative;
+  }
+
+  .trust-line {
+    flex: 1;
+    height: 0;
+    border-top: 2px dashed #e05050;
+  }
+
+  .trust-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #e05050;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    background: #fff;
+    padding: 2px 12px;
+    border-radius: 10px;
+    border: 1px solid #f0c0c0;
+  }
+
+  .providers {
+    margin-top: 28px;
+    text-align: center;
+  }
+  .providers-label {
+    font-size: 11px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .provider-list {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .provider-tag {
+    font-size: 12px;
+    color: #666;
+    background: #f5f5f0;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid #e0e0d8;
+  }
+
+  .flow-arrows {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 16px 0 0;
+    padding: 0 32px;
+  }
+  .flow-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 11px;
+    color: #aaa;
+  }
+  .flow-arrow .arrow {
+    font-size: 18px;
+    line-height: 1;
+    color: #ccc;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="title">OpenAI Agents SDK 架构</div>
+  <div class="subtitle">Harness（控制面）与 Sandbox（计算面）的双层分离</div>
+
+  <div class="arch-container">
+    <div class="side-label left">Your Infrastructure</div>
+
+    <div class="layers">
+      <!-- Harness Layer -->
+      <div class="layer layer-harness">
+        <div class="layer-label">Harness · 控制面</div>
+        <div class="layer-desc">运行在可信基础设施上，管理 Agent 生命周期与模型交互</div>
+        <div class="modules">
+          <div class="module module-harness">
+            <span class="module-icon">⟳</span>
+            Agent Loop
+          </div>
+          <div class="module module-harness">
+            <span class="module-icon">◇</span>
+            Model Calls
+          </div>
+          <div class="module module-harness">
+            <span class="module-icon">⇄</span>
+            Tool Routing
+          </div>
+          <div class="module module-harness">
+            <span class="module-icon">☑</span>
+            Approvals
+          </div>
+          <div class="module module-harness">
+            <span class="module-icon">⊞</span>
+            Tracing
+          </div>
+          <div class="module module-harness">
+            <span class="module-icon">⊡</span>
+            Run State
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust Boundary -->
+      <div class="trust-boundary">
+        <div class="trust-line"></div>
+        <div class="trust-label">Trust Boundary</div>
+        <div class="trust-line"></div>
+      </div>
+
+      <!-- Sandbox Layer -->
+      <div class="layer layer-sandbox">
+        <div class="layer-label">Sandbox · 计算面</div>
+        <div class="layer-desc">隔离的执行环境，Agent 在此安全地操作文件、运行命令</div>
+        <div class="modules">
+          <div class="module module-sandbox">
+            <span class="module-icon">📁</span>
+            Filesystem
+          </div>
+          <div class="module module-sandbox">
+            <span class="module-icon">▸_</span>
+            Shell
+          </div>
+          <div class="module module-sandbox">
+            <span class="module-icon">🧠</span>
+            Memory
+          </div>
+          <div class="module module-sandbox">
+            <span class="module-icon">⚡</span>
+            Skills
+          </div>
+          <div class="module module-sandbox">
+            <span class="module-icon">⊘</span>
+            Compaction
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-label">Sandbox Provider</div>
+  </div>
+
+  <!-- Flow Arrows -->
+  <div class="flow-arrows">
+    <div class="flow-arrow">
+      <span class="arrow">↕</span>
+      凭证隔离
+    </div>
+    <div class="flow-arrow">
+      <span class="arrow">↕</span>
+      状态外化
+    </div>
+    <div class="flow-arrow">
+      <span class="arrow">↕</span>
+      快照恢复
+    </div>
+  </div>
+
+  <!-- Sandbox Providers -->
+  <div class="providers">
+    <div class="providers-label">Supported Sandbox Providers</div>
+    <div class="provider-list">
+      <span class="provider-tag">Blaxel</span>
+      <span class="provider-tag">Cloudflare</span>
+      <span class="provider-tag">Daytona</span>
+      <span class="provider-tag">E2B</span>
+      <span class="provider-tag">Modal</span>
+      <span class="provider-tag">Runloop</span>
+      <span class="provider-tag">Vercel</span>
+      <span class="provider-tag">Custom</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

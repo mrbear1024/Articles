@@ -2,11 +2,14 @@
 """
 build.py - Articles 静态站点生成器
 将所有 Markdown 文件渲染为 HTML，生成按时间降序的首页索引。
+构建时自动将本地图片上传到 Cloudflare R2，替换为 CDN 链接。
 
 用法: python3 build.py
-依赖: pip3 install markdown pygments
+依赖: pip3 install markdown pygments boto3
 """
 
+import json
+import mimetypes
 import os
 import re
 import shutil
@@ -17,6 +20,7 @@ from html import escape
 from pathlib import Path
 from urllib.parse import quote
 
+import boto3
 import markdown
 from markdown.extensions.codehilite import CodeHiliteExtension
 from markdown.extensions.fenced_code import FencedCodeExtension
@@ -49,6 +53,117 @@ CATEGORY_DISPLAY = {
     "思考与反思": "思考与反思",
     "其他": "其他",
 }
+
+# ── R2 Configuration ────────────────────────────────────────────
+
+R2_ENV_FILE = Path.home() / ".claude/skills/r2-image-upload/config/.env"
+R2_CACHE_FILE = ROOT / "_r2_cache.json"
+R2_KEY_PREFIX = "site"
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif"}
+
+_r2_client = None
+_r2_bucket = None
+_r2_public_url = None
+_r2_cache: dict[str, str] = {}
+
+
+def _load_r2_env() -> dict[str, str]:
+    """从 .env 文件读取 R2 凭据。"""
+    env: dict[str, str] = {}
+    if not R2_ENV_FILE.exists():
+        return env
+    for line in R2_ENV_FILE.read_text("utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        eq = line.find("=")
+        if eq != -1:
+            env[line[:eq].strip()] = line[eq + 1:].strip()
+    return env
+
+
+def init_r2() -> bool:
+    """初始化 R2 客户端，成功返回 True。"""
+    global _r2_client, _r2_bucket, _r2_public_url
+    env = _load_r2_env()
+    account_id = env.get("R2_ACCOUNT_ID")
+    access_key = env.get("R2_ACCESS_KEY_ID")
+    secret_key = env.get("R2_SECRET_ACCESS_KEY")
+    if not all([account_id, access_key, secret_key]):
+        return False
+    _r2_bucket = env.get("R2_BUCKET", "articles-images")
+    _r2_public_url = env.get("R2_PUBLIC_URL", "https://article-images.xlearnity.ai").rstrip("/")
+    _r2_client = boto3.client(
+        "s3",
+        endpoint_url=f"https://{account_id}.r2.cloudflarestorage.com",
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        region_name="auto",
+    )
+    return True
+
+
+def load_r2_cache():
+    global _r2_cache
+    if R2_CACHE_FILE.exists():
+        try:
+            _r2_cache = json.loads(R2_CACHE_FILE.read_text("utf-8"))
+        except Exception:
+            _r2_cache = {}
+
+
+def save_r2_cache():
+    R2_CACHE_FILE.write_text(
+        json.dumps(_r2_cache, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+
+def upload_to_r2(filepath: Path, key_prefix: str) -> str | None:
+    """上传单个文件到 R2，返回 CDN URL。"""
+    key = f"{key_prefix}/{filepath.name}"
+    content_type = mimetypes.guess_type(str(filepath))[0] or "application/octet-stream"
+    try:
+        _r2_client.put_object(
+            Bucket=_r2_bucket,
+            Key=key,
+            Body=filepath.read_bytes(),
+            ContentType=content_type,
+        )
+        return f"{_r2_public_url}/{key}"
+    except Exception as e:
+        print(f"    ⚠ R2 upload failed ({filepath.name}): {e}")
+        return None
+
+
+def process_images_r2(html: str, md_source: Path) -> str:
+    """扫描 HTML 中的本地图片引用，上传到 R2 并替换为 CDN URL。"""
+    md_dir = (ROOT / md_source).parent
+    slug = str(md_source.with_suffix("")).replace(" ", "-")
+    prefix = f"{R2_KEY_PREFIX}/{slug}"
+
+    def _replace(match):
+        before, src, after = match.group(1), match.group(2), match.group(3)
+        if src.startswith(("http://", "https://", "//", "data:")):
+            return match.group(0)
+        if Path(src).suffix.lower() not in IMAGE_EXTENSIONS:
+            return match.group(0)
+        img_path = (md_dir / src).resolve()
+        if not img_path.exists():
+            return match.group(0)
+        try:
+            cache_key = str(img_path.relative_to(ROOT))
+        except ValueError:
+            return match.group(0)
+        if cache_key in _r2_cache:
+            return before + _r2_cache[cache_key] + after
+        print(f"    ↑ {cache_key}")
+        url = upload_to_r2(img_path, prefix)
+        if url:
+            _r2_cache[cache_key] = url
+            return before + url + after
+        return match.group(0)
+
+    return re.sub(r'(<img[^>]+src=")([^"]+)(")', _replace, html)
 
 
 # ── Data ─────────────────────────────────────────────────────────
@@ -521,6 +636,14 @@ def build():
     copy_assets()
     print("  ✓ static assets")
 
+    # R2 图片上传
+    r2_ready = init_r2()
+    if r2_ready:
+        load_r2_cache()
+        print(f"  ✓ R2 upload enabled ({len(_r2_cache)} cached)")
+    else:
+        print("  ⚠ R2 upload disabled (missing credentials)")
+
     # Git 日期
     git_dates = get_git_dates()
 
@@ -529,6 +652,7 @@ def build():
     print(f"  ✓ found {len(articles)} articles")
 
     # 渲染每篇文章
+    uploaded_count = 0
     for art in articles:
         src = ROOT / art.source
         try:
@@ -539,11 +663,24 @@ def build():
 
         html_body = render_md(text)
         html_body = strip_first_h1(html_body)
+
+        if r2_ready:
+            before = len(_r2_cache)
+            html_body = process_images_r2(html_body, art.source)
+            uploaded_count += len(_r2_cache) - before
+
         html_page = build_article_html(art, html_body)
 
         out_file = OUT / art.url
         out_file.parent.mkdir(parents=True, exist_ok=True)
         out_file.write_text(html_page, encoding="utf-8")
+
+    # 保存 R2 缓存
+    if r2_ready:
+        save_r2_cache()
+        if uploaded_count:
+            print(f"  ✓ {uploaded_count} images uploaded to R2")
+        print(f"  ✓ {len(_r2_cache)} total images on R2")
 
     # 首页
     cats = list(dict.fromkeys(a.category for a in articles))

@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git 和 GitHub 完整入门教程</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0d1117;
+    --bg-card: #161b22;
+    --bg-card-alt: #1c2333;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --accent5: #ff7b72;
+    --accent6: #79c0ff;
+    --border: #30363d;
+    --gradient1: linear-gradient(135deg, #58a6ff 0%, #3fb950 100%);
+    --gradient2: linear-gradient(135deg, #f78166 0%, #d2a8ff 100%);
+  }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ===== Slide system ===== */
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 80px;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    visibility: hidden;
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    z-index: 2;
+  }
+
+  .slide.exit-left {
+    opacity: 0;
+    visibility: visible;
+    z-index: 1;
+    animation: slideOutLeft 0.45s ease forwards;
+  }
+
+  .slide.exit-right {
+    opacity: 0;
+    visibility: visible;
+    z-index: 1;
+    animation: slideOutRight 0.45s ease forwards;
+  }
+
+  .slide.enter-from-right {
+    animation: slideInFromRight 0.45s ease forwards;
+  }
+
+  .slide.enter-from-left {
+    animation: slideInFromLeft 0.45s ease forwards;
+  }
+
+  @keyframes slideOutLeft {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(-60px); }
+  }
+  @keyframes slideOutRight {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(60px); }
+  }
+  @keyframes slideInFromRight {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInFromLeft {
+    from { opacity: 0; transform: translateX(-60px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ===== Background decorations (absolute, out of flow) ===== */
+  .bg-grid {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image:
+      linear-gradient(rgba(48,54,61,0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(48,54,61,0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Only promote non-bg children */
+  .slide > *:not(.bg-grid):not(.bg-glow) { position: relative; z-index: 1; }
+
+  /* ===== Typography ===== */
+  h1 { font-size: 3.2em; font-weight: 900; line-height: 1.2; margin-bottom: 20px; letter-spacing: -0.02em; }
+  h2 { font-size: 2.4em; font-weight: 700; line-height: 1.3; margin-bottom: 16px; }
+  h3 { font-size: 1.4em; font-weight: 500; color: var(--text-dim); margin-bottom: 30px; }
+  p, li { font-size: 1.15em; line-height: 1.8; }
+
+  .text-dim    { color: var(--text-dim); }
+  .text-accent { color: var(--accent); }
+  .text-green  { color: var(--accent2); }
+  .text-orange { color: var(--accent3); }
+  .text-purple { color: var(--accent4); }
+
+  code, .code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(110,118,129,0.15);
+    padding: 2px 8px; border-radius: 6px;
+    font-size: 0.9em; color: var(--accent3);
+  }
+
+  .gradient-text {
+    background: var(--gradient1);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ===== Code block ===== */
+  .code-block {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 30px;
+    font-size: 1.05em; line-height: 1.9;
+    text-align: left; width: 100%; max-width: 700px;
+  }
+  .code-block .prompt  { color: var(--accent2); }
+  .code-block .cmd     { color: var(--text); }
+  .code-block .flag    { color: var(--accent3); }
+  .code-block .string  { color: var(--accent6); }
+  .code-block .comment { color: var(--text-dim); }
+
+  /* ===== Layout helpers ===== */
+  .row   { display: flex; gap: 30px; width: 100%; max-width: 1200px; align-items: stretch; }
+  .col   { flex: 1; display: flex; flex-direction: column; }
+  .center { text-align: center; align-items: center; }
+  .gap-20 { gap: 20px; } .gap-40 { gap: 40px; }
+  .mt-20  { margin-top: 20px; } .mt-40 { margin-top: 40px; }
+  .full-w { width: 100%; max-width: 1200px; }
+
+  /* ===== Card ===== */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 30px; text-align: left;
+  }
+  .card-title {
+    font-size: 1.2em; font-weight: 700; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card p { font-size: 1em; color: var(--text-dim); line-height: 1.7; }
+  .icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.3em; flex-shrink: 0;
+  }
+
+  /* ===== Badge ===== */
+  .badge {
+    display: inline-block; padding: 6px 16px; border-radius: 20px;
+    font-size: 0.85em; font-weight: 500; margin-bottom: 16px;
+  }
+  .badge-blue   { background: rgba(88,166,255,0.15);  color: var(--accent); }
+  .badge-green  { background: rgba(63,185,80,0.15);   color: var(--accent2); }
+  .badge-orange { background: rgba(247,129,102,0.15);  color: var(--accent3); }
+  .badge-purple { background: rgba(210,168,255,0.15);  color: var(--accent4); }
+
+  /* ===== Progress & Navigation ===== */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: var(--gradient1); transition: width 0.4s ease; z-index: 100;
+  }
+  .page-indicator {
+    position: fixed; bottom: 30px; right: 40px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+    color: var(--text-dim); z-index: 100;
+  }
+  .nav-dots {
+    position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 8px; z-index: 100;
+  }
+  .nav-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--border);
+    cursor: pointer; transition: all 0.3s ease;
+  }
+  .nav-dot.active {
+    background: var(--accent); box-shadow: 0 0 8px rgba(88,166,255,0.4);
+  }
+  .keyboard-hint {
+    position: fixed; bottom: 30px; left: 40px;
+    font-size: 0.8em; color: var(--text-dim);
+    display: flex; align-items: center; gap: 8px; z-index: 100;
+  }
+  .key {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 28px; height: 26px; padding: 0 6px;
+    border: 1px solid var(--border); border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+    background: var(--bg-card);
+  }
+
+  /* ===== Back home ===== */
+  .back-home {
+    position: fixed; top: 20px; left: 20px; z-index: 100;
+    display: inline-flex; align-items: center; gap: 5px;
+    color: var(--text-dim); text-decoration: none;
+    font-size: 0.78em; padding: 5px 12px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--bg-card); transition: all 0.2s;
+  }
+  .back-home:hover { color: var(--accent); border-color: var(--accent); background: rgba(88,166,255,0.08); }
+  .back-home svg { width: 14px; height: 14px; }
+
+  /* ===== SVG / Diagram ===== */
+  .diagram-container { width: 100%; max-width: 900px; display: flex; justify-content: center; }
+  .diagram-container svg { max-width: 100%; height: auto; }
+  .glow-blue { filter: drop-shadow(0 0 20px rgba(88,166,255,0.3)); }
+
+  /* ===== File chaos (slide 2) ===== */
+  .file-stack { display: flex; flex-direction: column; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.95em; }
+  .file-item {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  /* ===== Flow boxes (three zones) ===== */
+  .flow-container { display: flex; align-items: center; gap: 0; width: 100%; max-width: 1000px; }
+  .flow-box {
+    flex: 1; background: var(--bg-card); border: 2px solid var(--border);
+    border-radius: 16px; padding: 24px 16px; text-align: center;
+    transition: all 0.3s ease;
+  }
+  .flow-box:hover { border-color: var(--accent); transform: translateY(-4px); }
+  .flow-box-title { font-weight: 700; font-size: 1.05em; margin-bottom: 8px; }
+  .flow-box-desc  { font-size: 0.85em; color: var(--text-dim); line-height: 1.5; }
+  .flow-arrow { font-size: 1.5em; color: var(--accent); padding: 0 8px; flex-shrink: 0; }
+
+  /* ===== VS container (Git vs GitHub) ===== */
+  .vs-container { display: flex; align-items: stretch; gap: 40px; width: 100%; max-width: 1000px; }
+  .vs-side {
+    flex: 1; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 30px;
+  }
+  .vs-side-title { font-weight: 700; font-size: 1.3em; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .vs-divider { display: flex; align-items: center; justify-content: center; font-size: 2em; color: var(--text-dim); font-weight: 300; }
+
+  /* ===== GitHub features grid ===== */
+  .gh-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 1000px; }
+  .gh-feature-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px 24px; text-align: center; transition: all 0.3s ease;
+  }
+  .gh-feature-card:hover { border-color: var(--accent); transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+  .gh-feature-icon  { font-size: 2.4em; margin-bottom: 16px; }
+  .gh-feature-title { font-weight: 700; font-size: 1.1em; margin-bottom: 10px; }
+  .gh-feature-desc  { font-size: 0.9em; color: var(--text-dim); line-height: 1.6; }
+
+  /* ===== Workflow steps ===== */
+  .workflow-steps { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 800px; }
+  .workflow-step {
+    display: flex; align-items: center; gap: 20px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 24px; transition: all 0.3s ease;
+  }
+  .workflow-step:hover { border-color: var(--accent); transform: translateX(8px); }
+  .workflow-step-text  { flex: 1; }
+  .workflow-step-title { font-weight: 600; font-size: 1.05em; margin-bottom: 4px; }
+  .workflow-step-desc  { font-size: 0.9em; color: var(--text-dim); }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.95em; flex-shrink: 0;
+  }
+
+  /* ===== Feature list ===== */
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 12px; text-align: left; }
+  .feature-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 1.1em; line-height: 1.6; }
+  .bullet {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 0.8em; margin-top: 2px;
+  }
+
+  /* ===== Command table ===== */
+  .cmd-table { width: 100%; max-width: 900px; border-collapse: separate; border-spacing: 0; font-size: 0.95em; }
+  .cmd-table th {
+    background: var(--bg-card-alt); padding: 14px 20px; text-align: left;
+    font-weight: 600; color: var(--accent); border-bottom: 2px solid var(--border);
+  }
+  .cmd-table th:first-child { border-radius: 12px 0 0 0; }
+  .cmd-table th:last-child  { border-radius: 0 12px 0 0; }
+  .cmd-table td {
+    padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg-card);
+  }
+  .cmd-table td:first-child { font-family: 'JetBrains Mono', monospace; color: var(--accent3); font-size: 0.9em; }
+  .cmd-table tr:last-child td:first-child { border-radius: 0 0 0 12px; }
+  .cmd-table tr:last-child td:last-child  { border-radius: 0 0 12px 0; }
+
+  /* ===== Title slide logo ===== */
+  .title-git-logo { width: 120px; height: 120px; margin-bottom: 30px; }
+</style>
+</head>
+<body>
+
+<a class="back-home" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>首页</a>
+<div class="progress-bar" id="progressBar"></div>
+<div class="nav-dots" id="navDots"></div>
+<div class="keyboard-hint"><span class="key">←</span><span class="key">→</span> 翻页</div>
+<div class="page-indicator" id="pageIndicator"></div>
+
+<!-- ===== SLIDE 1: Title ===== -->
+<div class="slide active" id="slide-0">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent); top: -200px; right: -100px;"></div>
+  <div class="bg-glow" style="background: var(--accent2); bottom: -200px; left: -100px;"></div>
+  <div class="center">
+    <svg class="title-git-logo glow-blue" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="gitGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#58a6ff"/><stop offset="100%" style="stop-color:#3fb950"/></linearGradient></defs>
+      <circle cx="60" cy="60" r="56" fill="none" stroke="url(#gitGrad)" stroke-width="3"/>
+      <g transform="translate(60,60) rotate(45)">
+        <rect x="-28" y="-4" width="56" height="8" rx="4" fill="url(#gitGrad)"/>
+        <rect x="-4" y="-28" width="8" height="56" rx="4" fill="url(#gitGrad)"/>
+        <circle cx="0" cy="0" r="8" fill="url(#gitGrad)"/>
+        <circle cx="-24" cy="0" r="5" fill="url(#gitGrad)"/>
+        <circle cx="0" cy="-24" r="5" fill="url(#gitGrad)"/>
+      </g>
+    </svg>
+    <h1><span class="gradient-text">Git</span> 和 <span class="gradient-text">GitHub</span><br>完整入门教程</h1>
+    <h3>从零开始掌握版本控制</h3>
+    <p class="text-dim" style="font-size: 0.95em; margin-top: 20px;">理解核心概念 · 掌握基础操作 · 学会团队协作</p>
+  </div>
+</div>
+
+<!-- ===== SLIDE 2: The Problem ===== -->
+<div class="slide" id="slide-1">
+  <div class="bg-grid"></div>
+  <div class="row" style="max-width: 1100px;">
+    <div class="col" style="flex: 1; justify-content: center;">
+      <span class="badge badge-orange">问题</span>
+      <h2 style="font-size: 2.2em;">你是否经历过<br><span class="text-orange">版本混乱</span>？</h2>
+      <p class="text-dim" style="margin-top: 16px; max-width: 400px;">手动管理版本是一场噩梦。文件越来越多，命名越来越长，最终没人知道哪个是最新版本。</p>
+    </div>
+    <div class="col" style="flex: 1; justify-content: center;">
+      <div class="file-stack">
+        <div class="file-item"><span>📄</span><span>报告_v1.docx</span></div>
+        <div class="file-item"><span>📄</span><span>报告_v2.docx</span></div>
+        <div class="file-item"><span>📄</span><span>报告_v2_修改版.docx</span></div>
+        <div class="file-item"><span>📄</span><span style="color: var(--accent3);">报告_v2_修改版_最终版.docx</span></div>
+        <div class="file-item"><span>📄</span><span style="color: var(--accent5);">报告_最终版_真的最终版.docx</span></div>
+        <div class="file-item" style="border-color: var(--accent5);"><span>📄</span><span style="color: var(--accent5);">报告_打死也不改了.docx</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 3: What is Git ===== -->
+<div class="slide" id="slide-2">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent2); top: -150px; left: 50%; transform: translateX(-50%);"></div>
+  <div class="center">
+    <span class="badge badge-green">解决方案</span>
+    <h2 style="font-size: 2.6em;">Git —— <span class="text-green">分布式版本控制系统</span></h2>
+    <p class="text-dim" style="max-width: 700px; margin-top: 10px; margin-bottom: 40px;">由 Linus Torvalds（Linux 创始人）于 2005 年创建，如今是软件开发领域的标准工具</p>
+    <div class="row gap-20">
+      <div class="card" style="border-top: 3px solid var(--accent);">
+        <div class="card-title"><div class="icon" style="background: rgba(88,166,255,0.15);"><span style="color: var(--accent);">⏱</span></div>版本控制</div>
+        <p>自动记录每一次修改的完整快照，随时可以回到任何历史版本</p>
+      </div>
+      <div class="card" style="border-top: 3px solid var(--accent2);">
+        <div class="card-title"><div class="icon" style="background: rgba(63,185,80,0.15);"><span style="color: var(--accent2);">🔗</span></div>分布式</div>
+        <p>每个人的电脑上都有完整的历史记录，服务器挂了也不丢失</p>
+      </div>
+      <div class="card" style="border-top: 3px solid var(--accent4);">
+        <div class="card-title"><div class="icon" style="background: rgba(210,168,255,0.15);"><span style="color: var(--accent4);">🌿</span></div>分支管理</div>
+        <p>可以创建平行的开发线路，互不干扰，自由实验和合并</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 4: Commit ===== -->
+<div class="slide" id="slide-3">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-blue">核心概念</span>
+    <h2>提交（Commit）—— 项目的<span class="text-accent">存档点</span></h2>
+    <p class="text-dim" style="max-width: 600px; margin-bottom: 40px;">每次提交记录项目在某个时间点的完整状态，就像游戏存档一样</p>
+    <div class="diagram-container">
+      <svg viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg">
+        <line x1="80" y1="100" x2="720" y2="100" stroke="#30363d" stroke-width="3"/>
+        <polygon points="720,94 740,100 720,106" fill="#30363d"/>
+        <circle cx="150" cy="100" r="24" fill="#1c2333" stroke="#58a6ff" stroke-width="3"/>
+        <text x="150" y="105" text-anchor="middle" fill="#58a6ff" font-family="JetBrains Mono" font-size="11" font-weight="700">C1</text>
+        <text x="150" y="55" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="12">初始化项目</text>
+        <text x="150" y="145" text-anchor="middle" fill="#30363d" font-family="JetBrains Mono" font-size="10">a1b2c3d</text>
+        <line x1="174" y1="100" x2="226" y2="100" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4,3"/>
+        <circle cx="250" cy="100" r="24" fill="#1c2333" stroke="#3fb950" stroke-width="3"/>
+        <text x="250" y="105" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11" font-weight="700">C2</text>
+        <text x="250" y="55" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="12">添加首页</text>
+        <text x="250" y="145" text-anchor="middle" fill="#30363d" font-family="JetBrains Mono" font-size="10">d4e5f6g</text>
+        <line x1="274" y1="100" x2="326" y2="100" stroke="#3fb950" stroke-width="2" stroke-dasharray="4,3"/>
+        <circle cx="350" cy="100" r="24" fill="#1c2333" stroke="#f78166" stroke-width="3"/>
+        <text x="350" y="105" text-anchor="middle" fill="#f78166" font-family="JetBrains Mono" font-size="11" font-weight="700">C3</text>
+        <text x="350" y="55" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="12">修复样式</text>
+        <text x="350" y="145" text-anchor="middle" fill="#30363d" font-family="JetBrains Mono" font-size="10">h7i8j9k</text>
+        <line x1="374" y1="100" x2="426" y2="100" stroke="#f78166" stroke-width="2" stroke-dasharray="4,3"/>
+        <circle cx="450" cy="100" r="24" fill="#1c2333" stroke="#d2a8ff" stroke-width="3"/>
+        <text x="450" y="105" text-anchor="middle" fill="#d2a8ff" font-family="JetBrains Mono" font-size="11" font-weight="700">C4</text>
+        <text x="450" y="55" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="12">添加登录</text>
+        <text x="450" y="145" text-anchor="middle" fill="#30363d" font-family="JetBrains Mono" font-size="10">l0m1n2o</text>
+        <line x1="474" y1="100" x2="526" y2="100" stroke="#d2a8ff" stroke-width="2" stroke-dasharray="4,3"/>
+        <circle cx="550" cy="100" r="24" fill="#58a6ff" stroke="#58a6ff" stroke-width="3"/>
+        <text x="550" y="105" text-anchor="middle" fill="#0d1117" font-family="JetBrains Mono" font-size="11" font-weight="700">C5</text>
+        <text x="550" y="55" text-anchor="middle" fill="#e6edf3" font-family="Noto Sans SC" font-size="12" font-weight="500">当前版本</text>
+        <text x="550" y="145" text-anchor="middle" fill="#58a6ff" font-family="JetBrains Mono" font-size="10">p3q4r5s</text>
+        <rect x="520" y="164" width="60" height="26" rx="6" fill="rgba(88,166,255,0.2)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="550" y="181" text-anchor="middle" fill="#58a6ff" font-family="JetBrains Mono" font-size="11" font-weight="600">HEAD</text>
+        <line x1="550" y1="164" x2="550" y2="124" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <rect x="610" y="60" width="170" height="80" rx="10" fill="#1c2333" stroke="#30363d" stroke-width="1"/>
+        <text x="625" y="82" fill="#8b949e" font-family="Noto Sans SC" font-size="11">每个提交包含：</text>
+        <text x="625" y="100" fill="#e6edf3" font-family="Noto Sans SC" font-size="11">• 文件变更内容</text>
+        <text x="625" y="116" fill="#e6edf3" font-family="Noto Sans SC" font-size="11">• 提交者和时间</text>
+        <text x="625" y="132" fill="#e6edf3" font-family="Noto Sans SC" font-size="11">• 提交说明信息</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 5: Three Zones ===== -->
+<div class="slide" id="slide-4">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent3); bottom: -200px; right: -100px;"></div>
+  <div class="center">
+    <span class="badge badge-orange">核心概念</span>
+    <h2>Git 的<span class="text-orange">三个区域</span></h2>
+    <p class="text-dim" style="max-width: 600px; margin-bottom: 40px;">文件在这三个区域之间流转，这是理解 Git 工作方式的关键</p>
+    <div class="flow-container">
+      <div class="flow-box" style="border-color: var(--accent3);">
+        <div class="flow-box-title" style="color: var(--accent3);">📂 工作区</div>
+        <div class="flow-box-desc">Working Directory</div>
+        <div class="flow-box-desc" style="margin-top: 8px;">你正在编辑的文件</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; padding: 0 4px;">
+        <div class="flow-arrow">→</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.75em; color: var(--accent2); margin-top: 4px;">git add</div>
+      </div>
+      <div class="flow-box" style="border-color: var(--accent);">
+        <div class="flow-box-title" style="color: var(--accent);">📋 暂存区</div>
+        <div class="flow-box-desc">Staging Area</div>
+        <div class="flow-box-desc" style="margin-top: 8px;">准备好要提交的修改</div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; padding: 0 4px;">
+        <div class="flow-arrow">→</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.75em; color: var(--accent2); margin-top: 4px;">git commit</div>
+      </div>
+      <div class="flow-box" style="border-color: var(--accent2);">
+        <div class="flow-box-title" style="color: var(--accent2);">🗄️ 版本库</div>
+        <div class="flow-box-desc">Repository</div>
+        <div class="flow-box-desc" style="margin-top: 8px;">安全保存的历史记录</div>
+      </div>
+    </div>
+    <div style="margin-top: 36px; max-width: 700px;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 28px; text-align: left;">
+        <p style="font-size: 0.95em; color: var(--text-dim); line-height: 1.8;">
+          <span style="color: var(--accent3);">💡 类比</span>——搬家时，你从各个房间收集物品放到<strong style="color: var(--accent);">打包区</strong>（git add），整理好后<strong style="color: var(--accent2);">封箱发走</strong>（git commit）。每个箱子里的东西应该是同一类的。
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 6: Branching ===== -->
+<div class="slide" id="slide-5">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent4); top: -100px; left: -100px;"></div>
+  <div class="center">
+    <span class="badge badge-purple">核心概念</span>
+    <h2>分支（Branch）—— <span class="text-purple">平行宇宙</span></h2>
+    <p class="text-dim" style="max-width: 600px; margin-bottom: 30px;">在分支上自由实验，成功了就合并回来，失败了就丢弃——原始代码不受任何影响</p>
+    <div class="diagram-container">
+      <svg viewBox="0 0 800 260" xmlns="http://www.w3.org/2000/svg">
+        <path d="M80,140 L260,140" stroke="#3fb950" stroke-width="3" fill="none"/>
+        <path d="M460,140 L700,140" stroke="#3fb950" stroke-width="3" fill="none"/>
+        <path d="M260,140 C300,140 300,60 340,60" stroke="#d2a8ff" stroke-width="3" fill="none"/>
+        <path d="M340,60 L460,60" stroke="#d2a8ff" stroke-width="3" fill="none"/>
+        <path d="M460,60 C500,60 500,140 460,140" stroke="#d2a8ff" stroke-width="2.5" fill="none" stroke-dasharray="6,4"/>
+        <path d="M260,140 L460,140" stroke="#3fb950" stroke-width="2" stroke-dasharray="6,4"/>
+        <circle cx="140" cy="140" r="18" fill="#1c2333" stroke="#3fb950" stroke-width="2.5"/>
+        <text x="140" y="145" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="10" font-weight="700">C1</text>
+        <circle cx="200" cy="140" r="18" fill="#1c2333" stroke="#3fb950" stroke-width="2.5"/>
+        <text x="200" y="145" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="10" font-weight="700">C2</text>
+        <circle cx="260" cy="140" r="18" fill="#1c2333" stroke="#3fb950" stroke-width="2.5"/>
+        <text x="260" y="145" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="10" font-weight="700">C3</text>
+        <circle cx="340" cy="60" r="18" fill="#1c2333" stroke="#d2a8ff" stroke-width="2.5"/>
+        <text x="340" y="65" text-anchor="middle" fill="#d2a8ff" font-family="JetBrains Mono" font-size="10" font-weight="700">C4</text>
+        <circle cx="400" cy="60" r="18" fill="#1c2333" stroke="#d2a8ff" stroke-width="2.5"/>
+        <text x="400" y="65" text-anchor="middle" fill="#d2a8ff" font-family="JetBrains Mono" font-size="10" font-weight="700">C5</text>
+        <circle cx="460" cy="60" r="18" fill="#1c2333" stroke="#d2a8ff" stroke-width="2.5"/>
+        <text x="460" y="65" text-anchor="middle" fill="#d2a8ff" font-family="JetBrains Mono" font-size="10" font-weight="700">C6</text>
+        <circle cx="540" cy="140" r="20" fill="#1c2333" stroke="#58a6ff" stroke-width="3"/>
+        <text x="540" y="145" text-anchor="middle" fill="#58a6ff" font-family="JetBrains Mono" font-size="9" font-weight="700">merge</text>
+        <circle cx="620" cy="140" r="18" fill="#1c2333" stroke="#3fb950" stroke-width="2.5"/>
+        <text x="620" y="145" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="10" font-weight="700">C7</text>
+        <rect x="570" y="164" width="100" height="24" rx="6" fill="rgba(63,185,80,0.15)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="620" y="180" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="11" font-weight="600">main</text>
+        <rect x="320" y="26" width="120" height="24" rx="6" fill="rgba(210,168,255,0.15)" stroke="#d2a8ff" stroke-width="1.5"/>
+        <text x="380" y="42" text-anchor="middle" fill="#d2a8ff" font-family="JetBrains Mono" font-size="11" font-weight="600">feature</text>
+        <text x="260" y="200" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="11">创建分支</text>
+        <line x1="260" y1="190" x2="260" y2="160" stroke="#30363d" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="540" y="200" text-anchor="middle" fill="#58a6ff" font-family="Noto Sans SC" font-size="11">合并分支</text>
+        <line x1="540" y1="190" x2="540" y2="162" stroke="#58a6ff" stroke-width="1" stroke-dasharray="3,2"/>
+        <rect x="180" y="220" width="200" height="28" rx="8" fill="#1c2333" stroke="#30363d" stroke-width="1"/>
+        <text x="280" y="238" text-anchor="middle" fill="#f78166" font-family="JetBrains Mono" font-size="11">git checkout -b feature</text>
+        <rect x="450" y="220" width="200" height="28" rx="8" fill="#1c2333" stroke="#30363d" stroke-width="1"/>
+        <text x="550" y="238" text-anchor="middle" fill="#f78166" font-family="JetBrains Mono" font-size="11">git merge feature</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 7: Basic Commands ===== -->
+<div class="slide" id="slide-6">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-green">实操</span>
+    <h2>Git 基础命令</h2>
+    <p class="text-dim" style="margin-bottom: 30px;">日常使用只需要掌握这几个命令</p>
+    <div class="row gap-40" style="max-width: 1100px; align-items: flex-start;">
+      <div class="col" style="flex: 1;">
+        <div class="code-block" style="max-width: 100%;">
+          <div style="margin-bottom: 14px; color: var(--text-dim); font-size: 0.85em;">// 初始化与基本操作</div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">init</span>                 <span class="comment"># 创建仓库</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">status</span>              <span class="comment"># 查看状态</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">add</span> <span class="string">hello.txt</span>       <span class="comment"># 暂存文件</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">add</span> <span class="string">.</span>               <span class="comment"># 暂存全部</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">commit</span> <span class="flag">-m</span> <span class="string">"说明"</span>   <span class="comment"># 提交</span></div>
+        </div>
+      </div>
+      <div class="col" style="flex: 1;">
+        <div class="code-block" style="max-width: 100%;">
+          <div style="margin-bottom: 14px; color: var(--text-dim); font-size: 0.85em;">// 查看与分支</div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">log</span> <span class="flag">--oneline</span>       <span class="comment"># 简洁历史</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">diff</span>                <span class="comment"># 查看变更</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">checkout</span> <span class="flag">-b</span> <span class="string">dev</span>    <span class="comment"># 创建分支</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">checkout</span> <span class="string">main</span>      <span class="comment"># 切换分支</span></div>
+          <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">merge</span> <span class="string">dev</span>          <span class="comment"># 合并分支</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 8: Daily Workflow ===== -->
+<div class="slide" id="slide-7">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-blue">实操</span>
+    <h2>日常工作流程</h2>
+    <p class="text-dim" style="margin-bottom: 30px;">每天重复这个循环，形成肌肉记忆</p>
+    <div class="diagram-container">
+      <svg viewBox="0 0 800 340" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#58a6ff"/></marker></defs>
+        <rect x="60" y="30" width="200" height="80" rx="14" fill="#1c2333" stroke="#f78166" stroke-width="2"/>
+        <text x="160" y="58" text-anchor="middle" fill="#f78166" font-family="Noto Sans SC" font-size="13" font-weight="700">① 编写代码</text>
+        <text x="160" y="82" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="12">修改、添加文件</text>
+        <path d="M260,70 L320,70" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+        <rect x="320" y="30" width="200" height="80" rx="14" fill="#1c2333" stroke="#58a6ff" stroke-width="2"/>
+        <text x="420" y="58" text-anchor="middle" fill="#58a6ff" font-family="Noto Sans SC" font-size="13" font-weight="700">② 查看状态</text>
+        <text x="420" y="82" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">git status / git diff</text>
+        <path d="M520,70 L580,70" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+        <rect x="580" y="30" width="180" height="80" rx="14" fill="#1c2333" stroke="#d2a8ff" stroke-width="2"/>
+        <text x="670" y="58" text-anchor="middle" fill="#d2a8ff" font-family="Noto Sans SC" font-size="13" font-weight="700">③ 暂存修改</text>
+        <text x="670" y="82" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">git add .</text>
+        <path d="M670,110 L670,150" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+        <rect x="530" y="150" width="280" height="80" rx="14" fill="#1c2333" stroke="#3fb950" stroke-width="2.5"/>
+        <text x="670" y="178" text-anchor="middle" fill="#3fb950" font-family="Noto Sans SC" font-size="13" font-weight="700">④ 提交</text>
+        <text x="670" y="205" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">git commit -m "提交说明"</text>
+        <path d="M530,190 L480,190" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+        <rect x="260" y="150" width="220" height="80" rx="14" fill="#1c2333" stroke="#79c0ff" stroke-width="2"/>
+        <text x="370" y="178" text-anchor="middle" fill="#79c0ff" font-family="Noto Sans SC" font-size="13" font-weight="700">⑤ 查看历史</text>
+        <text x="370" y="205" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">git log --oneline</text>
+        <path d="M260,190 L160,190 L160,110" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrowBlue)" stroke-dasharray="6,4"/>
+        <rect x="60" y="265" width="700" height="60" rx="12" fill="rgba(88,166,255,0.08)" stroke="rgba(88,166,255,0.2)" stroke-width="1"/>
+        <text x="90" y="290" fill="#58a6ff" font-family="Noto Sans SC" font-size="13" font-weight="600">💡 提交信息的写法</text>
+        <text x="90" y="312" fill="#8b949e" font-family="Noto Sans SC" font-size="12">用动词开头："添加用户登录功能""修复首页加载异常""重构数据库连接"</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 9: What is GitHub ===== -->
+<div class="slide" id="slide-8">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent); top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+  <div class="center">
+    <span class="badge badge-blue">远程协作</span>
+    <h2 style="font-size: 2.5em;"><span class="gradient-text">GitHub</span> —— 代码的云端家园</h2>
+    <p class="text-dim" style="max-width: 600px; margin-bottom: 40px;">Git 是本地工具，GitHub 把它搬到了云端</p>
+    <div class="vs-container">
+      <div class="vs-side">
+        <div class="vs-side-title"><span style="font-size: 1.4em;">🖥️</span> Git（本地）</div>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+          <li style="display: flex; align-items: center; gap: 10px; font-size: 1em; color: var(--text-dim);"><span style="color: var(--accent2);">✓</span> 在你自己的电脑上运行</li>
+          <li style="display: flex; align-items: center; gap: 10px; font-size: 1em; color: var(--text-dim);"><span style="color: var(--accent2);">✓</span> 管理版本历史</li>
+          <li style="display: flex; align-items: center; gap: 10px; font-size: 1em; color: var(--text-dim);"><span style="color: var(--accent2);">✓</span> 创建和合并分支</li>
+          <li style="display: flex; align-items: center; gap: 10px; font-size: 1em; color: var(--text-dim);"><span style="color: var(--accent2);">✓</span> 好比笔和纸</li>
+        </ul>
+      </div>
+      <div class="vs-divider">+</div>
+      <div class="vs-side" style="border-color: var(--accent);">
+        <div class="vs-side-title" style="color: var(--accent);"><span style="font-size: 1.4em;">☁️</span> GitHub（云端）</div>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+          <li style="display: flex; align-items: center; gap: 10px; font-size: 1em; color: var(--text-dim);"><span style="color: var(--accent);">✦</span> 云端备份，永不丢失</li>
+          <li style="display: flex; align-items: center; gap: 10px; font-size: 1em; color: var(--text-dim);"><span style="color: var(--accent);">✦</span> 多人协作与代码审查</li>
+          <li style="display: flex; align-items: center; gap: 10px; font-size: 1em; color: var(--text-dim);"><span style="color: var(--accent);">✦</span> 全球最大开源社区</li>
+          <li style="display: flex; align-items: center; gap: 10px; font-size: 1em; color: var(--text-dim);"><span style="color: var(--accent);">✦</span> 好比图书馆</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 10: Push & Pull ===== -->
+<div class="slide" id="slide-9">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-green">远程操作</span>
+    <h2>推送（Push）与拉取（Pull）</h2>
+    <p class="text-dim" style="max-width: 600px; margin-bottom: 30px;">本地与远程仓库之间的数据同步</p>
+    <div class="diagram-container">
+      <svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3fb950"/></marker>
+          <marker id="arrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#d2a8ff"/></marker>
+        </defs>
+        <rect x="60" y="40" width="280" height="190" rx="16" fill="#1c2333" stroke="#3fb950" stroke-width="2"/>
+        <text x="200" y="75" text-anchor="middle" fill="#3fb950" font-family="Noto Sans SC" font-size="16" font-weight="700">🖥️ 本地仓库</text>
+        <text x="200" y="100" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="12">你的电脑</text>
+        <circle cx="130" cy="160" r="16" fill="#0d1117" stroke="#3fb950" stroke-width="2"/>
+        <text x="130" y="165" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="9" font-weight="700">C1</text>
+        <circle cx="180" cy="160" r="16" fill="#0d1117" stroke="#3fb950" stroke-width="2"/>
+        <text x="180" y="165" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="9" font-weight="700">C2</text>
+        <circle cx="230" cy="160" r="16" fill="#0d1117" stroke="#58a6ff" stroke-width="2"/>
+        <text x="230" y="165" text-anchor="middle" fill="#58a6ff" font-family="JetBrains Mono" font-size="9" font-weight="700">C3</text>
+        <circle cx="280" cy="160" r="16" fill="#58a6ff" stroke="#58a6ff" stroke-width="2"/>
+        <text x="280" y="165" text-anchor="middle" fill="#0d1117" font-family="JetBrains Mono" font-size="9" font-weight="700">C4</text>
+        <line x1="146" y1="160" x2="164" y2="160" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="196" y1="160" x2="214" y2="160" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="246" y1="160" x2="264" y2="160" stroke="#30363d" stroke-width="1.5"/>
+        <text x="200" y="206" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="11">新的提交还在本地</text>
+        <rect x="460" y="40" width="280" height="190" rx="16" fill="#1c2333" stroke="#d2a8ff" stroke-width="2"/>
+        <text x="600" y="75" text-anchor="middle" fill="#d2a8ff" font-family="Noto Sans SC" font-size="16" font-weight="700">☁️ GitHub</text>
+        <text x="600" y="100" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="12">github.com</text>
+        <circle cx="530" cy="160" r="16" fill="#0d1117" stroke="#d2a8ff" stroke-width="2"/>
+        <text x="530" y="165" text-anchor="middle" fill="#d2a8ff" font-family="JetBrains Mono" font-size="9" font-weight="700">C1</text>
+        <circle cx="580" cy="160" r="16" fill="#0d1117" stroke="#d2a8ff" stroke-width="2"/>
+        <text x="580" y="165" text-anchor="middle" fill="#d2a8ff" font-family="JetBrains Mono" font-size="9" font-weight="700">C2</text>
+        <line x1="546" y1="160" x2="564" y2="160" stroke="#30363d" stroke-width="1.5"/>
+        <text x="600" y="206" text-anchor="middle" fill="#8b949e" font-family="Noto Sans SC" font-size="11">等待同步</text>
+        <path d="M340,115 C390,115 410,115 460,115" stroke="#3fb950" stroke-width="2.5" marker-end="url(#arrowGreen)" fill="none"/>
+        <rect x="365" y="97" width="70" height="24" rx="6" fill="rgba(63,185,80,0.15)"/>
+        <text x="400" y="113" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono" font-size="12" font-weight="600">push</text>
+        <path d="M460,170 C410,170 390,170 340,170" stroke="#d2a8ff" stroke-width="2.5" marker-end="url(#arrowPurple)" fill="none"/>
+        <rect x="370" y="178" width="60" height="24" rx="6" fill="rgba(210,168,255,0.15)"/>
+        <text x="400" y="194" text-anchor="middle" fill="#d2a8ff" font-family="JetBrains Mono" font-size="12" font-weight="600">pull</text>
+      </svg>
+    </div>
+    <div class="row gap-20" style="max-width: 700px; margin-top: 20px;">
+      <div class="code-block" style="padding: 16px 24px; flex: 1;">
+        <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">push</span>    <span class="comment"># 推送到远程</span></div>
+      </div>
+      <div class="code-block" style="padding: 16px 24px; flex: 1;">
+        <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">pull</span>    <span class="comment"># 从远程拉取</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 11: GitHub Collaboration ===== -->
+<div class="slide" id="slide-10">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-purple">协作</span>
+    <h2>GitHub 核心协作功能</h2>
+    <p class="text-dim" style="margin-bottom: 36px;">三大功能构成完整的协作体系</p>
+    <div class="gh-features">
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">📋</div>
+        <div class="gh-feature-title text-accent">Issue</div>
+        <div class="gh-feature-desc">任务与问题追踪。报告 Bug、提出功能建议、记录待办事项。可打标签、指派、关联里程碑。</div>
+      </div>
+      <div class="gh-feature-card" style="border-color: var(--accent2);">
+        <div class="gh-feature-icon">🔀</div>
+        <div class="gh-feature-title text-green">Pull Request</div>
+        <div class="gh-feature-desc">代码审查与合并的核心流程。创建分支 → 提交代码 → 发起 PR → 团队审查 → 合并。</div>
+      </div>
+      <div class="gh-feature-card">
+        <div class="gh-feature-icon">🍴</div>
+        <div class="gh-feature-title text-purple">Fork</div>
+        <div class="gh-feature-desc">参与别人的开源项目。复制一份到自己账号下，修改后通过 PR 贡献给原项目。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 12: PR Workflow ===== -->
+<div class="slide" id="slide-11">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-green">协作</span>
+    <h2>Pull Request 完整流程</h2>
+    <p class="text-dim" style="margin-bottom: 24px;">GitHub 上最常用的协作方式</p>
+    <div class="workflow-steps">
+      <div class="workflow-step">
+        <div class="step-num" style="background: rgba(88,166,255,0.15); color: var(--accent);">1</div>
+        <div class="workflow-step-text">
+          <div class="workflow-step-title">创建分支</div>
+          <div class="workflow-step-desc"><code>git checkout -b feature-login</code> — 在独立分支上开发</div>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num" style="background: rgba(63,185,80,0.15); color: var(--accent2);">2</div>
+        <div class="workflow-step-text">
+          <div class="workflow-step-title">编写代码并提交</div>
+          <div class="workflow-step-desc">在分支上做修改，提交多次，每次提交聚焦一个目的</div>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num" style="background: rgba(247,129,102,0.15); color: var(--accent3);">3</div>
+        <div class="workflow-step-text">
+          <div class="workflow-step-title">推送并发起 PR</div>
+          <div class="workflow-step-desc"><code>git push -u origin feature-login</code> → 在 GitHub 上创建 Pull Request</div>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num" style="background: rgba(210,168,255,0.15); color: var(--accent4);">4</div>
+        <div class="workflow-step-text">
+          <div class="workflow-step-title">代码审查</div>
+          <div class="workflow-step-desc">团队成员查看代码改动，留下评论和建议，确认质量达标</div>
+        </div>
+      </div>
+      <div class="workflow-step" style="border-color: var(--accent2);">
+        <div class="step-num" style="background: rgba(63,185,80,0.2); color: var(--accent2);">5</div>
+        <div class="workflow-step-text">
+          <div class="workflow-step-title" style="color: var(--accent2);">合并到主分支 ✓</div>
+          <div class="workflow-step-desc">审查通过后，点击 Merge 按钮将分支合并到 main</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 13: .gitignore & README ===== -->
+<div class="slide" id="slide-12">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-orange">必备文件</span>
+    <h2>每个项目都需要的两个文件</h2>
+    <div class="row gap-40 mt-40" style="max-width: 1000px; align-items: stretch;">
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent3);">
+        <div class="card-title" style="font-size: 1.3em; margin-bottom: 20px;"><span style="color: var(--accent3); font-size: 1.3em;">🚫</span> .gitignore</div>
+        <p style="margin-bottom: 16px;">告诉 Git 忽略哪些文件</p>
+        <div class="code-block" style="max-width: 100%; font-size: 0.9em; margin-top: 12px;">
+          <div><span class="comment"># 依赖目录</span></div>
+          <div><span class="cmd">node_modules/</span></div>
+          <div><span class="comment"># 敏感信息</span></div>
+          <div><span class="cmd">.env</span></div>
+          <div><span class="comment"># 系统文件</span></div>
+          <div><span class="cmd">.DS_Store</span></div>
+        </div>
+      </div>
+      <div class="card" style="flex: 1; border-top: 3px solid var(--accent);">
+        <div class="card-title" style="font-size: 1.3em; margin-bottom: 20px;"><span style="color: var(--accent); font-size: 1.3em;">📖</span> README.md</div>
+        <p style="margin-bottom: 16px;">项目的说明书和门面</p>
+        <div class="code-block" style="max-width: 100%; font-size: 0.9em; margin-top: 12px;">
+          <div><span class="flag"># 项目名称</span></div>
+          <div><span class="cmd">简要介绍这个项目做什么</span></div>
+          <div></div>
+          <div><span class="flag">## 安装方法</span></div>
+          <div><span class="cmd">npm install</span></div>
+          <div></div>
+          <div><span class="flag">## 使用方法</span></div>
+          <div><span class="cmd">npm start</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 14: Merge Conflicts ===== -->
+<div class="slide" id="slide-13">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-orange">进阶</span>
+    <h2>合并冲突<span class="text-dim"> —— 正常现象，不用害怕</span></h2>
+    <p class="text-dim" style="max-width: 650px; margin-bottom: 30px;">当两个人修改了同一个文件的同一个位置，Git 无法自动决定保留哪个版本</p>
+    <div class="row gap-40" style="max-width: 1000px; align-items: stretch;">
+      <div class="col" style="flex: 1;">
+        <div style="color: var(--accent3); font-weight: 600; margin-bottom: 12px;">冲突标记</div>
+        <div class="code-block" style="max-width: 100%; font-size: 0.9em;">
+          <div><span class="flag"><<<<<<< HEAD</span></div>
+          <div><span class="string">你的修改内容</span></div>
+          <div><span class="flag">=======</span></div>
+          <div><span class="comment">对方的修改内容</span></div>
+          <div><span class="flag">>>>>>>> feature</span></div>
+        </div>
+      </div>
+      <div class="col" style="flex: 1;">
+        <div style="color: var(--accent2); font-weight: 600; margin-bottom: 12px;">解决步骤</div>
+        <ul class="feature-list" style="gap: 12px;">
+          <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">1</div><span style="font-size: 1em;">打开冲突文件</span></li>
+          <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">2</div><span style="font-size: 1em;">决定保留哪些内容</span></li>
+          <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">3</div><span style="font-size: 1em;">删除冲突标记符号</span></li>
+          <li><div class="bullet" style="background: rgba(63,185,80,0.15); color: var(--accent2);">4</div><span style="font-size: 1em;"><code>git add</code> + <code>git commit</code></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 15: Command Cheatsheet ===== -->
+<div class="slide" id="slide-14">
+  <div class="bg-grid"></div>
+  <div class="center">
+    <span class="badge badge-blue">速查</span>
+    <h2>完整命令速查表</h2>
+    <p class="text-dim" style="margin-bottom: 24px;">收藏这一页，日常够用了</p>
+    <table class="cmd-table">
+      <thead><tr><th>命令</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td>git init</td><td>初始化新仓库</td></tr>
+        <tr><td>git clone &lt;url&gt;</td><td>克隆远程仓库到本地</td></tr>
+        <tr><td>git status</td><td>查看当前状态</td></tr>
+        <tr><td>git add .</td><td>暂存所有修改</td></tr>
+        <tr><td>git commit -m "msg"</td><td>提交暂存的修改</td></tr>
+        <tr><td>git log --oneline</td><td>查看简洁的提交历史</td></tr>
+        <tr><td>git diff</td><td>查看未暂存的变更</td></tr>
+        <tr><td>git checkout -b &lt;name&gt;</td><td>创建并切换到新分支</td></tr>
+        <tr><td>git merge &lt;branch&gt;</td><td>合并指定分支到当前分支</td></tr>
+        <tr><td>git push</td><td>推送到远程仓库</td></tr>
+        <tr><td>git pull</td><td>从远程拉取最新代码</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== SLIDE 16: Learning Path ===== -->
+<div class="slide" id="slide-15">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent2); bottom: -150px; left: 50%; transform: translateX(-50%);"></div>
+  <div class="center">
+    <span class="badge badge-green">路线图</span>
+    <h2>学习路径建议</h2>
+    <p class="text-dim" style="margin-bottom: 30px;">关键在于用，而非记</p>
+    <div class="row gap-20" style="max-width: 1000px;">
+      <div class="card" style="flex: 1; border-left: 3px solid var(--accent); border-top: none; border-right: none; border-bottom: none;">
+        <div style="color: var(--accent); font-weight: 700; font-size: 0.85em; margin-bottom: 8px;">第一周</div>
+        <div class="card-title" style="font-size: 1.1em;">建立肌肉记忆</div>
+        <p style="font-size: 0.9em;">每天练习 add、commit、status、log，让基本命令变成条件反射</p>
+      </div>
+      <div class="card" style="flex: 1; border-left: 3px solid var(--accent2); border-top: none; border-right: none; border-bottom: none;">
+        <div style="color: var(--accent2); font-weight: 700; font-size: 0.85em; margin-bottom: 8px;">第二周</div>
+        <div class="card-title" style="font-size: 1.1em;">推送到 GitHub</div>
+        <p style="font-size: 0.9em;">创建一个真实的项目（笔记、博客、小工具），推送到 GitHub</p>
+      </div>
+      <div class="card" style="flex: 1; border-left: 3px solid var(--accent3); border-top: none; border-right: none; border-bottom: none;">
+        <div style="color: var(--accent3); font-weight: 700; font-size: 0.85em; margin-bottom: 8px;">第三周</div>
+        <div class="card-title" style="font-size: 1.1em;">分支与协作</div>
+        <p style="font-size: 0.9em;">练习分支操作，找朋友互相提 PR，体验完整协作流程</p>
+      </div>
+      <div class="card" style="flex: 1; border-left: 3px solid var(--accent4); border-top: none; border-right: none; border-bottom: none;">
+        <div style="color: var(--accent4); font-weight: 700; font-size: 0.85em; margin-bottom: 8px;">持续</div>
+        <div class="card-title" style="font-size: 1.1em;">参与开源</div>
+        <p style="font-size: 0.9em;">从修复文档错别字开始，逐步参与开源项目的深层贡献</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SLIDE 17: End ===== -->
+<div class="slide" id="slide-16">
+  <div class="bg-grid"></div>
+  <div class="bg-glow" style="background: var(--accent); top: -200px; right: -100px;"></div>
+  <div class="bg-glow" style="background: var(--accent2); bottom: -200px; left: -100px;"></div>
+  <div class="center">
+    <svg class="glow-blue" viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="endGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#58a6ff"/><stop offset="100%" style="stop-color:#3fb950"/></linearGradient></defs>
+      <circle cx="40" cy="40" r="36" fill="none" stroke="url(#endGrad)" stroke-width="2.5"/>
+      <polyline points="24,42 35,52 56,30" fill="none" stroke="url(#endGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h1 style="margin-top: 30px;"><span class="gradient-text">开始你的 Git 之旅</span></h1>
+    <h3>工具的价值在于使用，现在就打开终端试试吧</h3>
+    <div style="margin-top: 40px;">
+      <div class="code-block" style="display: inline-block; padding: 20px 40px;">
+        <div><span class="prompt">$</span> <span class="cmd">mkdir</span> <span class="string">my-first-repo</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">cd</span> <span class="string">my-first-repo</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">git</span> <span class="flag">init</span></div>
+        <div style="color: var(--accent2); margin-top: 6px;">✓ Initialized empty Git repository</div>
+      </div>
+    </div>
+    <p class="text-dim" style="margin-top: 40px; font-size: 0.9em;">掌握以上内容足以应对日常使用。遇到新需求时再学习对应的进阶功能。</p>
+  </div>
+</div>
+
+<script>
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var current = 0;
+  var animating = false;
+
+  // Build nav dots
+  var navDots = document.getElementById('navDots');
+  for (var i = 0; i < total; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('data-idx', i);
+    dot.addEventListener('click', function() {
+      goToSlide(parseInt(this.getAttribute('data-idx')));
+    });
+    navDots.appendChild(dot);
+  }
+
+  function updateUI() {
+    document.getElementById('pageIndicator').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('progressBar').style.width = ((current + 1) / total * 100) + '%';
+    var dots = document.querySelectorAll('.nav-dot');
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].className = 'nav-dot' + (i === current ? ' active' : '');
+    }
+  }
+
+  function goToSlide(n) {
+    if (n < 0 || n >= total || n === current || animating) return;
+    animating = true;
+
+    var direction = n > current ? 1 : -1;
+    var leaving = slides[current];
+    var entering = slides[n];
+
+    // Clean ALL slides first
+    for (var i = 0; i < total; i++) {
+      if (i !== current) {
+        slides[i].classList.remove('active', 'exit-left', 'exit-right', 'enter-from-left', 'enter-from-right');
+        slides[i].style.visibility = 'hidden';
+        slides[i].style.opacity = '0';
+      }
+    }
+
+    // Animate leaving slide out
+    leaving.classList.remove('active');
+    leaving.classList.add(direction > 0 ? 'exit-left' : 'exit-right');
+
+    // Animate entering slide in
+    entering.style.visibility = 'visible';
+    entering.style.opacity = '1';
+    entering.classList.add('active');
+    entering.classList.add(direction > 0 ? 'enter-from-right' : 'enter-from-left');
+
+    current = n;
+    updateUI();
+
+    setTimeout(function() {
+      // Clean up all animation classes
+      for (var i = 0; i < total; i++) {
+        slides[i].classList.remove('exit-left', 'exit-right', 'enter-from-left', 'enter-from-right');
+        if (i !== current) {
+          slides[i].classList.remove('active');
+          slides[i].style.visibility = 'hidden';
+          slides[i].style.opacity = '0';
+        } else {
+          slides[i].style.visibility = 'visible';
+          slides[i].style.opacity = '1';
+        }
+      }
+      animating = false;
+    }, 480);
+  }
+
+  // Keyboard
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goToSlide(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goToSlide(current - 1);
+    }
+  });
+
+  // Touch
+  var touchX = 0;
+  document.addEventListener('touchstart', function(e) { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', function(e) {
+    var d = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(d) > 50) { d > 0 ? goToSlide(current + 1) : goToSlide(current - 1); }
+  });
+
+  // Wheel
+  var wheelLock;
+  document.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    if (wheelLock) return;
+    wheelLock = setTimeout(function() { wheelLock = null; }, 700);
+    e.deltaY > 0 ? goToSlide(current + 1) : goToSlide(current - 1);
+  }, { passive: false });
+
+  updateUI();
+})();
+</script>
+</body>
+</html>

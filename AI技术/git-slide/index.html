@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git & GitHub 学习资料</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #0f1318;
+    --bg2: #161b22;
+    --bg3: #1c2333;
+    --text: #e2e8f0;
+    --text-dim: #8b949e;
+    --text-strong: #f0f6fc;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --orange: #f78166;
+    --purple: #d2a8ff;
+    --border: #30363d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .page::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 25% 20%, rgba(88,166,255,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 75% 80%, rgba(63,185,80,0.05) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .page::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(48,54,61,0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(48,54,61,0.18) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .content { position: relative; z-index: 1; text-align: center; max-width: 900px; }
+
+  .logo {
+    width: 80px; height: 80px; margin-bottom: 32px;
+    filter: drop-shadow(0 0 24px rgba(88,166,255,0.25));
+  }
+
+  h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 2.6em;
+    font-weight: 900;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+    margin-bottom: 12px;
+  }
+  h1 span {
+    background: linear-gradient(135deg, #58a6ff, #3fb950);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    font-size: 1.1em;
+    color: var(--text-dim);
+    margin-bottom: 56px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 780px;
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    text-align: left;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .card:hover {
+    border-color: var(--blue);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+  }
+
+  .card-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72em;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+  }
+
+  .card-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin-bottom: 10px;
+    line-height: 1.35;
+  }
+
+  .card-desc {
+    font-size: 0.9em;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .card-arrow {
+    position: absolute;
+    bottom: 28px; right: 28px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(88,166,255,0.08);
+    color: var(--blue);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: all 0.25s;
+  }
+  .card:hover .card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .c-blue::before   { background: linear-gradient(90deg, var(--blue), transparent); }
+  .c-green::before  { background: linear-gradient(90deg, var(--green), transparent); }
+  .c-orange::before { background: linear-gradient(90deg, var(--orange), transparent); }
+  .c-purple::before { background: linear-gradient(90deg, var(--purple), transparent); }
+
+  .b-blue   { background: rgba(88,166,255,0.12);  color: var(--blue); }
+  .b-green  { background: rgba(63,185,80,0.12);   color: var(--green); }
+  .b-orange { background: rgba(247,129,102,0.12);  color: var(--orange); }
+  .b-purple { background: rgba(210,168,255,0.12);  color: var(--purple); }
+
+  .footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-dim);
+    font-size: 0.8em;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    h1 { font-size: 1.8em; }
+    .grid { grid-template-columns: 1fr; }
+    .card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="content">
+    <svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#58a6ff"/><stop offset="100%" stop-color="#3fb950"/></linearGradient></defs>
+      <circle cx="60" cy="60" r="56" fill="none" stroke="url(#g1)" stroke-width="3"/>
+      <g transform="translate(60,60) rotate(45)">
+        <rect x="-28" y="-4" width="56" height="8" rx="4" fill="url(#g1)"/>
+        <rect x="-4" y="-28" width="8" height="56" rx="4" fill="url(#g1)"/>
+        <circle cx="0" cy="0" r="8" fill="url(#g1)"/>
+        <circle cx="-24" cy="0" r="5" fill="url(#g1)"/>
+        <circle cx="0" cy="-24" r="5" fill="url(#g1)"/>
+      </g>
+    </svg>
+
+    <h1><span>Git</span> & <span>GitHub</span> 学习资料</h1>
+    <p class="subtitle">从零基础入门到日常高效协作，四份资料覆盖完整学习路径</p>
+
+    <div class="grid">
+      <a class="card c-blue" href="tutorial.html">
+        <span class="card-badge b-blue">长文教程</span>
+        <div class="card-title">Git 和 GitHub 完整入门教程</div>
+        <div class="card-desc">从零开始，理解 Git 核心概念、学会基础操作、掌握团队协作。图文并茂，配有 SVG 图解和真实终端输出。</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="card c-green" href="slide.html">
+        <span class="card-badge b-green">演示文稿</span>
+        <div class="card-title">Git 和 GitHub 入门 PPT</div>
+        <div class="card-desc">17 页幻灯片，可视化讲解版本控制核心概念。适合课堂演示或快速回顾，支持键盘/触摸/滚轮翻页。</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="card c-orange" href="github-guide.html">
+        <span class="card-badge b-orange">长文教程</span>
+        <div class="card-title">GitHub 高频功能实用指南</div>
+        <div class="card-desc">聚焦 GitHub 本身，系统梳理仓库管理、Issue、PR、Actions、CLI 等日常高频功能，配有真实截图。</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a class="card c-purple" href="github-guide-slide.html">
+        <span class="card-badge b-purple">演示文稿</span>
+        <div class="card-title">GitHub 高频功能 PPT</div>
+        <div class="card-desc">18 页幻灯片，浓缩 GitHub 核心功能要点。从仓库管理到发现优秀项目，适合培训或快速参考。</div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">Git & GitHub 学习资料 · 2026</footer>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(135deg, #0f0c29 0%, #1a1744 50%, #24243e 100%);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 40px;
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  }
+  .card {
+    width: 780px; background: rgba(26, 23, 68, 0.6);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+    padding: 36px 40px; backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .card-title {
+    font-size: 20px; font-weight: 700; color: #4facfe;
+    margin-bottom: 6px;
+  }
+  .card-subtitle {
+    font-size: 13px; color: #6b7280; margin-bottom: 24px;
+  }
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border-radius: 12px; overflow: hidden;
+  }
+  thead th {
+    background: rgba(79, 172, 254, 0.12); color: #4facfe;
+    font-size: 14px; font-weight: 600; padding: 14px 18px;
+    text-align: left; border-bottom: 1px solid rgba(79, 172, 254, 0.2);
+  }
+  tbody td {
+    padding: 13px 18px; font-size: 13px; color: #c9d1d9;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(79, 172, 254, 0.04); }
+  .col-mechanism { color: #00f2fe; font-weight: 600; white-space: nowrap; }
+  .col-effect { color: #8b95a5; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-title">OpenClaw · 持久在线 + 跨通道连续性</div>
+    <div class="card-subtitle">没有"关掉"的概念 — 24/7 运行的服务</div>
+    <table>
+      <thead>
+        <tr><th>机制</th><th>作用</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-mechanism">JSONL Transcripts</td>
+          <td class="col-effect">所有通道的对话逐行记录</td>
+        </tr>
+        <tr>
+          <td class="col-mechanism">Session Scope</td>
+          <td class="col-effect">控制会话隔离粒度</td>
+        </tr>
+        <tr>
+          <td class="col-mechanism">Cron / Heartbeat</td>
+          <td class="col-effect">无人交互时也能主动执行任务</td>
+        </tr>
+        <tr>
+          <td class="col-mechanism">跨通道连续性</td>
+          <td class="col-effect">Telegram 上说的话，Slack 上问"那个事怎么样了"也能接上</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

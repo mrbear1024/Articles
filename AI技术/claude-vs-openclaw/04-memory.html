@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory - Claude Code vs OpenClaw</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f172a;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  .card {
+    max-width: 960px;
+    width: 100%;
+    background: #1e293b;
+    border-radius: 20px;
+    padding: 48px;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+  }
+  .dim-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #f1f5f9;
+    margin-bottom: 32px;
+  }
+  h1 span { color: #64748b; font-weight: 400; }
+  .vs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .side {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid #334155;
+    position: relative;
+    overflow: hidden;
+  }
+  .side::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .side-claude::before { background: linear-gradient(90deg, #e07c40, #f59e0b); }
+  .side-openclaw::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
+  .side-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .side-claude .side-title { color: #e07c40; }
+  .side-openclaw .side-title { color: #10b981; }
+  .side-subtitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 28px;
+  }
+
+  /* Claude memory */
+  .mem-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .source-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .source-item {
+    font-size: 13px;
+    font-weight: 600;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .source-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #475569;
+  }
+  .dash-arrow {
+    color: #475569;
+    font-size: 18px;
+    letter-spacing: 2px;
+  }
+  .file-node {
+    padding: 16px 20px;
+    border: 2px solid #e07c40;
+    border-radius: 10px;
+    background: rgba(224,124,64,0.06);
+    text-align: center;
+  }
+  .file-node .icon { font-size: 24px; margin-bottom: 6px; }
+  .file-node .name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e07c40;
+  }
+  .file-node .desc {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+  .agent-target {
+    padding: 16px;
+    border: 2px solid #e07c40;
+    border-radius: 10px;
+    background: rgba(224,124,64,0.06);
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #e07c40;
+    line-height: 1.4;
+  }
+
+  /* OpenClaw memory */
+  .oc-mem-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+  .tag-group {
+    border: 2px dashed #14b8a6;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .tag {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    color: #0f172a;
+  }
+  .tag-agents { background: #10b981; }
+  .tag-soul { background: #3b82f6; }
+  .tag-tools { background: #f59e0b; }
+  .tag-identity { background: #a78bfa; }
+  .tag-user { background: #f87171; }
+  .tag-boot { background: #ec4899; }
+  .tag-memory { background: #14b8a6; }
+
+  .mem-store {
+    padding: 14px 14px;
+    border: 2px solid #10b981;
+    border-radius: 10px;
+    background: rgba(16,185,129,0.08);
+    text-align: center;
+  }
+  .mem-store .name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #10b981;
+    line-height: 1.4;
+  }
+  .mem-store .desc {
+    font-size: 10px;
+    color: #64748b;
+    margin-top: 4px;
+  }
+  .search-badge {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+  }
+  .search-chip {
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 10px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .search-vector {
+    color: #a78bfa;
+    border-color: #a78bfa;
+    background: rgba(167,139,250,0.1);
+  }
+  .search-keyword {
+    color: #06b6d4;
+    border-color: #06b6d4;
+    background: rgba(6,182,212,0.1);
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="dim-badge">Dimension 4 of 5</div>
+  <h1>Memory <span>— 记忆系统</span></h1>
+  <div class="vs-grid">
+
+    <!-- Claude Code -->
+    <div class="side side-claude">
+      <div class="side-title">Claude Code</div>
+      <div class="side-subtitle">CLAUDE.md as memory</div>
+      <div class="mem-flow">
+        <div class="source-list">
+          <div class="source-item"><span class="source-dot"></span>enterprise</div>
+          <div class="source-item"><span class="source-dot"></span>user</div>
+          <div class="source-item"><span class="source-dot"></span>project</div>
+        </div>
+        <span class="dash-arrow">--&gt;</span>
+        <div class="file-node">
+          <div class="icon">📄</div>
+          <div class="name">Claude.md</div>
+          <div class="desc">纯文本，人类可编辑</div>
+        </div>
+        <span class="dash-arrow">--&gt;</span>
+        <div class="agent-target">Claude Code<br>Agent</div>
+      </div>
+    </div>
+
+    <!-- OpenClaw -->
+    <div class="side side-openclaw">
+      <div class="side-title">OpenClaw</div>
+      <div class="side-subtitle">MEMORY.md + daily notes + hybrid search</div>
+      <div class="oc-mem-flow">
+        <div class="tag-group">
+          <span class="tag tag-agents">AGENTS</span>
+          <span class="tag tag-soul">SOUL</span>
+          <span class="tag tag-tools">TOOLS</span>
+          <span class="tag tag-identity">IDENTITY</span>
+          <span class="tag tag-user">USER</span>
+          <span class="tag tag-boot">BOOT/HEART</span>
+          <span class="tag tag-memory">MEMORY</span>
+        </div>
+        <span class="dash-arrow" style="color:#10b981;">--&gt;</span>
+        <div class="mem-store">
+          <div class="name">Memory.md<br>+ Daily</div>
+          <div class="desc">分层聚合存储</div>
+        </div>
+        <span class="dash-arrow" style="color:#10b981;">--&gt;</span>
+        <div class="search-badge">
+          <span class="search-chip search-vector">Vector</span>
+          <span class="search-chip search-keyword">Keyword</span>
+          <span style="font-size:10px; color:#64748b; font-weight:500;">混合检索</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="50%" style="stop-color:#1a1744"/>
+      <stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="ccGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f5576c"/>
+      <stop offset="100%" style="stop-color:#f093fb"/>
+    </linearGradient>
+    <linearGradient id="ocGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4facfe"/>
+      <stop offset="100%" style="stop-color:#00f2fe"/>
+    </linearGradient>
+    <filter id="shadow4">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <marker id="arrowCC" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f093fb"/>
+    </marker>
+    <marker id="arrowOC" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4facfe"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="500" fill="url(#bg4)"/>
+
+  <!-- Title -->
+  <text x="450" y="40" text-anchor="middle" fill="#e2e8f0" font-size="22" font-weight="700">驱动循环对比</text>
+
+  <!-- ===== Claude Code: ReAct Loop (top half) ===== -->
+  <text x="450" y="80" text-anchor="middle" fill="#f093fb" font-size="16" font-weight="600">Claude Code — 深度聚焦的 ReAct 循环</text>
+  <text x="450" y="100" text-anchor="middle" fill="#6b7280" font-size="12">单线程 · 深度对话 · 可持续上下文</text>
+
+  <!-- Circular loop with 4 nodes -->
+  <!-- Node: 收集上下文 -->
+  <g filter="url(#shadow4)">
+    <rect x="80" y="125" width="150" height="50" rx="12" fill="#f5576c" opacity="0.12" stroke="url(#ccGrad)" stroke-width="1.5"/>
+  </g>
+  <text x="155" y="155" text-anchor="middle" fill="#f093fb" font-size="14" font-weight="600">收集上下文</text>
+
+  <!-- Arrow -->
+  <line x1="235" y1="150" x2="310" y2="150" stroke="#f093fb" stroke-width="1.5" marker-end="url(#arrowCC)" opacity="0.7"/>
+
+  <!-- Node: 执行动作 -->
+  <g filter="url(#shadow4)">
+    <rect x="320" y="125" width="150" height="50" rx="12" fill="#f5576c" opacity="0.12" stroke="url(#ccGrad)" stroke-width="1.5"/>
+  </g>
+  <text x="395" y="155" text-anchor="middle" fill="#f093fb" font-size="14" font-weight="600">执行动作</text>
+
+  <!-- Arrow -->
+  <line x1="475" y1="150" x2="550" y2="150" stroke="#f093fb" stroke-width="1.5" marker-end="url(#arrowCC)" opacity="0.7"/>
+
+  <!-- Node: 验证结果 -->
+  <g filter="url(#shadow4)">
+    <rect x="560" y="125" width="150" height="50" rx="12" fill="#f5576c" opacity="0.12" stroke="url(#ccGrad)" stroke-width="1.5"/>
+  </g>
+  <text x="635" y="155" text-anchor="middle" fill="#f093fb" font-size="14" font-weight="600">验证结果</text>
+
+  <!-- Loop-back arrow -->
+  <path d="M 635 180 Q 635 210, 500 215 Q 350 220, 155 210 Q 100 205, 100 180" stroke="#f093fb" stroke-width="1.5" fill="none" marker-end="url(#arrowCC)" opacity="0.5" stroke-dasharray="6,3"/>
+  <text x="380" y="235" text-anchor="middle" fill="#f093fb" font-size="11" opacity="0.6">可能几百轮循环</text>
+
+  <!-- Depth label -->
+  <g transform="translate(790, 160)">
+    <rect x="-25" y="-15" width="90" height="28" rx="6" fill="#f5576c" opacity="0.1"/>
+    <text x="20" y="1" text-anchor="middle" fill="#f093fb" font-size="11">深度优先</text>
+  </g>
+
+  <!-- ===== Separator ===== -->
+  <line x1="60" y1="270" x2="840" y2="270" stroke="#2d2b55" stroke-width="1"/>
+
+  <!-- ===== OpenClaw: Event-driven Loop (bottom half) ===== -->
+  <text x="450" y="305" text-anchor="middle" fill="#4facfe" font-size="16" font-weight="600">OpenClaw — 事件驱动的响应循环</text>
+  <text x="450" y="325" text-anchor="middle" fill="#6b7280" font-size="12">多线程 · 事件驱动 · 消息路由</text>
+
+  <!-- Pipeline: 6 stages -->
+  <!-- Stage 1: Channel 接收 -->
+  <g filter="url(#shadow4)">
+    <rect x="30" y="350" width="110" height="50" rx="10" fill="#4facfe" opacity="0.12" stroke="url(#ocGrad)" stroke-width="1.5"/>
+  </g>
+  <text x="85" y="370" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">Channel</text>
+  <text x="85" y="387" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">接收消息</text>
+
+  <line x1="145" y1="375" x2="170" y2="375" stroke="#4facfe" stroke-width="1.5" marker-end="url(#arrowOC)" opacity="0.7"/>
+
+  <!-- Stage 2: 标准化 -->
+  <g filter="url(#shadow4)">
+    <rect x="180" y="350" width="100" height="50" rx="10" fill="#4facfe" opacity="0.12" stroke="url(#ocGrad)" stroke-width="1.5"/>
+  </g>
+  <text x="230" y="380" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">标准化</text>
+
+  <line x1="285" y1="375" x2="310" y2="375" stroke="#4facfe" stroke-width="1.5" marker-end="url(#arrowOC)" opacity="0.7"/>
+
+  <!-- Stage 3: 路由决策 -->
+  <g filter="url(#shadow4)">
+    <rect x="320" y="350" width="100" height="50" rx="10" fill="#4facfe" opacity="0.12" stroke="url(#ocGrad)" stroke-width="1.5"/>
+  </g>
+  <text x="370" y="380" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">路由决策</text>
+
+  <line x1="425" y1="375" x2="450" y2="375" stroke="#4facfe" stroke-width="1.5" marker-end="url(#arrowOC)" opacity="0.7"/>
+
+  <!-- Stage 4: 排入队列 -->
+  <g filter="url(#shadow4)">
+    <rect x="460" y="350" width="100" height="50" rx="10" fill="#4facfe" opacity="0.12" stroke="url(#ocGrad)" stroke-width="1.5"/>
+  </g>
+  <text x="510" y="380" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">排入队列</text>
+
+  <line x1="565" y1="375" x2="590" y2="375" stroke="#4facfe" stroke-width="1.5" marker-end="url(#arrowOC)" opacity="0.7"/>
+
+  <!-- Stage 5: Agent 处理 -->
+  <g filter="url(#shadow4)">
+    <rect x="600" y="350" width="110" height="50" rx="10" fill="#4facfe" opacity="0.12" stroke="url(#ocGrad)" stroke-width="1.5"/>
+  </g>
+  <text x="655" y="370" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">Agent</text>
+  <text x="655" y="387" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">处理</text>
+
+  <line x1="715" y1="375" x2="740" y2="375" stroke="#4facfe" stroke-width="1.5" marker-end="url(#arrowOC)" opacity="0.7"/>
+
+  <!-- Stage 6: 响应回传 -->
+  <g filter="url(#shadow4)">
+    <rect x="750" y="350" width="110" height="50" rx="10" fill="#4facfe" opacity="0.12" stroke="url(#ocGrad)" stroke-width="1.5"/>
+  </g>
+  <text x="805" y="370" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">响应</text>
+  <text x="805" y="387" text-anchor="middle" fill="#4facfe" font-size="12" font-weight="600">回传</text>
+
+  <!-- Breadth label -->
+  <g transform="translate(85, 430)">
+    <rect x="-25" y="-12" width="90" height="24" rx="6" fill="#4facfe" opacity="0.1"/>
+    <text x="20" y="3" text-anchor="middle" fill="#4facfe" font-size="11">广度优先</text>
+  </g>
+
+  <!-- Cron / self-driven note -->
+  <g transform="translate(450, 455)">
+    <rect x="-150" y="-14" width="300" height="28" rx="8" fill="#f6d365" opacity="0.08" stroke="#f6d365" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="0" y="3" text-anchor="middle" fill="#f6d365" font-size="12">+ Cron / Heartbeat 自驱循环 — 无需用户消息也能主动执行</text>
+  </g>
+</svg>

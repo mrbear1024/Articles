@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(135deg, #0f0c29 0%, #1a1744 50%, #24243e 100%);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 40px;
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  }
+  .card {
+    width: 860px; background: rgba(26, 23, 68, 0.6);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+    padding: 36px 40px; backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .card-title {
+    font-size: 20px; font-weight: 700; color: #f093fb;
+    margin-bottom: 6px;
+  }
+  .card-subtitle {
+    font-size: 13px; color: #6b7280; margin-bottom: 24px;
+  }
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border-radius: 12px; overflow: hidden;
+  }
+  thead th {
+    background: rgba(240, 147, 251, 0.12); color: #f093fb;
+    font-size: 14px; font-weight: 600; padding: 14px 16px;
+    text-align: left; border-bottom: 1px solid rgba(240, 147, 251, 0.2);
+  }
+  tbody td {
+    padding: 13px 16px; font-size: 13px; color: #c9d1d9;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(240, 147, 251, 0.04); }
+  .type-tag {
+    display: inline-block; padding: 3px 12px; border-radius: 6px;
+    font-weight: 600; font-size: 13px; letter-spacing: 0.5px;
+  }
+  .type-user { background: rgba(245, 87, 108, 0.15); color: #f5576c; }
+  .type-feedback { background: rgba(240, 147, 251, 0.15); color: #f093fb; }
+  .type-project { background: rgba(246, 211, 101, 0.15); color: #f6d365; }
+  .type-reference { background: rgba(67, 233, 123, 0.15); color: #43e97b; }
+  .col-content { color: #e2e8f0; }
+  .col-trigger { color: #8b95a5; }
+  .col-example {
+    color: #6b7280; font-style: italic; font-size: 12px;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-title">Claude Code · Auto Memory 四种类型</div>
+    <div class="card-subtitle">结构化跨会话记忆 — 透明 · 可审计 · 人类可控</div>
+    <table>
+      <thead>
+        <tr><th>类型</th><th>内容</th><th>触发保存</th><th>示例</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="type-tag type-user">user</span></td>
+          <td class="col-content">用户角色、偏好、知识背景</td>
+          <td class="col-trigger">了解到用户信息时</td>
+          <td class="col-example">"资深后端工程师，React 新手"</td>
+        </tr>
+        <tr>
+          <td><span class="type-tag type-feedback">feedback</span></td>
+          <td class="col-content">用户的行为纠正和确认</td>
+          <td class="col-trigger">"不要这样做"或"就是这样"</td>
+          <td class="col-example">"回复末尾不要加总结"</td>
+        </tr>
+        <tr>
+          <td><span class="type-tag type-project">project</span></td>
+          <td class="col-content">项目动态、目标、截止日期</td>
+          <td class="col-trigger">了解到项目进展时</td>
+          <td class="col-example">"周四代码冻结，准备移动端发版"</td>
+        </tr>
+        <tr>
+          <td><span class="type-tag type-reference">reference</span></td>
+          <td class="col-content">外部资源指针</td>
+          <td class="col-trigger">了解到外部系统入口时</td>
+          <td class="col-example">"bug 追踪在 Linear 的 INGEST 项目"</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

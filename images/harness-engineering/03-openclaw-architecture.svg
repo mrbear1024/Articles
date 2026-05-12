@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" font-family="'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="50%" style="stop-color:#1a1744"/>
+      <stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="channelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#43e97b"/>
+      <stop offset="100%" style="stop-color:#38f9d7"/>
+    </linearGradient>
+    <linearGradient id="gatewayGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f5576c"/>
+      <stop offset="100%" style="stop-color:#f093fb"/>
+    </linearGradient>
+    <linearGradient id="agentGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe"/>
+      <stop offset="100%" style="stop-color:#00f2fe"/>
+    </linearGradient>
+    <linearGradient id="skillGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f6d365"/>
+      <stop offset="100%" style="stop-color:#fda085"/>
+    </linearGradient>
+    <linearGradient id="memoryGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a18cd1"/>
+      <stop offset="100%" style="stop-color:#fbc2eb"/>
+    </linearGradient>
+    <filter id="shadow3">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+    <filter id="glow3">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="900" height="680" fill="url(#bg3)"/>
+
+  <!-- Title -->
+  <text x="450" y="45" text-anchor="middle" fill="#e2e8f0" font-size="22" font-weight="700">OpenClaw · 四层管道架构</text>
+  <text x="450" y="68" text-anchor="middle" fill="#6b7280" font-size="13">横向型 — 多个用户 · 多个通道 · 多条并行对话</text>
+
+  <!-- Layer 1: Channels -->
+  <g filter="url(#shadow3)">
+    <rect x="80" y="90" width="740" height="110" rx="16" fill="#43e97b" opacity="0.06" stroke="url(#channelGrad)" stroke-width="2"/>
+  </g>
+  <text x="450" y="118" text-anchor="middle" fill="#43e97b" font-size="17" font-weight="700">Channels 通道层</text>
+
+  <!-- Channel icons -->
+  <g transform="translate(160, 155)">
+    <rect x="-40" y="-18" width="80" height="30" rx="8" fill="#43e97b" opacity="0.15"/>
+    <text x="0" y="-1" text-anchor="middle" fill="#43e97b" font-size="12" font-weight="500">WhatsApp</text>
+  </g>
+  <g transform="translate(280, 155)">
+    <rect x="-40" y="-18" width="80" height="30" rx="8" fill="#43e97b" opacity="0.15"/>
+    <text x="0" y="-1" text-anchor="middle" fill="#43e97b" font-size="12" font-weight="500">Telegram</text>
+  </g>
+  <g transform="translate(400, 155)">
+    <rect x="-30" y="-18" width="60" height="30" rx="8" fill="#43e97b" opacity="0.15"/>
+    <text x="0" y="-1" text-anchor="middle" fill="#43e97b" font-size="12" font-weight="500">Slack</text>
+  </g>
+  <g transform="translate(500, 155)">
+    <rect x="-25" y="-18" width="50" height="30" rx="8" fill="#43e97b" opacity="0.15"/>
+    <text x="0" y="-1" text-anchor="middle" fill="#43e97b" font-size="12" font-weight="500">飞书</text>
+  </g>
+  <g transform="translate(600, 155)">
+    <rect x="-35" y="-18" width="70" height="30" rx="8" fill="#43e97b" opacity="0.15"/>
+    <text x="0" y="-1" text-anchor="middle" fill="#43e97b" font-size="12" font-weight="500">Discord</text>
+  </g>
+  <g transform="translate(720, 155)">
+    <rect x="-25" y="-18" width="50" height="30" rx="8" fill="#43e97b" opacity="0.1"/>
+    <text x="0" y="-1" text-anchor="middle" fill="#43e97b" font-size="12" opacity="0.6">20+</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="450" y1="205" x2="450" y2="240" stroke="#4b5563" stroke-width="2" stroke-dasharray="5,3"/>
+  <polygon points="443,237 450,250 457,237" fill="#4b5563"/>
+
+  <!-- Layer 2: Gateway (core) -->
+  <g filter="url(#shadow3)">
+    <rect x="80" y="255" width="740" height="120" rx="16" fill="#f5576c" opacity="0.06" stroke="url(#gatewayGrad)" stroke-width="2"/>
+  </g>
+  <text x="450" y="285" text-anchor="middle" fill="#f5576c" font-size="17" font-weight="700">Gateway 网关层（核心）</text>
+
+  <!-- Gateway features -->
+  <g transform="translate(200, 335)">
+    <rect x="-55" y="-16" width="110" height="28" rx="6" fill="#f5576c" opacity="0.12"/>
+    <text x="0" y="0" text-anchor="middle" fill="#f093fb" font-size="12">会话管理</text>
+  </g>
+  <g transform="translate(350, 335)">
+    <rect x="-55" y="-16" width="110" height="28" rx="6" fill="#f5576c" opacity="0.12"/>
+    <text x="0" y="0" text-anchor="middle" fill="#f093fb" font-size="12">消息路由</text>
+  </g>
+  <g transform="translate(500, 335)">
+    <rect x="-55" y="-16" width="110" height="28" rx="6" fill="#f5576c" opacity="0.12"/>
+    <text x="0" y="0" text-anchor="middle" fill="#f093fb" font-size="12">鉴权</text>
+  </g>
+  <g transform="translate(670, 335)">
+    <rect x="-70" y="-16" width="140" height="28" rx="6" fill="#f5576c" opacity="0.12"/>
+    <text x="0" y="0" text-anchor="middle" fill="#f093fb" font-size="12">工具执行协调</text>
+  </g>
+
+  <!-- Arrows down (split) -->
+  <line x1="320" y1="380" x2="280" y2="420" stroke="#4b5563" stroke-width="2" stroke-dasharray="5,3"/>
+  <polygon points="273,417 280,430 287,417" fill="#4b5563"/>
+  <line x1="580" y1="380" x2="620" y2="420" stroke="#4b5563" stroke-width="2" stroke-dasharray="5,3"/>
+  <polygon points="613,417 620,430 627,417" fill="#4b5563"/>
+
+  <!-- Layer 3a: Agent -->
+  <g filter="url(#shadow3)">
+    <rect x="80" y="435" width="340" height="110" rx="16" fill="#4facfe" opacity="0.06" stroke="url(#agentGrad3)" stroke-width="2"/>
+  </g>
+  <text x="250" y="465" text-anchor="middle" fill="#4facfe" font-size="16" font-weight="700">Agent 智能体层</text>
+  <text x="250" y="495" text-anchor="middle" fill="#8b95a5" font-size="12">上下文理解 · 意图推理</text>
+  <text x="250" y="518" text-anchor="middle" fill="#8b95a5" font-size="12">规划 · 决策</text>
+
+  <!-- Layer 3b: Skills -->
+  <g filter="url(#shadow3)">
+    <rect x="480" y="435" width="340" height="110" rx="16" fill="#f6d365" opacity="0.06" stroke="url(#skillGrad3)" stroke-width="2"/>
+  </g>
+  <text x="650" y="465" text-anchor="middle" fill="#f6d365" font-size="16" font-weight="700">Skills 技能层</text>
+  <text x="650" y="495" text-anchor="middle" fill="#8b95a5" font-size="12">网页调研 · 浏览器自动化</text>
+  <text x="650" y="518" text-anchor="middle" fill="#8b95a5" font-size="12">邮件 · 文件 · API 调用</text>
+
+  <!-- Arrow down from Agent -->
+  <line x1="250" y1="550" x2="250" y2="580" stroke="#4b5563" stroke-width="2" stroke-dasharray="5,3"/>
+  <polygon points="243,577 250,590 257,577" fill="#4b5563"/>
+
+  <!-- Layer 4: Memory -->
+  <g filter="url(#shadow3)">
+    <rect x="80" y="595" width="740" height="70" rx="16" fill="#a18cd1" opacity="0.06" stroke="url(#memoryGrad3)" stroke-width="2"/>
+  </g>
+  <text x="220" y="637" text-anchor="middle" fill="#a18cd1" font-size="16" font-weight="700">Memory 记忆层</text>
+  <text x="500" y="630" text-anchor="middle" fill="#8b95a5" font-size="12">JSONL 对话记录</text>
+  <text x="650" y="630" text-anchor="middle" fill="#8b95a5" font-size="12">Markdown 长期记忆</text>
+  <text x="500" y="650" text-anchor="middle" fill="#8b95a5" font-size="12">混合语义搜索</text>
+</svg>

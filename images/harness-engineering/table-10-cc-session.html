@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(135deg, #0f0c29 0%, #1a1744 50%, #24243e 100%);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 40px;
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+  }
+  .card {
+    width: 740px; background: rgba(26, 23, 68, 0.6);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+    padding: 36px 40px; backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .card-title {
+    font-size: 20px; font-weight: 700; color: #f093fb;
+    margin-bottom: 6px;
+  }
+  .card-subtitle {
+    font-size: 13px; color: #6b7280; margin-bottom: 24px;
+  }
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    border-radius: 12px; overflow: hidden;
+  }
+  thead th {
+    background: rgba(240, 147, 251, 0.12); color: #f093fb;
+    font-size: 14px; font-weight: 600; padding: 14px 18px;
+    text-align: left; border-bottom: 1px solid rgba(240, 147, 251, 0.2);
+  }
+  tbody td {
+    padding: 13px 18px; font-size: 13px; color: #c9d1d9;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(240, 147, 251, 0.04); }
+  .col-action { color: #f093fb; font-weight: 600; white-space: nowrap; }
+  .col-cmd {
+    color: #43e97b; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12.5px;
+    font-weight: 500;
+  }
+  .col-desc { color: #8b95a5; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-title">Claude Code · 本地 JSONL + 分叉恢复</div>
+    <div class="card-subtitle">会话用完即止 — 关掉终端 Agent 就停了</div>
+    <table>
+      <thead>
+        <tr><th>操作</th><th>命令</th><th>作用</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-action">恢复</td>
+          <td class="col-cmd">--continue</td>
+          <td class="col-desc">接上上次对话继续</td>
+        </tr>
+        <tr>
+          <td class="col-action">分叉</td>
+          <td class="col-cmd">--fork-session</td>
+          <td class="col-desc">复制对话到新会话，原会话不变</td>
+        </tr>
+        <tr>
+          <td class="col-action">回滚</td>
+          <td class="col-cmd">双击 Esc</td>
+          <td class="col-desc">回到上一个文件编辑检查点</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360" font-family="'PingFang SC', 'Noto Sans SC', sans-serif">
+  <rect width="800" height="360" fill="#0a0a0f" rx="12"/>
+
+  <!-- 同心圆 - 传播分层 -->
+  <!-- 第三层 -->
+  <circle cx="400" cy="185" r="155" fill="none" stroke="rgba(212,149,106,0.12)" stroke-width="1" stroke-dasharray="6,4"/>
+  <text x="400" y="48" text-anchor="middle" fill="rgba(240,232,216,0.2)" font-size="12">第三层 · 极少数情况触达 · 不可设计</text>
+
+  <!-- 第二层 -->
+  <circle cx="400" cy="185" r="110" fill="none" stroke="rgba(212,149,106,0.25)" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="548" y="140" fill="rgba(240,232,216,0.35)" font-size="12">第二层</text>
+  <text x="548" y="156" fill="rgba(240,232,216,0.25)" font-size="11">关注者的关注者</text>
+
+  <!-- 第一层 -->
+  <circle cx="400" cy="185" r="65" fill="rgba(212,149,106,0.06)" stroke="#d4956a" stroke-width="1.5"/>
+  <text x="340" y="140" fill="rgba(240,232,216,0.45)" font-size="12">第一层</text>
+  <text x="340" y="156" fill="rgba(240,232,216,0.35)" font-size="11">直接关注者</text>
+
+  <!-- 核心 - 你 -->
+  <circle cx="400" cy="185" r="24" fill="rgba(212,149,106,0.15)" stroke="#d4956a" stroke-width="2"/>
+  <text x="400" y="190" text-anchor="middle" fill="#f0e8d8" font-size="15" font-weight="700">你</text>
+
+  <!-- 小圆点 - 第一层用户 -->
+  <circle cx="360" cy="135" r="4" fill="#d4956a" opacity="0.7"/>
+  <circle cx="440" cy="135" r="4" fill="#d4956a" opacity="0.7"/>
+  <circle cx="345" cy="195" r="4" fill="#d4956a" opacity="0.7"/>
+  <circle cx="455" cy="195" r="4" fill="#d4956a" opacity="0.7"/>
+  <circle cx="370" cy="240" r="4" fill="#d4956a" opacity="0.7"/>
+  <circle cx="430" cy="240" r="4" fill="#d4956a" opacity="0.7"/>
+  <circle cx="400" cy="125" r="4" fill="#d4956a" opacity="0.7"/>
+
+  <!-- 小圆点 - 第二层用户（更稀疏） -->
+  <circle cx="310" cy="110" r="3" fill="rgba(212,149,106,0.4)"/>
+  <circle cx="490" cy="110" r="3" fill="rgba(212,149,106,0.4)"/>
+  <circle cx="295" cy="185" r="3" fill="rgba(212,149,106,0.4)"/>
+  <circle cx="505" cy="185" r="3" fill="rgba(212,149,106,0.4)"/>
+  <circle cx="320" cy="270" r="3" fill="rgba(212,149,106,0.4)"/>
+  <circle cx="480" cy="270" r="3" fill="rgba(212,149,106,0.4)"/>
+
+  <!-- 小圆点 - 第三层用户（极稀疏） -->
+  <circle cx="260" cy="80" r="2.5" fill="rgba(212,149,106,0.2)"/>
+  <circle cx="540" cy="80" r="2.5" fill="rgba(212,149,106,0.2)"/>
+  <circle cx="250" cy="220" r="2.5" fill="rgba(212,149,106,0.2)"/>
+
+  <!-- 底部注释 -->
+  <text x="400" y="345" text-anchor="middle" fill="rgba(240,232,216,0.35)" font-size="13">绝大多数内容的传播止步于第一层，能稳定触达第二层已是高质量输出</text>
+</svg>

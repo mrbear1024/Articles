@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" font-family="'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0c29"/>
+      <stop offset="50%" style="stop-color:#1a1744"/>
+      <stop offset="100%" style="stop-color:#24243e"/>
+    </linearGradient>
+    <linearGradient id="modelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb"/>
+      <stop offset="100%" style="stop-color:#f5576c"/>
+    </linearGradient>
+    <linearGradient id="harnessGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe"/>
+      <stop offset="100%" style="stop-color:#00f2fe"/>
+    </linearGradient>
+    <linearGradient id="agentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#43e97b"/>
+      <stop offset="100%" style="stop-color:#38f9d7"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="900" height="360" fill="url(#bg)"/>
+
+  <!-- Agent box -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="80" width="220" height="100" rx="16" fill="none" stroke="url(#agentGrad)" stroke-width="2.5" opacity="0.9"/>
+    <rect x="40" y="80" width="220" height="100" rx="16" fill="#43e97b" opacity="0.08"/>
+  </g>
+  <text x="150" y="125" text-anchor="middle" fill="url(#agentGrad)" font-size="36" font-weight="700" filter="url(#glow)">Agent</text>
+  <text x="150" y="160" text-anchor="middle" fill="#8b95a5" font-size="14">智能体</text>
+
+  <!-- Equals sign -->
+  <text x="310" y="142" text-anchor="middle" fill="#6b7280" font-size="48" font-weight="300">=</text>
+
+  <!-- Model box -->
+  <g filter="url(#shadow)">
+    <rect x="370" y="80" width="200" height="100" rx="16" fill="none" stroke="url(#modelGrad)" stroke-width="2.5" opacity="0.9"/>
+    <rect x="370" y="80" width="200" height="100" rx="16" fill="#f093fb" opacity="0.08"/>
+  </g>
+  <text x="470" y="125" text-anchor="middle" fill="url(#modelGrad)" font-size="32" font-weight="700">Model</text>
+  <text x="470" y="160" text-anchor="middle" fill="#8b95a5" font-size="14">大语言模型</text>
+
+  <!-- Plus sign -->
+  <text x="620" y="142" text-anchor="middle" fill="#6b7280" font-size="48" font-weight="300">+</text>
+
+  <!-- Harness box -->
+  <g filter="url(#shadow)">
+    <rect x="670" y="80" width="200" height="100" rx="16" fill="none" stroke="url(#harnessGrad)" stroke-width="2.5" opacity="0.9"/>
+    <rect x="670" y="80" width="200" height="100" rx="16" fill="#4facfe" opacity="0.08"/>
+  </g>
+  <text x="770" y="125" text-anchor="middle" fill="url(#harnessGrad)" font-size="32" font-weight="700">Harness</text>
+  <text x="770" y="160" text-anchor="middle" fill="#8b95a5" font-size="14">工程框架</text>
+
+  <!-- Annotation lines -->
+  <line x1="470" y1="190" x2="470" y2="230" stroke="#f093fb" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+  <line x1="770" y1="190" x2="770" y2="230" stroke="#4facfe" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>
+
+  <!-- Model details -->
+  <text x="470" y="250" text-anchor="middle" fill="#9ca3af" font-size="13">Claude · GPT · Gemini</text>
+  <text x="470" y="272" text-anchor="middle" fill="#6b7280" font-size="12">别人家的引擎</text>
+
+  <!-- Harness details -->
+  <text x="770" y="250" text-anchor="middle" fill="#9ca3af" font-size="13">循环 · 工具 · 记忆 · 权限 · 上下文</text>
+  <text x="770" y="272" text-anchor="middle" fill="#6b7280" font-size="12">自研的整辆车</text>
+
+  <!-- Bottom tagline -->
+  <text x="450" y="330" text-anchor="middle" fill="#4b5563" font-size="13" font-style="italic">模型是引擎，harness 是整辆车。引擎再强，没有方向盘、刹车和导航，你哪儿也去不了。</text>
+</svg>

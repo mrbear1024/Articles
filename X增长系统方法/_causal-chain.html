@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 800px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .container {
+    width: 740px;
+    position: relative;
+  }
+
+  /* 顶部渐变线 */
+  .top-line {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(to right, #1a1a2e, #16213e, #0f3460, #1a535c, #2b2d42, #533483);
+    margin: 0 20px;
+  }
+
+  /* 节点行 */
+  .nodes {
+    display: flex;
+    margin-top: 0;
+    padding: 0 20px;
+  }
+  .node {
+    flex: 1;
+    text-align: center;
+    position: relative;
+  }
+  /* 竖线 */
+  .node .stem {
+    width: 3px;
+    height: 20px;
+    margin: 0 auto;
+  }
+  /* 方块 */
+  .node .box {
+    display: inline-block;
+    padding: 8px 6px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    min-width: 80px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  /* 描述 */
+  .node .desc {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #999;
+    line-height: 1.6;
+  }
+  /* 箭头（节点之间） */
+  .node .arrow {
+    position: absolute;
+    top: 38px;
+    right: -8px;
+    font-size: 16px;
+    color: #ccc;
+    font-weight: 400;
+  }
+  .node:last-child .arrow { display: none; }
+
+  /* 颜色 */
+  .c1 .stem { background: #1a1a2e; }
+  .c1 .box  { background: #1a1a2e; }
+  .c2 .stem { background: #16213e; }
+  .c2 .box  { background: #16213e; }
+  .c3 .stem { background: #0f3460; }
+  .c3 .box  { background: #0f3460; }
+  .c4 .stem { background: #1a535c; }
+  .c4 .box  { background: #1a535c; }
+  .c5 .stem { background: #2b2d42; }
+  .c5 .box  { background: #2b2d42; }
+  .c6 .stem { background: #533483; }
+  .c6 .box  { background: #533483; }
+
+  /* 底部标注 */
+  .footer {
+    margin-top: 28px;
+    text-align: center;
+    position: relative;
+  }
+  .footer .line {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 0 60px 10px;
+  }
+  .footer .arrow-left {
+    position: absolute;
+    left: 52px;
+    top: -4px;
+    color: #ccc;
+    font-size: 14px;
+  }
+  .footer .text {
+    font-size: 12px;
+    color: #999;
+    letter-spacing: 1px;
+  }
+
+  /* 阶段分组标注 */
+  .phases {
+    display: flex;
+    margin: 20px 20px 0;
+    gap: 6px;
+  }
+  .phase {
+    text-align: center;
+    padding: 6px 0;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .phase-1 { flex: 2; background: #f0f0f5; color: #666; }
+  .phase-2 { flex: 2; background: #eef3f7; color: #666; }
+  .phase-3 { flex: 2; background: #f3eff8; color: #666; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="top-line"></div>
+
+  <div class="nodes">
+    <div class="node c1">
+      <div class="stem"></div>
+      <div class="box">定位</div>
+      <div class="desc">领域<br>视角<br>立场</div>
+      <div class="arrow">→</div>
+    </div>
+    <div class="node c2">
+      <div class="stem"></div>
+      <div class="box">人设</div>
+      <div class="desc">Profile<br>调性<br>风格</div>
+      <div class="arrow">→</div>
+    </div>
+    <div class="node c3">
+      <div class="stem"></div>
+      <div class="box">内容方向</div>
+      <div class="desc">四种类型<br>比例<br>节奏</div>
+      <div class="arrow">→</div>
+    </div>
+    <div class="node c4">
+      <div class="stem"></div>
+      <div class="box">受众画像</div>
+      <div class="desc">谁在看<br>他们要<br>什么</div>
+      <div class="arrow">→</div>
+    </div>
+    <div class="node c5">
+      <div class="stem"></div>
+      <div class="box">互动质量</div>
+      <div class="desc">评论<br>引用<br>对话</div>
+      <div class="arrow">→</div>
+    </div>
+    <div class="node c6">
+      <div class="stem"></div>
+      <div class="box">数据信号</div>
+      <div class="desc">可解读<br>可迭代<br>可校准</div>
+    </div>
+  </div>
+
+  <!-- 阶段标注 -->
+  <div class="phases">
+    <div class="phase phase-1">地基</div>
+    <div class="phase phase-2">引擎</div>
+    <div class="phase phase-3">加速器</div>
+  </div>
+
+  <!-- 底部诊断方向 -->
+  <div class="footer">
+    <div class="line"></div>
+    <div class="arrow-left">←</div>
+    <div class="text">问题诊断方向：数据异常时，沿链条向左追溯根因</div>
+  </div>
+
+</div>
+</body>
+</html>
