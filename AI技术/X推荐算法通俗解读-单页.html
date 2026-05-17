@@ -1,0 +1,1283 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X 推荐算法通俗解读</title>
+  <style>
+    :root {
+      --ink: #18202a;
+      --muted: #5a6675;
+      --line: #d8dee8;
+      --panel: #ffffff;
+      --soft: #f6f8fb;
+      --blue: #1769e0;
+      --green: #138a55;
+      --red: #c9413a;
+      --gold: #bd7b13;
+      --violet: #7257c8;
+      --cyan: #087ea4;
+      --shadow: 0 18px 50px rgba(31, 45, 61, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #f3f6fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(216, 222, 232, 0.9);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      width: min(1180px, calc(100% - 32px));
+      height: 62px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      border-radius: 7px;
+      color: #fff;
+      background: #111820;
+      font-weight: 800;
+    }
+
+    .brand span:last-child {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .nav a {
+      padding: 7px 10px;
+      border-radius: 7px;
+    }
+
+    .nav a:hover {
+      background: var(--soft);
+      color: var(--ink);
+    }
+
+    .hero {
+      border-bottom: 1px solid var(--line);
+      background:
+        repeating-linear-gradient(135deg, rgba(23, 105, 224, 0.06) 0 1px, transparent 1px 18px),
+        linear-gradient(135deg, #ffffff 0%, #eef3f9 100%);
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+      gap: 44px;
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 54px 0 42px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cyan);
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+    }
+
+    h1 {
+      margin: 14px 0 18px;
+      max-width: 780px;
+      font-size: 56px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 0;
+      color: #3e4a59;
+      font-size: 19px;
+    }
+
+    .hero-note {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .note {
+      min-height: 116px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .note strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .phone-scene {
+      position: relative;
+      min-height: 560px;
+    }
+
+    .phone {
+      width: min(330px, 100%);
+      margin-left: auto;
+      padding: 16px;
+      border: 1px solid #cbd4df;
+      border-radius: 30px;
+      background: #101820;
+      box-shadow: var(--shadow);
+    }
+
+    .phone-screen {
+      overflow: hidden;
+      border-radius: 20px;
+      background: #f8fafc;
+    }
+
+    .phone-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid #e5eaf1;
+      background: #fff;
+      font-size: 14px;
+      font-weight: 760;
+    }
+
+    .feed-card {
+      padding: 16px;
+      border-bottom: 1px solid #e5eaf1;
+      background: #fff;
+    }
+
+    .feed-card.alt {
+      background: #f9fbfd;
+    }
+
+    .feed-line {
+      height: 10px;
+      margin-top: 9px;
+      border-radius: 999px;
+      background: #dce4ef;
+    }
+
+    .feed-line.short {
+      width: 58%;
+    }
+
+    .feed-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 760;
+    }
+
+    .avatar {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .score-chip {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 12px;
+      padding: 5px 8px;
+      border-radius: 7px;
+      color: #0c5a36;
+      background: #e3f5ec;
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .signal-badge {
+      position: absolute;
+      left: 0;
+      width: 190px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 12px 34px rgba(31, 45, 61, 0.12);
+    }
+
+    .signal-badge.one {
+      top: 84px;
+    }
+
+    .signal-badge.two {
+      right: 10px;
+      bottom: 58px;
+      left: auto;
+    }
+
+    .signal-badge strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .signal-badge span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 44px 0 68px;
+    }
+
+    section {
+      margin-top: 54px;
+    }
+
+    section:first-child {
+      margin-top: 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 36px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      max-width: 470px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .band {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 8px 22px rgba(31, 45, 61, 0.06);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .summary {
+      min-height: 172px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .summary .num {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 7px;
+      color: #fff;
+      background: var(--ink);
+      font-weight: 800;
+    }
+
+    .summary h3 {
+      margin: 14px 0 7px;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .summary p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .funnel {
+      padding: 22px;
+    }
+
+    .funnel-row {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr) 220px;
+      gap: 18px;
+      align-items: center;
+      padding: 18px 0;
+      border-top: 1px solid #e7edf4;
+    }
+
+    .funnel-row:first-child {
+      border-top: 0;
+    }
+
+    .funnel-label {
+      font-weight: 800;
+    }
+
+    .funnel-label span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .lane {
+      position: relative;
+      min-height: 52px;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #edf2f7;
+    }
+
+    .lane-fill {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 52px;
+      min-width: 54px;
+      padding-right: 14px;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .lane-fill.blue {
+      width: 96%;
+      background: var(--blue);
+    }
+
+    .lane-fill.green {
+      width: 70%;
+      background: var(--green);
+    }
+
+    .lane-fill.gold {
+      width: 44%;
+      background: var(--gold);
+    }
+
+    .lane-fill.red {
+      width: 24%;
+      background: var(--red);
+    }
+
+    .funnel-explain {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.86fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .recipe {
+      padding: 24px;
+    }
+
+    .recipe-row {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr) 72px;
+      gap: 14px;
+      align-items: center;
+      margin: 16px 0;
+    }
+
+    .recipe-row strong {
+      font-size: 15px;
+    }
+
+    .bar {
+      height: 13px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e7edf4;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+    }
+
+    .bar .good1 {
+      width: 92%;
+      background: var(--green);
+    }
+
+    .bar .good2 {
+      width: 78%;
+      background: var(--blue);
+    }
+
+    .bar .good3 {
+      width: 58%;
+      background: var(--violet);
+    }
+
+    .bar .good4 {
+      width: 45%;
+      background: var(--cyan);
+    }
+
+    .bar .bad {
+      width: 28%;
+      background: var(--red);
+    }
+
+    .plain-list {
+      padding: 24px;
+    }
+
+    .plain-list h3,
+    .rule-box h3,
+    .story h3 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .plain-list ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #3e4a59;
+    }
+
+    .plain-list li {
+      margin: 8px 0;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      padding: 22px;
+    }
+
+    .flow-step {
+      position: relative;
+      min-height: 172px;
+      padding: 16px;
+      border: 1px solid #dfe6ef;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .flow-step::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 10px;
+      height: 2px;
+      background: #b9c4d2;
+    }
+
+    .flow-step:last-child::after {
+      display: none;
+    }
+
+    .flow-icon {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      margin-bottom: 12px;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--ink);
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .flow-step h3 {
+      margin: 0 0 7px;
+      font-size: 17px;
+    }
+
+    .flow-step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .myth-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .myth {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .myth .tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 4px 8px;
+      border-radius: 7px;
+      color: #7b281f;
+      background: #fde8e3;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .myth h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .myth p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .control-panel {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .control-copy {
+      padding: 26px;
+      background: #111820;
+      color: #fff;
+    }
+
+    .control-copy h2 {
+      color: #fff;
+    }
+
+    .control-copy p {
+      margin: 14px 0 0;
+      color: #cfdae7;
+    }
+
+    .control-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      background: #fff;
+    }
+
+    .control-action {
+      min-height: 160px;
+      padding: 20px;
+      border-left: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .control-action:nth-child(3),
+    .control-action:nth-child(4) {
+      border-bottom: 0;
+    }
+
+    .control-action b {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+
+    .control-action p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .rule-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .rule-box {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .rule-box p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .rule-strip {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 9px;
+      border-radius: 7px;
+      color: #334155;
+      background: #edf2f7;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .story {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .story-card {
+      position: relative;
+      min-height: 248px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .story-visual {
+      height: 108px;
+      background:
+        linear-gradient(120deg, rgba(23, 105, 224, 0.18), transparent),
+        #eaf1fa;
+    }
+
+    .story-visual.green {
+      background:
+        linear-gradient(120deg, rgba(19, 138, 85, 0.2), transparent),
+        #ecf7f2;
+    }
+
+    .story-visual.gold {
+      background:
+        linear-gradient(120deg, rgba(189, 123, 19, 0.22), transparent),
+        #fbf2df;
+    }
+
+    .mini-network {
+      position: relative;
+      height: 100%;
+    }
+
+    .node {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.48);
+    }
+
+    .node.n1 { left: 20%; top: 24%; background: var(--blue); }
+    .node.n2 { left: 58%; top: 35%; background: var(--green); }
+    .node.n3 { left: 42%; top: 64%; background: var(--gold); }
+    .wire {
+      position: absolute;
+      height: 2px;
+      background: rgba(24, 32, 42, 0.3);
+      transform-origin: left center;
+    }
+    .wire.w1 { left: 26%; top: 39%; width: 34%; transform: rotate(12deg); }
+    .wire.w2 { left: 48%; top: 61%; width: 22%; transform: rotate(-34deg); }
+
+    .story-body {
+      padding: 18px;
+    }
+
+    .story-body h3 {
+      margin-bottom: 8px;
+    }
+
+    .story-body p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer {
+      margin-top: 54px;
+      padding: 24px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 1100px) {
+      .hero-inner,
+      .two-col,
+      .control-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .phone-scene {
+        min-height: auto;
+      }
+
+      .phone {
+        margin: 0 auto;
+      }
+
+      .signal-badge {
+        position: static;
+        width: auto;
+        margin: 14px auto 0;
+      }
+
+      .summary-grid,
+      .myth-grid,
+      .story,
+      .rule-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step {
+        min-height: auto;
+      }
+
+      .flow-step::after {
+        display: none;
+      }
+
+      .funnel-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .two-col,
+      .control-panel {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 44px;
+      }
+
+      h2 {
+        font-size: 31px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar-inner {
+        width: min(100% - 24px, 1180px);
+        height: auto;
+        min-height: 62px;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 12px 0;
+      }
+
+      .hero-inner,
+      main {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .hero-inner {
+        padding-top: 34px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      h2 {
+        font-size: 26px;
+      }
+
+      .hero-note,
+      .summary-grid,
+      .myth-grid,
+      .story,
+      .rule-grid,
+      .control-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      .section-head p {
+        margin-top: 10px;
+      }
+
+      .recipe-row {
+        grid-template-columns: 92px minmax(0, 1fr) 52px;
+        gap: 10px;
+      }
+
+      .control-action {
+        border-left: 0;
+      }
+
+      .control-action:nth-child(3) {
+        border-bottom: 1px solid var(--line);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#top" aria-label="返回顶部">
+          <span class="brand-mark">X</span>
+          <span>推荐算法通俗解读</span>
+        </a>
+        <nav class="nav" aria-label="页面导航">
+          <a href="#answer">先看结论</a>
+          <a href="#funnel">推荐漏斗</a>
+          <a href="#score">分数配方</a>
+          <a href="#control">你能影响什么</a>
+          <a href="#myths">常见误解</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero" id="top">
+      <div class="hero-inner">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span>基于 xAI 开源的 x-algorithm 源码</div>
+          <h1>X 为什么会把一条内容推给你？</h1>
+          <p class="lead">
+            最短答案：系统会先猜“你会不会喜欢、停留、回复、转发、点开、关注作者”，再把不合适、重复、已看过或风险内容挡掉，最后把帖子、广告和产品模块混排成你看到的 For You。
+          </p>
+          <div class="hero-note" id="answer">
+            <div class="note">
+              <strong>不是只看热度</strong>
+              <p>点赞数和转发数会作为参考，但不是“越热越靠前”的简单榜单。</p>
+            </div>
+            <div class="note">
+              <strong>更看个人相关性</strong>
+              <p>你的近期行为会形成兴趣画像，影响圈外内容召回和最终排序。</p>
+            </div>
+            <div class="note">
+              <strong>负反馈很重要</strong>
+              <p>不感兴趣、拉黑、静音、举报这类风险预测会压低推荐分。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="phone-scene" aria-label="推荐流程示意">
+          <div class="signal-badge one">
+            <strong>模型先预测</strong>
+            <span>这条内容会不会让你停留、互动或反感</span>
+          </div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="phone-head">
+                <span>For You</span>
+                <span>排名中</span>
+              </div>
+              <div class="feed-card">
+                <div class="feed-title"><span class="avatar">A</span><span>你可能会认真读完</span></div>
+                <div class="feed-line"></div>
+                <div class="feed-line short"></div>
+                <span class="score-chip">高停留 + 高喜欢</span>
+              </div>
+              <div class="feed-card alt">
+                <div class="feed-title"><span class="avatar" style="background:#7257c8">B</span><span>朋友也在讨论</span></div>
+                <div class="feed-line"></div>
+                <div class="feed-line short" style="width:72%"></div>
+                <span class="score-chip">高回复概率</span>
+              </div>
+              <div class="feed-card">
+                <div class="feed-title"><span class="avatar" style="background:#bd7b13">Ad</span><span>广告占位</span></div>
+                <div class="feed-line"></div>
+                <div class="feed-line short" style="width:46%"></div>
+                <span class="score-chip" style="color:#72500c;background:#fff3d9">安全间隔插入</span>
+              </div>
+              <div class="feed-card alt">
+                <div class="feed-title"><span class="avatar" style="background:#138a55">C</span><span>来自你没关注的人</span></div>
+                <div class="feed-line"></div>
+                <div class="feed-line short" style="width:62%"></div>
+                <span class="score-chip">兴趣相似</span>
+              </div>
+            </div>
+          </div>
+          <div class="signal-badge two">
+            <strong>然后再混排</strong>
+            <span>帖子、广告、推荐关注、提示模块一起组成页面</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main>
+      <section>
+        <div class="section-head">
+          <h2>普通用户最该知道的 4 件事</h2>
+          <p>源码里有很多服务和模型名，但落到体验上，其实可以压缩成这四句话。</p>
+        </div>
+        <div class="summary-grid">
+          <article class="summary">
+            <span class="num">1</span>
+            <h3>系统先找候选</h3>
+            <p>一部分来自你关注的人，一部分来自全站里和你兴趣相近的内容。</p>
+          </article>
+          <article class="summary">
+            <span class="num">2</span>
+            <h3>模型预测行为</h3>
+            <p>它不是只问“这条热不热”，而是问“这个用户会不会对它有反应”。</p>
+          </article>
+          <article class="summary">
+            <span class="num">3</span>
+            <h3>过滤器先挡风险</h3>
+            <p>已看过、重复、太旧、屏蔽关系、静音词、安全问题都可能被拿掉。</p>
+          </article>
+          <article class="summary">
+            <span class="num">4</span>
+            <h3>最终页面还会混排</h3>
+            <p>广告、关注推荐和产品提示会插入，所以你看到的不只是帖子排序榜。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="funnel">
+        <div class="section-head">
+          <h2>一条帖子到你面前，要过 5 道关</h2>
+          <p>可以把 X 推荐理解成漏斗：越往后，留下来的内容越少，也越贴近这次请求。</p>
+        </div>
+        <div class="band funnel">
+          <div class="funnel-row">
+            <div class="funnel-label">全站内容<span>海量新帖、旧帖、视频、转帖、回复</span></div>
+            <div class="lane"><div class="lane-fill blue">很多</div></div>
+            <p class="funnel-explain">系统不会把所有内容逐条精排，成本太高。</p>
+          </div>
+          <div class="funnel-row">
+            <div class="funnel-label">候选召回<span>关注内 + 兴趣相似 + 话题来源</span></div>
+            <div class="lane"><div class="lane-fill green">一批</div></div>
+            <p class="funnel-explain">Thunder 找关注内新鲜内容，Phoenix 找圈外相似内容。</p>
+          </div>
+          <div class="funnel-row">
+            <div class="funnel-label">模型打分<span>预测喜欢、停留、回复、反感等</span></div>
+            <div class="lane"><div class="lane-fill gold">更少</div></div>
+            <p class="funnel-explain">不是一个分数拍脑袋，而是很多行为预测合成。</p>
+          </div>
+          <div class="funnel-row">
+            <div class="funnel-label">过滤和去重<span>已看过、屏蔽、静音、安全、重复</span></div>
+            <div class="lane"><div class="lane-fill red">少量</div></div>
+            <p class="funnel-explain">模型喜欢也不一定能过硬规则。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="score">
+        <div class="section-head">
+          <h2>推荐分像一份配方，不是一个按钮</h2>
+          <p>源码中的 RankingScorer 会把很多行为预测乘上权重，再考虑作者多样性和圈外内容比例。</p>
+        </div>
+        <div class="two-col">
+          <div class="band recipe">
+            <div class="recipe-row">
+              <strong>喜欢</strong>
+              <div class="bar"><i class="good1"></i></div>
+              <span>加分</span>
+            </div>
+            <div class="recipe-row">
+              <strong>停留</strong>
+              <div class="bar"><i class="good2"></i></div>
+              <span>加分</span>
+            </div>
+            <div class="recipe-row">
+              <strong>回复/转发</strong>
+              <div class="bar"><i class="good3"></i></div>
+              <span>加分</span>
+            </div>
+            <div class="recipe-row">
+              <strong>点开作者</strong>
+              <div class="bar"><i class="good4"></i></div>
+              <span>加分</span>
+            </div>
+            <div class="recipe-row">
+              <strong>不感兴趣</strong>
+              <div class="bar"><i class="bad"></i></div>
+              <span>减分</span>
+            </div>
+          </div>
+          <aside class="band plain-list">
+            <h3>用白话说</h3>
+            <ul>
+              <li>你越可能认真看完、点开、互动，内容越可能靠前。</li>
+              <li>你越可能拉黑、静音、举报、快速划走，内容越会被压低。</li>
+              <li>同一个作者的多条内容不会无限霸屏，后面的会被衰减。</li>
+              <li>关注外内容会有单独调节，避免 feed 全是陌生人或全是关注内。</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>从工程角度看，它大致这样运转</h2>
+          <p>下面这张图省略了内部服务名，只保留用户能感受到的关键步骤。</p>
+        </div>
+        <div class="band flow">
+          <article class="flow-step">
+            <div class="flow-icon">1</div>
+            <h3>读懂你最近的动作</h3>
+            <p>你喜欢、回复、转发、停留、视频观看等行为会变成一段历史。</p>
+          </article>
+          <article class="flow-step">
+            <div class="flow-icon">2</div>
+            <h3>找一批可能相关的帖子</h3>
+            <p>关注的人提供新鲜内容，全站向量检索提供兴趣相近内容。</p>
+          </article>
+          <article class="flow-step">
+            <div class="flow-icon">3</div>
+            <h3>逐条预测你的反应</h3>
+            <p>模型分别预测喜欢、停留、回复、转发、负反馈等概率。</p>
+          </article>
+          <article class="flow-step">
+            <div class="flow-icon">4</div>
+            <h3>挡掉不该出现的内容</h3>
+            <p>重复、已看、屏蔽、静音、安全风险和话题不匹配会被过滤。</p>
+          </article>
+          <article class="flow-step">
+            <div class="flow-icon">5</div>
+            <h3>组成最终页面</h3>
+            <p>帖子排序后，还会插入广告、关注推荐、提示和置顶模块。</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>它为什么会推荐“没关注的人”？</h2>
+          <p>这部分来自 out-of-network 召回。系统会从全站找与你历史行为相似的内容。</p>
+        </div>
+        <div class="story">
+          <article class="story-card">
+            <div class="story-visual">
+              <div class="mini-network">
+                <span class="wire w1"></span><span class="wire w2"></span>
+                <span class="node n1"></span><span class="node n2"></span><span class="node n3"></span>
+              </div>
+            </div>
+            <div class="story-body">
+              <h3>不是只看你关注谁</h3>
+              <p>关注列表负责一部分供给，但 For You 还会从全站找你可能感兴趣的内容。</p>
+            </div>
+          </article>
+          <article class="story-card">
+            <div class="story-visual green">
+              <div class="mini-network">
+                <span class="wire w1"></span><span class="wire w2"></span>
+                <span class="node n1" style="background:#138a55"></span>
+                <span class="node n2" style="background:#087ea4"></span>
+                <span class="node n3" style="background:#7257c8"></span>
+              </div>
+            </div>
+            <div class="story-body">
+              <h3>相似兴趣会连起来</h3>
+              <p>你最近互动过的内容会形成向量表示，系统找距离近的帖子。</p>
+            </div>
+          </article>
+          <article class="story-card">
+            <div class="story-visual gold">
+              <div class="mini-network">
+                <span class="wire w1"></span><span class="wire w2"></span>
+                <span class="node n1" style="background:#bd7b13"></span>
+                <span class="node n2" style="background:#1769e0"></span>
+                <span class="node n3" style="background:#c9413a"></span>
+              </div>
+            </div>
+            <div class="story-body">
+              <h3>比例会被调节</h3>
+              <p>圈外内容不是无限制涌入，代码里有单独的 OON 权重因子。</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="control">
+        <div class="band control-panel">
+          <div class="control-copy">
+            <h2>你能影响推荐，但不是立刻“重置宇宙”</h2>
+            <p>系统看的是一段行为历史。单次点击会有影响，但连续、明确、一致的动作更有信号强度。</p>
+          </div>
+          <div class="control-actions">
+            <div class="control-action">
+              <b>多给正反馈</b>
+              <p>喜欢、回复、转发、停留、点开作者，会告诉系统这类内容值得更多出现。</p>
+            </div>
+            <div class="control-action">
+              <b>明确负反馈</b>
+              <p>不感兴趣、静音、屏蔽，比快速划走更明确。</p>
+            </div>
+            <div class="control-action">
+              <b>清理关注关系</b>
+              <p>关注列表会影响 in-network 候选，也影响系统对你兴趣的理解。</p>
+            </div>
+            <div class="control-action">
+              <b>避免误点误停留</b>
+              <p>长时间停留和频繁点开会被当作兴趣信号，即使你只是围观。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>哪些内容会被挡掉或压低？</h2>
+          <p>推荐不是模型一票决定，很多硬规则会保护体验和安全。</p>
+        </div>
+        <div class="rule-grid">
+          <article class="rule-box">
+            <h3>直接过滤</h3>
+            <p>这类内容可能在排序前后被移除，不再进入最终 feed。</p>
+            <div class="rule-strip">
+              <span class="pill">重复内容</span>
+              <span class="pill">已经看过</span>
+              <span class="pill">太旧</span>
+              <span class="pill">屏蔽关系</span>
+              <span class="pill">静音词</span>
+              <span class="pill">安全风险</span>
+            </div>
+          </article>
+          <article class="rule-box">
+            <h3>降低排序</h3>
+            <p>这类内容不一定消失，但会因为预测不佳或体验约束被放到后面。</p>
+            <div class="rule-strip">
+              <span class="pill">可能不感兴趣</span>
+              <span class="pill">可能被举报</span>
+              <span class="pill">同作者太多</span>
+              <span class="pill">视频不符合条件</span>
+              <span class="pill">圈外比例调节</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="myths">
+        <div class="section-head">
+          <h2>三个常见误解</h2>
+          <p>用源码能确认的部分，反而能帮我们避开很多玄学解释。</p>
+        </div>
+        <div class="myth-grid">
+          <article class="myth">
+            <span class="tag">误解</span>
+            <h3>“点赞越多越推荐”</h3>
+            <p>公开互动数只是候选特征之一。更关键的是模型预测“你这个人”会不会互动。</p>
+          </article>
+          <article class="myth">
+            <span class="tag">误解</span>
+            <h3>“只要我关注就一定看到”</h3>
+            <p>关注内内容会进入候选池，但仍要和其他内容一起过滤、打分、排序。</p>
+          </article>
+          <article class="myth">
+            <span class="tag">误解</span>
+            <h3>“模型喜欢就一定出现”</h3>
+            <p>安全、社交关系、已看历史、去重、广告混排都会改变最终页面。</p>
+          </article>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>
+          本页基于 xAI 开源仓库 x-algorithm 的代码阅读整理，重点解释用户体验相关逻辑。生产环境的模型规模、实时参数和内部服务实现可能与开源示例不同。
+        </p>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
